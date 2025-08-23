@@ -1,0 +1,527 @@
+/* ===== OTP Component - BEM Methodology ===== */
+
+/* ===== OTP Wrapper ===== */
+.otp-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  width: auto;
+
+  /* Disabled state */
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Loading state */
+  &--loading {
+    .otp-spinner {
+      display: flex;
+    }
+  }
+
+  /* Masked state */
+  &--masked {
+    .otp-input {
+      font-family: var(--font-family-mono);
+      letter-spacing: var(--letter-spacing-wide);
+    }
+  }
+}
+
+/* ===== OTP Label ===== */
+.otp-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--inpt-font-size-m);
+  font-weight: var(--gl-inpt-text-weight);
+  line-height: var(--inpt-line-height-m);
+  color: var(--text-primary);
+  transition: color var(--transition-fast) var(--transition-ease);
+
+  /* Size variants */
+  &--xs {
+    font-size: var(--inpt-font-size-xs);
+    line-height: var(--inpt-line-height-xs);
+  }
+
+  &--s {
+    font-size: var(--inpt-font-size-s);
+    line-height: var(--inpt-line-height-s);
+  }
+
+  &--m {
+    font-size: var(--inpt-font-size-m);
+    line-height: var(--inpt-line-height-m);
+  }
+
+  &--l {
+    font-size: var(--inpt-font-size-l);
+    line-height: var(--inpt-line-height-l);
+  }
+
+  &--xl {
+    font-size: var(--inpt-font-size-xl);
+    line-height: var(--inpt-line-height-xl);
+  }
+
+  /* State variants */
+  &--error {
+    color: var(--text-error);
+  }
+
+  &--success {
+    color: var(--text-success);
+  }
+
+  &--warning {
+    color: var(--text-warning);
+  }
+
+  &--disabled {
+    color: var(--input-text-disabled);
+  }
+
+  /* Required indicator */
+  &__required {
+    color: var(--text-error);
+    font-weight: var(--font-weight-medium);
+    margin-left: var(--spacing-2);
+  }
+}
+
+/* ===== OTP Inputs Container ===== */
+.otp-inputs {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  justify-content: center;
+
+  /* Responsive gap adjustment */
+  @media (max-width: 480px) {
+    gap: var(--spacing-6);
+  }
+}
+
+/* ===== Individual OTP Input ===== */
+.otp-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--gl-radius-input);
+  font-family: inherit;
+  font-weight: var(--gl-inpt-text-weight);
+  color: var(--input-text);
+  text-align: center;
+  transition: 
+    border-color var(--transition-fast) var(--transition-ease),
+    background-color var(--transition-fast) var(--transition-ease),
+    box-shadow var(--transition-fast) var(--transition-ease),
+    transform var(--transition-fast) var(--transition-ease);
+  outline: none;
+
+  /* Size variants */
+  &--xs {
+    width: var(--spacing-32);
+    height: var(--spacing-32);
+    font-size: var(--inpt-font-size-xs);
+    line-height: var(--inpt-line-height-xs);
+  }
+
+  &--s {
+    width: var(--spacing-36);
+    height: var(--spacing-36);
+    font-size: var(--inpt-font-size-s);
+    line-height: var(--inpt-line-height-s);
+  }
+
+  &--m {
+    width: var(--spacing-40);
+    height: var(--spacing-40);
+    font-size: var(--inpt-font-size-m);
+    line-height: var(--inpt-line-height-m);
+  }
+
+  &--l {
+    width: var(--spacing-48);
+    height: var(--spacing-48);
+    font-size: var(--inpt-font-size-l);
+    line-height: var(--inpt-line-height-l);
+  }
+
+  &--xl {
+    width: var(--spacing-56);
+    height: var(--spacing-56);
+    font-size: var(--inpt-font-size-xl);
+    line-height: var(--inpt-line-height-xl);
+  }
+
+  /* Hover state */
+  &:hover:not(&--disabled):not(&--focused) {
+    background-color: var(--input-bg-hover);
+    border-color: var(--input-border-hover);
+    transform: translateY(-1px);
+  }
+
+  /* Focus state */
+  &--focused {
+    background-color: var(--input-bg-focus);
+    border-color: var(--input-border-focus);
+    box-shadow: 
+      var(--gl-inpts-shadow-x) 
+      var(--gl-inpts-shadow-y) 
+      var(--gl-inpts-shadow-blur) 
+      var(--gl-inpts-shadow-spread) 
+      var(--input-border-focus);
+    transform: translateY(-1px);
+  }
+
+  /* Filled state */
+  &--filled {
+    background-color: var(--primary-01);
+    border-color: var(--primary-05);
+    color: var(--primary-07);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /* State variants */
+  &--error {
+    border-color: var(--input-border-error);
+
+    &:hover,
+    &--focused {
+      border-color: var(--input-border-error);
+      box-shadow: 
+        var(--gl-inpts-shadow-x) 
+        var(--gl-inpts-shadow-y) 
+        var(--gl-inpts-shadow-blur) 
+        var(--gl-inpts-shadow-spread) 
+        var(--input-border-error);
+    }
+
+    &--filled {
+      background-color: var(--error-01);
+      border-color: var(--error-05);
+      color: var(--error-07);
+    }
+  }
+
+  &--success {
+    border-color: var(--border-success);
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-success);
+      box-shadow: 
+        var(--gl-inpts-shadow-x) 
+        var(--gl-inpts-shadow-y) 
+        var(--gl-inpts-shadow-blur) 
+        var(--gl-inpts-shadow-spread) 
+        var(--border-success);
+    }
+
+    &--filled {
+      background-color: var(--success-01);
+      border-color: var(--success-05);
+      color: var(--success-07);
+    }
+  }
+
+  &--warning {
+    border-color: var(--border-warning);
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-warning);
+      box-shadow: 
+        var(--gl-inpts-shadow-x) 
+        var(--gl-inpts-shadow-y) 
+        var(--gl-inpts-shadow-blur) 
+        var(--gl-inpts-shadow-spread) 
+        var(--border-warning);
+    }
+
+    &--filled {
+      background-color: var(--warning-01);
+      border-color: var(--warning-05);
+      color: var(--warning-07);
+    }
+  }
+
+  &--disabled {
+    background-color: var(--input-bg-disabled);
+    border-color: var(--input-border);
+    color: var(--input-text-disabled);
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: var(--input-bg-disabled);
+      border-color: var(--input-border);
+      transform: none;
+    }
+
+    &--filled {
+      background-color: var(--gray-02);
+      border-color: var(--gray-04);
+      color: var(--text-disabled);
+    }
+  }
+
+  /* Placeholder styling */
+  &::placeholder {
+    color: var(--input-text-placeholder);
+    font-weight: var(--gl-inpt-placeholder-weight);
+    opacity: 1;
+  }
+
+  /* Remove default styling for number inputs */
+  &[type="number"] {
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  /* Password input styling */
+  &[type="password"] {
+    font-family: var(--font-family-mono);
+    letter-spacing: var(--letter-spacing-wide);
+  }
+}
+
+/* ===== OTP Separator ===== */
+.otp-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-size: var(--text-lg-size);
+  font-weight: var(--font-weight-medium);
+  user-select: none;
+  pointer-events: none;
+
+  /* Size adjustments based on parent size */
+  .otp-wrapper--xs & {
+    font-size: var(--text-sm-size);
+  }
+
+  .otp-wrapper--s & {
+    font-size: var(--text-md-size);
+  }
+
+  .otp-wrapper--l & {
+    font-size: var(--text-xl-size);
+  }
+
+  .otp-wrapper--xl & {
+    font-size: var(--heading-06-size);
+  }
+}
+
+/* ===== OTP Loading Spinner ===== */
+.otp-spinner {
+  position: absolute;
+  top: 50%;
+  right: -var(--spacing-32);
+  transform: translateY(-50%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  &__icon {
+    width: var(--spacing-20);
+    height: var(--spacing-20);
+    border: 2px solid var(--border-primary);
+    border-top: 2px solid var(--primary-05);
+    border-radius: var(--radius-full);
+    animation: otp-spinner 1s linear infinite;
+  }
+}
+
+/* ===== OTP Messages ===== */
+.otp-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  text-align: center;
+}
+
+.otp-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-6);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+  font-weight: var(--font-weight-normal);
+
+  /* Message variants */
+  &--helper {
+    color: var(--text-tertiary);
+  }
+
+  &--error {
+    color: var(--text-error);
+  }
+
+  &--success {
+    color: var(--text-success);
+  }
+
+  &--warning {
+    color: var(--text-warning);
+  }
+}
+
+/* ===== Animations ===== */
+@keyframes otp-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation for successful completion */
+@keyframes otp-success-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply success animation when all inputs are filled */
+.otp-wrapper--success .otp-input--filled {
+  animation: otp-success-pulse 0.3s ease-in-out;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 480px) {
+  .otp-input {
+    /* Ensure minimum touch target size on mobile */
+    &--xs {
+      width: var(--spacing-36);
+      height: var(--spacing-36);
+      font-size: var(--inpt-font-size-s);
+    }
+
+    &--s {
+      width: var(--spacing-40);
+      height: var(--spacing-40);
+      font-size: var(--inpt-font-size-m);
+    }
+  }
+
+  .otp-inputs {
+    /* Reduce gap on very small screens */
+    gap: var(--spacing-4);
+  }
+
+  .otp-separator {
+    /* Smaller separators on mobile */
+    font-size: var(--text-sm-size);
+  }
+
+  .otp-spinner {
+    /* Adjust spinner position for mobile */
+    right: -var(--spacing-24);
+
+    &__icon {
+      width: var(--spacing-16);
+      height: var(--spacing-16);
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .otp-inputs {
+    /* Further reduce gap on very small screens */
+    gap: var(--spacing-2);
+  }
+
+  .otp-input {
+    /* Smaller inputs for very small screens */
+    &--xs {
+      width: var(--spacing-32);
+      height: var(--spacing-32);
+    }
+
+    &--s {
+      width: var(--spacing-36);
+      height: var(--spacing-36);
+    }
+
+    &--m {
+      width: var(--spacing-36);
+      height: var(--spacing-36);
+    }
+  }
+}
+
+/* ===== High Contrast Mode Support ===== */
+@media (prefers-contrast: high) {
+  .otp-input {
+    border-width: 2px;
+
+    &--focused {
+      outline: 2px solid var(--input-border-focus);
+      outline-offset: 2px;
+    }
+
+    &--filled {
+      border-width: 3px;
+    }
+  }
+}
+
+/* ===== Reduced Motion Support ===== */
+@media (prefers-reduced-motion: reduce) {
+  .otp-input {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+
+    &--focused {
+      transform: none;
+    }
+  }
+
+  .otp-spinner__icon {
+    animation: none;
+  }
+
+  .otp-wrapper--success .otp-input--filled {
+    animation: none;
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .otp-wrapper {
+    .otp-input {
+      border: 2px solid var(--base-black);
+      background: var(--base-white);
+      color: var(--base-black);
+      box-shadow: none;
+    }
+
+    .otp-spinner {
+      display: none;
+    }
+  }
+}

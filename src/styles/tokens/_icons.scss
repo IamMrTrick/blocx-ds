@@ -1,0 +1,445 @@
+/* ===== Icon Design Tokens ===== */
+:root {
+  /* Icon sizes - aligned with typography system */
+  --icon-size-xxs: var(--text-xxs-size);    /* 8px  - matches text-xxs */
+  --icon-size-xs: var(--text-xs-size);      /* 10px - matches text-xs */
+  --icon-size-sm: var(--text-sm-size);      /* 12px - matches text-sm */
+  --icon-size-md: var(--text-md-size);      /* 14px - matches text-md */
+  --icon-size-lg: var(--text-lg-size);      /* 16px - matches text-lg */
+  --icon-size-xl: var(--text-xl-size);      /* 18px - matches text-xl */
+  --icon-size-h6: var(--heading-06-size);   /* 18px - matches heading-06 */
+  --icon-size-h5: var(--heading-05-size);   /* 20px - matches heading-05 */
+  --icon-size-h4: var(--heading-04-size);   /* 24px - matches heading-04 */
+  --icon-size-h3: var(--heading-03-size);   /* 28px - matches heading-03 */
+  --icon-size-h2: var(--heading-02-size);   /* 36px - matches heading-02 */
+  --icon-size-h1: var(--heading-01-size);   /* 48px - matches heading-01 */
+
+  /* Icon colors - semantic and consistent */
+  --icon-color-primary: var(--icon-primary);
+  --icon-color-secondary: var(--icon-secondary);
+  --icon-color-tertiary: var(--icon-tertiary);
+  --icon-color-disabled: var(--icon-disabled);
+  --icon-color-accent: var(--icon-accent);
+  --icon-color-success: var(--icon-success);
+  --icon-color-warning: var(--icon-warning);
+  --icon-color-error: var(--icon-error);
+  --icon-color-info: var(--icon-info);
+  --icon-color-inherit: currentColor;
+}
+
+/* ===== Icon Base Class ===== */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  
+  /* Default size and color */
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  color: var(--icon-color-inherit);
+}
+
+/* ===== Icon Size Utilities ===== */
+
+/* Typography-aligned sizes */
+.icon-size-xxs { 
+  width: var(--icon-size-xxs); 
+  height: var(--icon-size-xxs); 
+}
+
+.icon-size-xs { 
+  width: var(--icon-size-xs); 
+  height: var(--icon-size-xs); 
+}
+
+.icon-size-sm { 
+  width: var(--icon-size-sm); 
+  height: var(--icon-size-sm); 
+}
+
+.icon-size-md { 
+  width: var(--icon-size-md); 
+  height: var(--icon-size-md); 
+}
+
+.icon-size-lg { 
+  width: var(--icon-size-lg); 
+  height: var(--icon-size-lg); 
+}
+
+.icon-size-xl { 
+  width: var(--icon-size-xl); 
+  height: var(--icon-size-xl); 
+}
+
+.icon-size-h6 { 
+  width: var(--icon-size-h6); 
+  height: var(--icon-size-h6); 
+}
+
+.icon-size-h5 { 
+  width: var(--icon-size-h5); 
+  height: var(--icon-size-h5); 
+}
+
+.icon-size-h4 { 
+  width: var(--icon-size-h4); 
+  height: var(--icon-size-h4); 
+}
+
+.icon-size-h3 { 
+  width: var(--icon-size-h3); 
+  height: var(--icon-size-h3); 
+}
+
+.icon-size-h2 { 
+  width: var(--icon-size-h2); 
+  height: var(--icon-size-h2); 
+}
+
+.icon-size-h1 { 
+  width: var(--icon-size-h1); 
+  height: var(--icon-size-h1); 
+}
+
+/* ===== Icon Color Utilities ===== */
+
+.icon-color-primary { 
+  color: var(--icon-color-primary); 
+}
+
+.icon-color-secondary { 
+  color: var(--icon-color-secondary); 
+}
+
+.icon-color-tertiary { 
+  color: var(--icon-color-tertiary); 
+}
+
+.icon-color-disabled { 
+  color: var(--icon-color-disabled); 
+}
+
+.icon-color-accent { 
+  color: var(--icon-color-accent); 
+}
+
+.icon-color-success { 
+  color: var(--icon-color-success); 
+}
+
+.icon-color-warning { 
+  color: var(--icon-color-warning); 
+}
+
+.icon-color-error { 
+  color: var(--icon-color-error); 
+}
+
+.icon-color-info { 
+  color: var(--icon-color-info); 
+}
+
+.icon-color-inherit { 
+  color: var(--icon-color-inherit); 
+}
+
+/* ===== BEM-style Icon Modifiers (Alternative) ===== */
+
+.icon {
+  /* Size modifiers */
+  &--xxs { width: var(--icon-size-xxs); height: var(--icon-size-xxs); }
+  &--xs { width: var(--icon-size-xs); height: var(--icon-size-xs); }
+  &--sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+  &--md { width: var(--icon-size-md); height: var(--icon-size-md); }
+  &--lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+  &--xl { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+  &--h6 { width: var(--icon-size-h6); height: var(--icon-size-h6); }
+  &--h5 { width: var(--icon-size-h5); height: var(--icon-size-h5); }
+  &--h4 { width: var(--icon-size-h4); height: var(--icon-size-h4); }
+  &--h3 { width: var(--icon-size-h3); height: var(--icon-size-h3); }
+  &--h2 { width: var(--icon-size-h2); height: var(--icon-size-h2); }
+  &--h1 { width: var(--icon-size-h1); height: var(--icon-size-h1); }
+
+  /* Color modifiers */
+  &--primary { color: var(--icon-color-primary); }
+  &--secondary { color: var(--icon-color-secondary); }
+  &--tertiary { color: var(--icon-color-tertiary); }
+  &--disabled { color: var(--icon-color-disabled); }
+  &--accent { color: var(--icon-color-accent); }
+  &--success { color: var(--icon-color-success); }
+  &--warning { color: var(--icon-color-warning); }
+  &--error { color: var(--icon-color-error); }
+  &--info { color: var(--icon-color-info); }
+  &--inherit { color: var(--icon-color-inherit); }
+}
+
+@keyframes icon-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== Icon Skeleton Styles ===== */
+
+.icon-skeleton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  
+  /* Default size matching icon default */
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  
+  /* Skeleton appearance */
+  background: linear-gradient(
+    90deg, 
+    var(--gray-02) 25%, 
+    var(--gray-03) 50%, 
+    var(--gray-02) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-xs);
+  animation: icon-skeleton-shimmer 1.5s ease-in-out infinite;
+  
+  /* Ensure proper sizing inheritance */
+  &.icon-size-xxs { width: var(--icon-size-xxs); height: var(--icon-size-xxs); }
+  &.icon-size-xs { width: var(--icon-size-xs); height: var(--icon-size-xs); }
+  &.icon-size-sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+  &.icon-size-md { width: var(--icon-size-md); height: var(--icon-size-md); }
+  &.icon-size-lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+  &.icon-size-xl { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+  &.icon-size-h6 { width: var(--icon-size-h6); height: var(--icon-size-h6); }
+  &.icon-size-h5 { width: var(--icon-size-h5); height: var(--icon-size-h5); }
+  &.icon-size-h4 { width: var(--icon-size-h4); height: var(--icon-size-h4); }
+  &.icon-size-h3 { width: var(--icon-size-h3); height: var(--icon-size-h3); }
+  &.icon-size-h2 { width: var(--icon-size-h2); height: var(--icon-size-h2); }
+  &.icon-size-h1 { width: var(--icon-size-h1); height: var(--icon-size-h1); }
+}
+
+@keyframes icon-skeleton-shimmer {
+  0% { 
+    background-position: 200% 0; 
+  }
+  100% { 
+    background-position: -200% 0; 
+  }
+}
+
+/* ===== Icon Interactive States & Animations ===== */
+
+/* Interactive icon base */
+.icon-interactive {
+  cursor: pointer;
+  transition: 
+    color var(--transition-fast) ease,
+    transform var(--transition-fast) ease,
+    opacity var(--transition-fast) ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+  
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: var(--icon-color-disabled);
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+/* Button icon - no pointer events, let parent handle */
+.icon-button {
+  pointer-events: none;
+}
+
+/* Loading/spinning animation */
+.icon-loading {
+  animation: icon-spin 1s linear infinite;
+}
+
+/* Pulse animation for notifications */
+.icon-pulse {
+  animation: icon-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Bounce animation for success states */
+.icon-bounce {
+  animation: icon-bounce 1s ease-in-out;
+}
+
+@keyframes icon-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+/* Shake animation for error states */
+.icon-shake {
+  animation: icon-shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes icon-shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+/* Fade animations */
+.icon-fade-in {
+  animation: icon-fade-in 0.3s ease-in-out;
+}
+
+.icon-fade-out {
+  animation: icon-fade-out 0.3s ease-in-out;
+}
+
+@keyframes icon-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes icon-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ===== Icon Context Utilities ===== */
+
+/* Icon in buttons */
+.btn .icon {
+  flex-shrink: 0;
+  
+  &:first-child:not(:last-child) {
+    margin-inline-end: var(--spacing-8);
+  }
+  
+  &:last-child:not(:first-child) {
+    margin-inline-start: var(--spacing-8);
+  }
+}
+
+/* Icon in form inputs */
+.input-group .icon {
+  color: var(--icon-color-tertiary);
+  
+  &:first-child {
+    margin-inline-end: var(--spacing-8);
+  }
+  
+  &:last-child {
+    margin-inline-start: var(--spacing-8);
+  }
+}
+
+/* Icon in navigation */
+.nav-item .icon {
+  margin-inline-end: var(--spacing-8);
+}
+
+/* Icon in alerts/notifications */
+.alert .icon {
+  flex-shrink: 0;
+  margin-inline-end: var(--spacing-12);
+  
+  &.icon-color-success {
+    color: var(--icon-color-success);
+  }
+  
+  &.icon-color-warning {
+    color: var(--icon-color-warning);
+  }
+  
+  &.icon-color-error {
+    color: var(--icon-color-error);
+  }
+  
+  &.icon-color-info {
+    color: var(--icon-color-info);
+  }
+}
+
+/* ===== Responsive Icon Utilities ===== */
+
+@media (max-width: 768px) {
+  .icon-sm-hide {
+    display: none;
+  }
+  
+  .icon-sm-show {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 768px) {
+  .icon-md-hide {
+    display: none;
+  }
+  
+  .icon-md-show {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .icon-lg-hide {
+    display: none;
+  }
+  
+  .icon-lg-show {
+    display: inline-flex;
+  }
+}

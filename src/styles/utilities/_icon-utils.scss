@@ -1,0 +1,416 @@
+/* ===== Icon Utilities ===== */
+/* Comprehensive utility classes for icons */
+
+@import '../tokens/icons';
+
+/* ===== Size Utilities (Functional) ===== */
+
+.icon-xxs { 
+  @extend .icon-size-xxs; 
+}
+
+.icon-xs { 
+  @extend .icon-size-xs; 
+}
+
+.icon-sm { 
+  @extend .icon-size-sm; 
+}
+
+.icon-md { 
+  @extend .icon-size-md; 
+}
+
+.icon-lg { 
+  @extend .icon-size-lg; 
+}
+
+.icon-xl { 
+  @extend .icon-size-xl; 
+}
+
+.icon-h6 { 
+  @extend .icon-size-h6; 
+}
+
+.icon-h5 { 
+  @extend .icon-size-h5; 
+}
+
+.icon-h4 { 
+  @extend .icon-size-h4; 
+}
+
+.icon-h3 { 
+  @extend .icon-size-h3; 
+}
+
+.icon-h2 { 
+  @extend .icon-size-h2; 
+}
+
+.icon-h1 { 
+  @extend .icon-size-h1; 
+}
+
+/* ===== Color Utilities (Functional) ===== */
+
+.icon-primary { 
+  @extend .icon-color-primary; 
+}
+
+.icon-secondary { 
+  @extend .icon-color-secondary; 
+}
+
+.icon-tertiary { 
+  @extend .icon-color-tertiary; 
+}
+
+.icon-disabled { 
+  @extend .icon-color-disabled; 
+}
+
+.icon-accent { 
+  @extend .icon-color-accent; 
+}
+
+.icon-success { 
+  @extend .icon-color-success; 
+}
+
+.icon-warning { 
+  @extend .icon-color-warning; 
+}
+
+.icon-error { 
+  @extend .icon-color-error; 
+}
+
+.icon-info { 
+  @extend .icon-color-info; 
+}
+
+.icon-inherit { 
+  @extend .icon-color-inherit; 
+}
+
+/* ===== Hover State Utilities ===== */
+
+.hover\:icon-primary:hover { 
+  color: var(--icon-color-primary); 
+}
+
+.hover\:icon-secondary:hover { 
+  color: var(--icon-color-secondary); 
+}
+
+.hover\:icon-accent:hover { 
+  color: var(--icon-color-accent); 
+}
+
+.hover\:icon-success:hover { 
+  color: var(--icon-color-success); 
+}
+
+.hover\:icon-warning:hover { 
+  color: var(--icon-color-warning); 
+}
+
+.hover\:icon-error:hover { 
+  color: var(--icon-color-error); 
+}
+
+.hover\:icon-info:hover { 
+  color: var(--icon-color-info); 
+}
+
+/* ===== Focus State Utilities ===== */
+
+.focus\:icon-primary:focus { 
+  color: var(--icon-color-primary); 
+}
+
+.focus\:icon-accent:focus { 
+  color: var(--icon-color-accent); 
+}
+
+/* ===== Active State Utilities ===== */
+
+.active\:icon-primary:active { 
+  color: var(--icon-color-primary); 
+}
+
+.active\:icon-accent:active { 
+  color: var(--icon-color-accent); 
+}
+
+/* ===== Disabled State Utilities ===== */
+
+.disabled\:icon-disabled:disabled { 
+  color: var(--icon-color-disabled); 
+}
+
+/* ===== Animation Utilities ===== */
+
+.animate-spin { 
+  @extend .icon-loading; 
+}
+
+.animate-pulse { 
+  @extend .icon-pulse; 
+}
+
+.animate-bounce { 
+  @extend .icon-bounce; 
+}
+
+.animate-shake { 
+  @extend .icon-shake; 
+}
+
+.animate-fade-in { 
+  @extend .icon-fade-in; 
+}
+
+.animate-fade-out { 
+  @extend .icon-fade-out; 
+}
+
+/* ===== Responsive Utilities ===== */
+
+@media (max-width: 767px) {
+  .sm\:icon-hide {
+    display: none;
+  }
+  
+  .sm\:icon-show {
+    display: inline-flex;
+  }
+  
+  .sm\:icon-xxs { 
+    width: var(--icon-size-xxs); 
+    height: var(--icon-size-xxs); 
+  }
+  .sm\:icon-xs { 
+    width: var(--icon-size-xs); 
+    height: var(--icon-size-xs); 
+  }
+  .sm\:icon-sm { 
+    width: var(--icon-size-sm); 
+    height: var(--icon-size-sm); 
+  }
+  .sm\:icon-md { 
+    width: var(--icon-size-md); 
+    height: var(--icon-size-md); 
+  }
+  .sm\:icon-lg { 
+    width: var(--icon-size-lg); 
+    height: var(--icon-size-lg); 
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .md\:icon-hide {
+    display: none;
+  }
+  
+  .md\:icon-show {
+    display: inline-flex;
+  }
+  
+  .md\:icon-xxs { 
+    width: var(--icon-size-xxs); 
+    height: var(--icon-size-xxs); 
+  }
+  .md\:icon-xs { 
+    width: var(--icon-size-xs); 
+    height: var(--icon-size-xs); 
+  }
+  .md\:icon-sm { 
+    width: var(--icon-size-sm); 
+    height: var(--icon-size-sm); 
+  }
+  .md\:icon-md { 
+    width: var(--icon-size-md); 
+    height: var(--icon-size-md); 
+  }
+  .md\:icon-lg { 
+    width: var(--icon-size-lg); 
+    height: var(--icon-size-lg); 
+  }
+  .md\:icon-xl { 
+    width: var(--icon-size-xl); 
+    height: var(--icon-size-xl); 
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:icon-hide {
+    display: none;
+  }
+  
+  .lg\:icon-show {
+    display: inline-flex;
+  }
+  
+  .lg\:icon-sm { 
+    width: var(--icon-size-sm); 
+    height: var(--icon-size-sm); 
+  }
+  .lg\:icon-md { 
+    width: var(--icon-size-md); 
+    height: var(--icon-size-md); 
+  }
+  .lg\:icon-lg { 
+    width: var(--icon-size-lg); 
+    height: var(--icon-size-lg); 
+  }
+  .lg\:icon-xl { 
+    width: var(--icon-size-xl); 
+    height: var(--icon-size-xl); 
+  }
+  .lg\:icon-h6 { 
+    width: var(--icon-size-h6); 
+    height: var(--icon-size-h6); 
+  }
+  .lg\:icon-h5 { 
+    width: var(--icon-size-h5); 
+    height: var(--icon-size-h5); 
+  }
+  .lg\:icon-h4 { 
+    width: var(--icon-size-h4); 
+    height: var(--icon-size-h4); 
+  }
+}
+
+/* ===== Combination Utilities ===== */
+
+/* Common icon + text combinations */
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  
+  .icon {
+    flex-shrink: 0;
+  }
+}
+
+.icon-text-reverse {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  gap: var(--spacing-8);
+  
+  .icon {
+    flex-shrink: 0;
+  }
+}
+
+/* Icon with badge/notification dot */
+.icon-with-badge {
+  position: relative;
+  display: inline-flex;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    background-color: var(--error-05);
+    border-radius: 50%;
+    border: 1px solid var(--bg-primary);
+  }
+  
+  &.badge-success::after {
+    background-color: var(--success-05);
+  }
+  
+  &.badge-warning::after {
+    background-color: var(--warning-05);
+  }
+  
+  &.badge-info::after {
+    background-color: var(--info-05);
+  }
+}
+
+/* Icon button variants */
+.icon-btn {
+  @extend .icon;
+  @extend .icon-interactive;
+  
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  
+  &:hover {
+    background-color: var(--bg-secondary);
+  }
+  
+  &:active {
+    background-color: var(--bg-tertiary);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.icon-btn-primary {
+  @extend .icon-btn;
+  color: var(--icon-color-primary);
+  
+  &:hover {
+    background-color: var(--primary-01);
+    color: var(--primary-06);
+  }
+}
+
+.icon-btn-accent {
+  @extend .icon-btn;
+  color: var(--icon-color-accent);
+  
+  &:hover {
+    background-color: var(--primary-01);
+    color: var(--primary-06);
+  }
+}
+
+.icon-btn-success {
+  @extend .icon-btn;
+  color: var(--icon-color-success);
+  
+  &:hover {
+    background-color: var(--success-01);
+    color: var(--success-06);
+  }
+}
+
+.icon-btn-warning {
+  @extend .icon-btn;
+  color: var(--icon-color-warning);
+  
+  &:hover {
+    background-color: var(--warning-01);
+    color: var(--warning-06);
+  }
+}
+
+.icon-btn-error {
+  @extend .icon-btn;
+  color: var(--icon-color-error);
+  
+  &:hover {
+    background-color: var(--error-01);
+    color: var(--error-06);
+  }
+}

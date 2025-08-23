@@ -1,0 +1,52 @@
+// Main SCSS entry point
+// Import all SCSS files in the correct order
+
+// 1. Tokens (variables, colors, typography, etc.)
+@import 'tokens/colors';
+@import 'tokens/typography';
+@import 'tokens/spacing';
+@import 'tokens/radius';
+@import 'tokens/transitions';
+@import 'tokens/zindex';
+@import 'tokens/layout';
+@import 'tokens/button';
+@import 'tokens/badge';
+@import 'tokens/input';
+@import 'tokens/header';
+@import 'tokens/icons';
+@import 'tokens/navigation';
+
+// 2. Tools (mixins, functions)
+@import 'tools/mixins';
+@import 'tools/functions';
+
+// 3. Base styles
+@import 'base/reset';
+@import 'base/globals';
+
+// 4. Utilities
+@import 'utilities/spacing-utils';
+@import 'utilities/radius-utils';
+@import 'utilities/color-utils';
+@import 'utilities/layout-utils';
+@import 'utilities/section-utils';
+@import 'utilities/main-layout-utils';
+@import 'utilities/display-utils';
+@import 'utilities/text-utils';
+@import 'utilities/icon-utils';
+@import 'utilities/visually-hidden';
+
+// 5. Components
+// UI Components
+@import '../components/ui/button/Button';
+@import '../components/ui/badge/Badge';
+
+// Form Components
+@import '../components/ui/forms/form/Form';
+@import '../components/ui/forms/input/Input';
+@import '../components/ui/forms/text-area/TextArea';
+@import '../components/ui/forms/select/Select';
+@import '../components/ui/forms/checkbox/Checkbox';
+@import '../components/ui/forms/radiobutton/RadioButton';
+@import '../components/ui/forms/otp/OTP';
+

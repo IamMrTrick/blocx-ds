@@ -1,0 +1,64 @@
+/* ===== Layout Settings ===== */
+:root {
+  /* ===== Content Widths ===== */
+  --content-width-sm: 1140px;  /* Small desktop / compact layout */
+  --content-width-md: 1280px;  /* Standard desktop */
+  --content-width-lg: 1440px;  /* Large desktop / widescreen */
+  --content-width-xl: 1600px;  /* Ultra-wide screens */
+  
+  /* ===== Main Content Width ===== */
+  --content-width-main: var(--content-width-lg);
+  
+  /* Boxed-page frame (outer padding around the entire page). */
+  --page-frame: 0px;
+  
+  /* ===== Fluid gutters ===== */
+  /* bounds */
+  --gutter-inline-min: var(--spacing-16);
+  --gutter-inline-max: var(--spacing-32);
+  /* preferred (viewport-based) */
+  --gutter-inline-pref: 4vw;
+  /* final */
+  --gutter-inline: max(
+    var(--gutter-inline-min),
+    min(var(--gutter-inline-pref), var(--gutter-inline-max))
+  );
+  
+  /* ===== Section gap (vertical rhythm between sections) ===== */
+  --section-gap-min: var(--spacing-24);
+  --section-gap-max: var(--spacing-56);
+  --section-gap-pref: 5vw;
+  --section-gap: max(
+    var(--section-gap-min),
+    min(var(--section-gap-pref), var(--section-gap-max))
+  );
+  
+  /* ===== Header/Footer vertical padding ===== */
+  --hf-pad-min: var(--spacing-16);
+  --hf-pad-max: var(--spacing-32);
+  --hf-pad-pref: 3vw;
+  --header-footer-pad: max(
+    var(--hf-pad-min),
+    min(var(--hf-pad-pref), var(--hf-pad-max))
+  );
+  
+  /* Max content width (use your existing presets) */
+  --container-max: var(--content-width-main);
+  
+  /* Optional gap between sidebar and content */
+  --layout-gap: var(--spacing-20);
+  
+  /* Effective page max inline size respecting boxed frame */
+  --page-max-inline: min(
+    var(--container-max),
+    calc(100vw - (var(--page-frame) * 2))
+  );
+  
+  /* Sidebar presence toggle (0 = none, 1 = present) */
+  --has-sidebar: 0;
+  
+  /* Content width considering sidebar when present */
+  --content-effective: calc(
+    var(--page-max-inline) - (var(--has-sidebar) * (var(--sidebar-width) + var(--layout-gap)))
+  );
+}

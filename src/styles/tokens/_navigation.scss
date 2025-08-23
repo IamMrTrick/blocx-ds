@@ -1,0 +1,112 @@
+/* ===== Navigation - Design Tokens ===== */
+/* Navigation-specific design tokens for consistent theming */
+
+:root {
+  /* ===== Navigation Colors ===== */
+  /* Link colors */
+  --nav-link-color: var(--text-primary);
+  --nav-link-hover-color: var(--text-primary);
+  --nav-link-current-color: var(--primary-05);
+  
+  /* Link backgrounds */
+  --nav-link-hover-bg: var(--bg-secondary);
+  --nav-link-current-bg: var(--primary-01);
+  
+  /* Focus ring */
+  --nav-link-focus-ring: var(--primary-05);
+  
+  /* Footer navigation */
+  --nav-footer-link-color: var(--text-secondary);
+  --nav-footer-link-hover-color: var(--text-primary);
+  --nav-footer-link-font-size: var(--font-size-sm);
+  
+  /* Breadcrumb navigation */
+  --nav-breadcrumb-link-color: var(--text-secondary);
+  --nav-breadcrumb-link-hover-color: var(--text-primary);
+  --nav-breadcrumb-link-font-size: var(--font-size-sm);
+  --nav-separator-color: var(--text-muted);
+  
+  /* Pagination navigation */
+  --nav-pagination-border: var(--border-color);
+  --nav-pagination-hover-bg: var(--bg-secondary);
+  --nav-pagination-hover-border: var(--primary-05);
+  --nav-pagination-radius: var(--radius-md);
+  
+  /* Table of contents */
+  --nav-toc-link-color: var(--text-secondary);
+  --nav-toc-link-hover-color: var(--text-primary);
+  --nav-toc-link-hover-bg: var(--bg-secondary);
+  --nav-toc-link-font-size: var(--font-size-sm);
+  
+  /* Counter colors */
+  --nav-counter-color: var(--text-muted);
+  
+  /* Expand button */
+  --nav-expand-color: var(--text-muted);
+  --nav-expand-hover-color: var(--text-primary);
+  --nav-expand-hover-bg: var(--bg-secondary);
+  --nav-expand-focus-ring: var(--primary-05);
+  
+  /* Toggle button */
+  --nav-toggle-line-color: var(--text-primary);
+  --nav-toggle-hover-bg: var(--bg-secondary);
+  --nav-toggle-focus-ring: var(--primary-05);
+  
+  /* Submenu */
+  --nav-submenu-bg: var(--bg-primary);
+  --nav-submenu-border: var(--border-color);
+  --nav-submenu-radius: var(--radius-lg);
+  --nav-submenu-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --nav-submenu-link-hover-bg: var(--bg-secondary);
+  
+  /* Mega menu */
+  --nav-mega-bg: var(--bg-primary);
+  --nav-mega-border: var(--border-color);
+  --nav-mega-radius: var(--radius-lg);
+  --nav-mega-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --nav-mega-heading-color: var(--text-primary);
+  
+  /* Mobile navigation */
+  --nav-mobile-bg: var(--bg-primary);
+  --nav-mobile-border: var(--border-color);
+  --nav-mobile-radius: var(--radius-lg);
+  --nav-mobile-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  /* ===== Navigation Spacing ===== */
+  /* Gaps */
+  --nav-gap: var(--spacing-16);
+  --nav-gap-tablet: var(--spacing-12);
+  --nav-gap-mobile: var(--spacing-8);
+  
+  /* Link padding */
+  --nav-link-padding: var(--spacing-8) var(--spacing-12);
+  --nav-link-padding-tablet: var(--spacing-6) var(--spacing-8);
+  --nav-link-padding-mobile: var(--spacing-8) var(--spacing-12);
+  
+  /* Text padding */
+  --nav-text-padding: var(--spacing-8) var(--spacing-12);
+
+  /* ===== Navigation Typography ===== */
+  /* Font sizes */
+  --nav-link-font-size: var(--font-size-base);
+  --nav-link-font-size-tablet: var(--font-size-sm);
+  --nav-link-font-size-mobile: var(--font-size-base);
+  --nav-text-font-size: var(--font-size-base);
+
+  /* ===== Navigation Dimensions ===== */
+  /* Border radius */
+  --nav-link-radius: var(--radius-md);
+  
+  /* Heights */
+  --nav-link-min-height: 44px;
+  --nav-toggle-size: 40px;
+
+  /* ===== Navigation Transitions ===== */
+  --nav-link-transition: all 0.2s ease-in-out;
+  --nav-expand-transition: all 0.2s ease-in-out;
+  --nav-toggle-transition: all 0.3s ease-in-out;
+
+  /* ===== Navigation Breakpoints ===== */
+  --nav-breakpoint-tablet: 1024px;
+  --nav-breakpoint-mobile: 768px;
+}

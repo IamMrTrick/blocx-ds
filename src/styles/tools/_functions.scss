@@ -1,0 +1,353 @@
+// SCSS Functions
+// Utility functions for accessing design tokens and calculations
+
+// Color functions
+@function color($token) {
+  @return var(--color-#{$token});
+}
+
+@function color-primary($shade) {
+  @return var(--color-primary-#{$shade});
+}
+
+@function color-neutral($shade) {
+  @return var(--color-neutral-#{$shade});
+}
+
+@function color-success($shade: 500) {
+  @return var(--color-success);
+}
+
+@function color-warning($shade: 500) {
+  @return var(--color-warning);
+}
+
+@function color-error($shade: 500) {
+  @return var(--color-error);
+}
+
+@function color-info($shade: 500) {
+  @return var(--color-info);
+}
+
+// Spacing functions
+@function spacing($size) {
+  @return var(--spacing-#{$size});
+}
+
+@function spacing-none() {
+  @return var(--spacing-none);
+}
+
+@function spacing-2() {
+  @return var(--spacing-2);
+}
+
+@function spacing-4() {
+  @return var(--spacing-4);
+}
+
+@function spacing-6() {
+  @return var(--spacing-6);
+}
+
+@function spacing-8() {
+  @return var(--spacing-8);
+}
+
+@function spacing-10() {
+  @return var(--spacing-10);
+}
+
+@function spacing-12() {
+  @return var(--spacing-12);
+}
+
+@function spacing-14() {
+  @return var(--spacing-14);
+}
+
+@function spacing-16() {
+  @return var(--spacing-16);
+}
+
+@function spacing-18() {
+  @return var(--spacing-18);
+}
+
+@function spacing-20() {
+  @return var(--spacing-20);
+}
+
+@function spacing-24() {
+  @return var(--spacing-24);
+}
+
+@function spacing-28() {
+  @return var(--spacing-28);
+}
+
+@function spacing-32() {
+  @return var(--spacing-32);
+}
+
+@function spacing-36() {
+  @return var(--spacing-36);
+}
+
+@function spacing-40() {
+  @return var(--spacing-40);
+}
+
+@function spacing-44() {
+  @return var(--spacing-44);
+}
+
+@function spacing-48() {
+  @return var(--spacing-48);
+}
+
+@function spacing-56() {
+  @return var(--spacing-56);
+}
+
+@function spacing-64() {
+  @return var(--spacing-64);
+}
+
+@function spacing-80() {
+  @return var(--spacing-80);
+}
+
+@function spacing-96() {
+  @return var(--spacing-96);
+}
+
+@function spacing-112() {
+  @return var(--spacing-112);
+}
+
+@function spacing-128() {
+  @return var(--spacing-128);
+}
+
+@function spacing-144() {
+  @return var(--spacing-144);
+}
+
+@function spacing-160() {
+  @return var(--spacing-160);
+}
+
+@function spacing-176() {
+  @return var(--spacing-176);
+}
+
+@function spacing-192() {
+  @return var(--spacing-192);
+}
+
+@function spacing-208() {
+  @return var(--spacing-208);
+}
+
+@function spacing-224() {
+  @return var(--spacing-224);
+}
+
+@function spacing-240() {
+  @return var(--spacing-240);
+}
+
+@function spacing-256() {
+  @return var(--spacing-256);
+}
+
+@function spacing-288() {
+  @return var(--spacing-288);
+}
+
+@function spacing-320() {
+  @return var(--spacing-320);
+}
+
+@function spacing-384() {
+  @return var(--spacing-384);
+}
+
+// Radius functions
+@function radius($size) {
+  @return var(--radius-#{$size});
+}
+
+@function radius-none() {
+  @return var(--radius-none);
+}
+
+@function radius-2() {
+  @return var(--radius-2);
+}
+
+@function radius-4() {
+  @return var(--radius-4);
+}
+
+@function radius-6() {
+  @return var(--radius-6);
+}
+
+@function radius-8() {
+  @return var(--radius-8);
+}
+
+@function radius-10() {
+  @return var(--radius-10);
+}
+
+@function radius-12() {
+  @return var(--radius-12);
+}
+
+@function radius-14() {
+  @return var(--radius-14);
+}
+
+@function radius-16() {
+  @return var(--radius-16);
+}
+
+@function radius-18() {
+  @return var(--radius-18);
+}
+
+@function radius-20() {
+  @return var(--radius-20);
+}
+
+@function radius-22() {
+  @return var(--radius-22);
+}
+
+@function radius-24() {
+  @return var(--radius-24);
+}
+
+@function radius-full() {
+  @return var(--radius-full);
+}
+
+// Global radius functions
+@function gl-radius-wrapper() {
+  @return var(--gl-radius-wrapper);
+}
+
+@function gl-radius-inner-wrapper() {
+  @return var(--gl-radius-inner-wrapper);
+}
+
+@function gl-radius-in-inner-wrapper() {
+  @return var(--gl-radius-in-inner-wrapper);
+}
+
+@function gl-radius-cards() {
+  @return var(--gl-radius-cards);
+}
+
+@function gl-radius-btn() {
+  @return var(--gl-radius-btn);
+}
+
+@function gl-radius-inpts() {
+  @return var(--gl-radius-inpts);
+}
+
+@function gl-radius-inpt-text-area() {
+  @return var(--gl-radius-inpt-text-area);
+}
+
+// Typography functions
+@function font-size($size) {
+  @return var(--font-size-#{$size});
+}
+
+@function font-weight($weight) {
+  @return var(--font-weight-#{$weight});
+}
+
+@function line-height($height) {
+  @return var(--line-height-#{$height});
+}
+
+@function font-family($family) {
+  @return var(--font-family-#{$family});
+}
+
+// Z-index functions
+@function z-index($level) {
+  @return var(--z-#{$level});
+}
+
+// Unit conversion functions
+@function rem($pixels) {
+  @return #{$pixels / 16}rem;
+}
+
+@function em($pixels, $context: 16) {
+  @return #{$pixels / $context}em;
+}
+
+@function px($value) {
+  @if unit($value) == 'rem' {
+    @return #{$value * 16}px;
+  } @else if unit($value) == 'em' {
+    @return #{$value * 16}px;
+  } @else {
+    @return $value;
+  }
+}
+
+// Math functions
+@function multiply($value, $multiplier) {
+  @return $value * $multiplier;
+}
+
+@function divide($value, $divisor) {
+  @return $value / $divisor;
+}
+
+@function add($value1, $value2) {
+  @return $value1 + $value2;
+}
+
+@function subtract($value1, $value2) {
+  @return $value1 - $value2;
+}
+
+// Color manipulation functions
+@function lighten-color($color, $percentage) {
+  @return lighten($color, $percentage);
+}
+
+@function darken-color($color, $percentage) {
+  @return darken($color, $percentage);
+}
+
+@function saturate-color($color, $percentage) {
+  @return saturate($color, $percentage);
+}
+
+@function desaturate-color($color, $percentage) {
+  @return desaturate($color, $percentage);
+}
+
+// Utility functions
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
+}
+
+@function calculate-ratio($width, $height) {
+  @return percentage($height / $width);
+}

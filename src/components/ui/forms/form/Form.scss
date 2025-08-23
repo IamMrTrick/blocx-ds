@@ -1,0 +1,533 @@
+/* ===== Form Component - BEM Methodology ===== */
+
+/* ===== Form Wrapper ===== */
+.form-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  /* Variant modifiers */
+  &--card {
+    background-color: var(--base-white);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--gl-radius-cards);
+    box-shadow: 
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+  }
+
+  &--inline {
+    .form-content {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: var(--spacing-12);
+      flex-wrap: wrap;
+    }
+  }
+
+  /* Size variants */
+  &--xs {
+    .form-header__title {
+      font-size: var(--heading-06-size);
+      line-height: var(--heading-06-line);
+    }
+    
+    .form-header__description {
+      font-size: var(--text-sm-size);
+      line-height: var(--text-sm-line);
+    }
+  }
+
+  &--s {
+    .form-header__title {
+      font-size: var(--heading-05-size);
+      line-height: var(--heading-05-line);
+    }
+    
+    .form-header__description {
+      font-size: var(--text-md-size);
+      line-height: var(--text-md-line);
+    }
+  }
+
+  &--m {
+    .form-header__title {
+      font-size: var(--heading-04-size);
+      line-height: var(--heading-04-line);
+    }
+    
+    .form-header__description {
+      font-size: var(--text-lg-size);
+      line-height: var(--text-lg-line);
+    }
+  }
+
+  &--l {
+    .form-header__title {
+      font-size: var(--heading-03-size);
+      line-height: var(--heading-03-line);
+    }
+    
+    .form-header__description {
+      font-size: var(--text-xl-size);
+      line-height: var(--text-xl-line);
+    }
+  }
+
+  &--xl {
+    .form-header__title {
+      font-size: var(--heading-02-size);
+      line-height: var(--heading-02-line);
+    }
+    
+    .form-header__description {
+      font-size: var(--text-xl-size);
+      line-height: var(--text-xl-line);
+    }
+  }
+
+  /* Disabled state */
+  &--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  /* Loading state */
+  &--loading,
+  &--submitting {
+    .form-overlay {
+      display: flex;
+    }
+  }
+}
+
+/* ===== Form Header ===== */
+.form-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  
+  /* Card variant padding */
+  .form-wrapper--card & {
+    padding: var(--spacing-24) var(--spacing-24) var(--spacing-16);
+    border-bottom: 1px solid var(--border-primary);
+    background-color: var(--gray-01);
+  }
+
+  /* Default variant spacing */
+  .form-wrapper--default & {
+    margin-bottom: var(--spacing-24);
+  }
+
+  /* Inline variant - no header styling */
+  .form-wrapper--inline & {
+    display: none;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    line-height: var(--line-height-snug);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: var(--line-height-normal);
+  }
+}
+
+/* ===== Form Element ===== */
+.form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  /* Card variant padding */
+  .form-wrapper--card & {
+    padding: var(--spacing-24);
+  }
+
+  /* Inline variant */
+  .form-wrapper--inline & {
+    .form-content {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: var(--spacing-12);
+      flex-wrap: wrap;
+    }
+  }
+
+  /* Size variants - adjust internal spacing */
+  &--xs {
+    .form-content {
+      gap: var(--spacing-12);
+    }
+  }
+
+  &--s {
+    .form-content {
+      gap: var(--spacing-16);
+    }
+  }
+
+  &--m {
+    .form-content {
+      gap: var(--spacing-20);
+    }
+  }
+
+  &--l {
+    .form-content {
+      gap: var(--spacing-24);
+    }
+  }
+
+  &--xl {
+    .form-content {
+      gap: var(--spacing-28);
+    }
+  }
+}
+
+/* ===== Form Content ===== */
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+  width: 100%;
+
+  /* Inline variant */
+  .form-wrapper--inline & {
+    flex-direction: row;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: var(--spacing-12);
+  }
+}
+
+/* ===== Form Footer ===== */
+.form-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  
+  /* Card variant padding */
+  .form-wrapper--card & {
+    padding: var(--spacing-16) var(--spacing-24) var(--spacing-24);
+    border-top: 1px solid var(--border-primary);
+    background-color: var(--gray-01);
+  }
+
+  /* Default variant spacing */
+  .form-wrapper--default & {
+    margin-top: var(--spacing-24);
+  }
+
+  /* Inline variant */
+  .form-wrapper--inline & {
+    margin-top: var(--spacing-16);
+  }
+}
+
+/* ===== Form Overlay (Loading) ===== */
+.form-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-overlay);
+
+  &__spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-16);
+    background-color: var(--base-white);
+    border-radius: var(--gl-radius-cards);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  &__spinner-icon {
+    width: var(--spacing-24);
+    height: var(--spacing-24);
+    border: 3px solid var(--border-primary);
+    border-top: 3px solid var(--primary-05);
+    border-radius: var(--radius-full);
+    animation: form-spinner 1s linear infinite;
+  }
+}
+
+/* ===== Form Field Groups ===== */
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+
+  &__title {
+    font-size: var(--text-lg-size);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0;
+    padding-bottom: var(--spacing-8);
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  &__description {
+    font-size: var(--text-md-size);
+    color: var(--text-secondary);
+    margin: 0;
+    margin-top: var(--spacing-4);
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-16);
+  }
+
+  /* Inline field group */
+  &--inline {
+    .form-field-group__fields {
+      flex-direction: row;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: var(--spacing-12);
+    }
+  }
+
+  /* Grid field group */
+  &--grid {
+    .form-field-group__fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-16);
+    }
+  }
+}
+
+/* ===== Form Actions ===== */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  margin-top: var(--spacing-24);
+
+  /* Alignment variants */
+  &--left {
+    justify-content: flex-start;
+  }
+
+  &--center {
+    justify-content: center;
+  }
+
+  &--right {
+    justify-content: flex-end;
+  }
+
+  &--space-between {
+    justify-content: space-between;
+  }
+
+  /* Stacked on mobile */
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    &--space-between {
+      flex-direction: column;
+      gap: var(--spacing-12);
+    }
+  }
+}
+
+/* ===== Form Validation Summary ===== */
+.form-validation-summary {
+  padding: var(--spacing-12) var(--spacing-16);
+  background-color: var(--error-01);
+  border: 1px solid var(--error-05);
+  border-radius: var(--gl-radius-cards);
+  margin-bottom: var(--spacing-20);
+
+  &__title {
+    font-size: var(--text-md-size);
+    font-weight: var(--font-weight-semibold);
+    color: var(--error-07);
+    margin: 0 0 var(--spacing-8) 0;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  &__item {
+    font-size: var(--text-sm-size);
+    color: var(--error-06);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-6);
+
+    &::before {
+      content: "•";
+      color: var(--error-05);
+      font-weight: var(--font-weight-bold);
+      flex-shrink: 0;
+    }
+  }
+}
+
+/* ===== Animations ===== */
+@keyframes form-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .form-wrapper--card {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .form-header {
+    .form-wrapper--card & {
+      padding: var(--spacing-16) var(--spacing-16) var(--spacing-12);
+    }
+  }
+
+  .form {
+    .form-wrapper--card & {
+      padding: var(--spacing-16);
+    }
+  }
+
+  .form-footer {
+    .form-wrapper--card & {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-16);
+    }
+  }
+
+  .form-content {
+    gap: var(--spacing-16);
+  }
+
+  .form-wrapper--inline {
+    .form-content {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .form-field-group--inline {
+    .form-field-group__fields {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .form-field-group--grid {
+    .form-field-group__fields {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .form-header {
+    gap: var(--spacing-6);
+
+    &__title {
+      font-size: var(--heading-05-size);
+    }
+
+    &__description {
+      font-size: var(--text-md-size);
+    }
+  }
+
+  .form-content {
+    gap: var(--spacing-12);
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-8);
+  }
+}
+
+/* ===== High Contrast Mode Support ===== */
+@media (prefers-contrast: high) {
+  .form-wrapper--card {
+    border-width: 2px;
+  }
+
+  .form-header {
+    .form-wrapper--card & {
+      border-bottom-width: 2px;
+    }
+  }
+
+  .form-footer {
+    .form-wrapper--card & {
+      border-top-width: 2px;
+    }
+  }
+
+  .form-validation-summary {
+    border-width: 2px;
+  }
+}
+
+/* ===== Reduced Motion Support ===== */
+@media (prefers-reduced-motion: reduce) {
+  .form-overlay__spinner-icon {
+    animation: none;
+  }
+
+  .form-overlay {
+    backdrop-filter: none;
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .form-wrapper {
+    box-shadow: none;
+    border: 1px solid var(--base-black);
+  }
+
+  .form-overlay {
+    display: none;
+  }
+
+  .form-actions {
+    display: none;
+  }
+}

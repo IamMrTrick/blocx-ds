@@ -1,0 +1,72 @@
+/* ===== Radius ===== */
+:root {
+  --radius-none: 0px;
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-12: 12px;
+  --radius-14: 14px;
+  --radius-16: 16px;
+  --radius-18: 18px; 
+  --radius-20: 20px;
+  --radius-22: 22px;
+  --radius-24: 24px;
+  --radius-md: 12px;  /* Medium radius for general use */
+  --radius-lg: 16px;  /* Large radius for cards and containers */
+  --radius-full: 9999px;
+}
+
+/* ===== Global Radius ===== */
+:root {
+  /* Layout & Container Radius */
+  --gl-radius-wrapper: var(--radius-8);
+  --gl-radius-inner-wrapper: var(--radius-6);
+  --gl-radius-in-inner-wrapper: var(--radius-4);
+  
+  /* Card & Content Radius */
+  --gl-radius-cards: var(--gl-radius-wrapper);
+  --gl-radius-modal: var(--gl-radius-cards);
+  --gl-radius-tooltip: var(--gl-radius-cards);
+  
+  /* Interactive Elements Radius */
+  --gl-radius-btn: var(--radius-16);
+  --gl-radius-btn-sm: var(--gl-radius-btn);
+  --gl-radius-btn-lg: var(--gl-radius-btn);
+  
+  /* Form Elements Radius */
+  --gl-radius-input: var(--gl-radius-btn);
+  --gl-radius-textarea: var(--gl-radius-cards);
+  --gl-radius-select: var(--gl-radius-input);
+  --gl-radius-checkbox: var(--gl-radius-input);
+  --gl-radius-radio: var(--radius-full);
+  --gl-radius-inpts: var(--gl-radius-input);  /* Alias for input radius */
+  --gl-radius-inpt-text-area: var(--gl-radius-textarea);  /* Alias for textarea radius */
+  
+  /* Navigation & Menu Radius */
+  --gl-radius-dropdown: var(--gl-radius-btn);
+  --gl-radius-nav-item: var(--gl-radius-btn);
+  --gl-radius-tab: var(--gl-radius-btn);
+  
+  /* Media & Avatar Radius */
+  --gl-radius-avatar: var(--radius-full);
+  --gl-radius-image: var(--gl-radius-cards);
+  --gl-radius-video: var(--gl-radius-cards);
+  
+  /* Status & Badge Radius */
+  --gl-radius-badge: var(--gl-radius-btn);
+  --gl-radius-pill: var(--gl-radius-btn);
+  --gl-radius-chip: var(--gl-radius-btn);
+  
+  /* Alert & Notification Radius */
+  --gl-radius-alert: var(--gl-radius-btn);
+  --gl-radius-toast: var(--gl-radius-btn);
+  --gl-radius-notification: var(--gl-radius-btn);
+  
+  /* Progress & Loading Radius */
+  --gl-radius-progress: var(--radius-full);
+  --gl-radius-skeleton: var(--gl-radius-inner-wrapper);
+  --gl-radius-loading: var(--radius-full);
+}
+

@@ -1,0 +1,457 @@
+/* ===== Input Component - BEM Methodology ===== */
+
+/* ===== Input Wrapper (Only for layout structure) ===== */
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  width: auto;
+
+  /* Full width modifier */
+  &--full-width {
+    width: 100%;
+  }
+}
+
+/* ===== Input Label ===== */
+.input-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--inpt-font-size-m);
+  font-weight: var(--gl-inpt-text-weight);
+  line-height: var(--inpt-line-height-m);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast) var(--transition-ease);
+
+  /* Size variants */
+  &--xs {
+    font-size: var(--inpt-font-size-xs);
+    line-height: var(--inpt-line-height-xs);
+  }
+
+  &--s {
+    font-size: var(--inpt-font-size-s);
+    line-height: var(--inpt-line-height-s);
+  }
+
+  &--m {
+    font-size: var(--inpt-font-size-m);
+    line-height: var(--inpt-line-height-m);
+  }
+
+  &--l {
+    font-size: var(--inpt-font-size-l);
+    line-height: var(--inpt-line-height-l);
+  }
+
+  &--xl {
+    font-size: var(--inpt-font-size-xl);
+    line-height: var(--inpt-line-height-xl);
+  }
+
+  /* State variants */
+  &--error {
+    color: var(--text-error);
+  }
+
+  &--success {
+    color: var(--text-success);
+  }
+
+  &--warning {
+    color: var(--text-warning);
+  }
+
+  &--disabled {
+    color: var(--input-text-disabled);
+    cursor: not-allowed;
+  }
+
+  /* Required indicator */
+  &__required {
+    color: var(--text-error);
+    font-weight: var(--font-weight-medium);
+    margin-left: var(--spacing-2);
+  }
+}
+
+/* ===== Input Field Container (Main Input Element) ===== */
+.input-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--gl-radius-input);
+  font-family: var(--font-family-sans);
+  font-weight: var(--gl-inpt-text-weight);
+  cursor: text;
+  transition: 
+    border-color var(--transition-fast) var(--transition-ease),
+    background-color var(--transition-fast) var(--transition-ease),
+    box-shadow var(--transition-fast) var(--transition-ease),
+    transform var(--transition-fast) var(--transition-ease);
+  box-sizing: border-box;
+
+  /* Size variants - exactly like buttons */
+  &--xs {
+    height: var(--gl-btn-spacing-xs-mh);
+    max-height: var(--gl-btn-spacing-xs-mh);
+    padding: var(--gl-btn-spacing-xs-v) var(--gl-btn-spacing-xs-h);
+    font-size: var(--gl-btn-font-size-xs);
+    line-height: var(--gl-btn-line-height-xs);
+  }
+
+  &--s {
+    height: var(--gl-btn-spacing-s-mh);
+    max-height: var(--gl-btn-spacing-s-mh);
+    padding: var(--gl-btn-spacing-s-v) var(--gl-btn-spacing-s-h);
+    font-size: var(--gl-btn-font-size-s);
+    line-height: var(--gl-btn-line-height-s);
+  }
+
+  &--m {
+    height: var(--gl-btn-spacing-m-mh);
+    max-height: var(--gl-btn-spacing-m-mh);
+    padding: var(--gl-btn-spacing-m-v) var(--gl-btn-spacing-m-h);
+    font-size: var(--gl-btn-font-size-m);
+    line-height: var(--gl-btn-line-height-m);
+  }
+
+  &--l {
+    height: var(--gl-btn-spacing-l-mh);
+    max-height: var(--gl-btn-spacing-l-mh);
+    padding: var(--gl-btn-spacing-l-v) var(--gl-btn-spacing-l-h);
+    font-size: var(--gl-btn-font-size-l);
+    line-height: var(--gl-btn-line-height-l);
+  }
+
+  &--xl {
+    height: var(--gl-btn-spacing-xl-mh);
+    max-height: var(--gl-btn-spacing-xl-mh);
+    padding: var(--gl-btn-spacing-xl-v) var(--gl-btn-spacing-xl-h);
+    font-size: var(--gl-btn-font-size-xl);
+    line-height: var(--gl-btn-line-height-xl);
+  }
+
+  /* Hover state - like buttons */
+  &:hover:not(&--disabled):not(&--focused) {
+    background-color: var(--input-bg-hover);
+    border-color: var(--input-border-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Focus state - like buttons */
+  &--focused {
+    background-color: var(--input-bg-focus);
+    border-color: var(--input-border-focus);
+    transform: translateY(-1px);
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.1),
+      0 0 0 2px var(--input-border-focus);
+    outline: none;
+  }
+
+  /* Focus-visible for accessibility */
+  &:focus-visible {
+    outline: 2px solid var(--input-border-focus);
+    outline-offset: 2px;
+  }
+
+  /* State variants */
+  &--error {
+    border-color: var(--input-border-error);
+
+    &:hover,
+    &--focused {
+      border-color: var(--input-border-error);
+      box-shadow: 
+        var(--gl-inpts-shadow-x) 
+        var(--gl-inpts-shadow-y) 
+        var(--gl-inpts-shadow-blur) 
+        var(--gl-inpts-shadow-spread) 
+        var(--input-border-error);
+    }
+  }
+
+  &--success {
+    border-color: var(--border-success);
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-success);
+      box-shadow: 
+        var(--gl-inpts-shadow-x) 
+        var(--gl-inpts-shadow-y) 
+        var(--gl-inpts-shadow-blur) 
+        var(--gl-inpts-shadow-spread) 
+        var(--border-success);
+    }
+  }
+
+  &--warning {
+    border-color: var(--border-warning);
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-warning);
+      box-shadow: 
+        var(--gl-inpts-shadow-x) 
+        var(--gl-inpts-shadow-y) 
+        var(--gl-inpts-shadow-blur) 
+        var(--gl-inpts-shadow-spread) 
+        var(--border-warning);
+    }
+  }
+
+  &--disabled {
+    background-color: var(--input-bg-disabled);
+    border-color: var(--input-border);
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      background-color: var(--input-bg-disabled);
+      border-color: var(--input-border);
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  /* Icon containers */
+  &__start-icon,
+  &__end-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    transition: color var(--transition-fast) var(--transition-ease);
+    flex-shrink: 0;
+  }
+
+  &__start-icon {
+    margin-right: var(--spacing-8);
+  }
+
+  &__end-icon {
+    margin-left: var(--spacing-8);
+  }
+
+  /* Loading spinner */
+  &__spinner {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--spacing-8);
+    flex-shrink: 0;
+  }
+
+  &__spinner-icon {
+    width: var(--spacing-16);
+    height: var(--spacing-16);
+    border: 2px solid var(--border-primary);
+    border-top: 2px solid var(--primary-05);
+    border-radius: var(--radius-full);
+    animation: input-spinner 1s linear infinite;
+  }
+}
+
+/* ===== Input Element (Inside field container) ===== */
+.input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--input-text);
+  padding: 0;
+  margin: 0;
+  
+  /* Remove all default input styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Force remove any focus styles */
+  &:focus,
+  &:focus-visible,
+  &:active {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Placeholder styling */
+  &::placeholder {
+    color: var(--input-text-placeholder);
+    font-weight: var(--gl-inpt-placeholder-weight);
+    opacity: 1;
+  }
+
+  /* Disabled state */
+  &:disabled {
+    color: var(--input-text-disabled);
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: var(--input-text-disabled);
+    }
+  }
+
+  /* Remove default styling for specific input types */
+  &[type="search"] {
+    -webkit-appearance: none;
+    
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration {
+      -webkit-appearance: none;
+    }
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  /* Date/time inputs */
+  &[type="date"],
+  &[type="time"],
+  &[type="datetime-local"] {
+    &::-webkit-calendar-picker-indicator {
+      color: var(--text-tertiary);
+      cursor: pointer;
+    }
+  }
+}
+
+/* ===== Input Messages ===== */
+.input-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.input-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+  font-weight: var(--font-weight-normal);
+
+  /* Message variants */
+  &--helper {
+    color: var(--text-tertiary);
+  }
+
+  &--error {
+    color: var(--text-error);
+  }
+
+  &--success {
+    color: var(--text-success);
+  }
+
+  &--warning {
+    color: var(--text-warning);
+  }
+}
+
+/* ===== Character Count ===== */
+.input-char-count {
+  display: flex;
+  justify-content: flex-end;
+  font-size: var(--text-xs-size);
+  line-height: var(--text-xs-line);
+  color: var(--text-tertiary);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--spacing-2);
+
+  &--over-limit {
+    color: var(--text-error);
+  }
+}
+
+/* ===== Animations ===== */
+@keyframes input-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .input-field {
+    /* Ensure minimum touch target size on mobile - same as buttons */
+    &--xs {
+      height: var(--spacing-40);
+      max-height: var(--spacing-40);
+    }
+
+    &--s {
+      height: var(--spacing-44);
+      max-height: var(--spacing-44);
+    }
+  }
+
+  .input-label {
+    /* Slightly larger labels on mobile for better readability */
+    &--xs {
+      font-size: var(--inpt-font-size-s);
+    }
+  }
+}
+
+/* ===== High Contrast Mode Support ===== */
+@media (prefers-contrast: high) {
+  .input-field {
+    border-width: 2px;
+
+    &--focused {
+      outline: 2px solid var(--input-border-focus);
+      outline-offset: 2px;
+    }
+  }
+}
+
+/* ===== Reduced Motion Support ===== */
+@media (prefers-reduced-motion: reduce) {
+  .input-field,
+  .input,
+  .input-label,
+  .input-field__start-icon,
+  .input-field__end-icon {
+    transition: none;
+  }
+
+  .input-field {
+    &:hover,
+    &--focused {
+      transform: none;
+    }
+  }
+
+  .input-field__spinner-icon {
+    animation: none;
+  }
+}

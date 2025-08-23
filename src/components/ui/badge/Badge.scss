@@ -1,0 +1,312 @@
+/* ===== Badge Component - BEM Methodology ===== */
+
+/* Block: badge */
+.badge {
+  /* ===== Base Styles ===== */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-4);
+  font-family: var(--font-family-sans);
+  font-weight: var(--gl-badge-font-weight);
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  
+  /* Focus styles for accessibility */
+  &:focus-visible {
+    outline: 2px solid var(--primary-05);
+    outline-offset: 2px;
+  }
+
+  /* ===== Size Modifiers ===== */
+  
+  /* Modifier: badge--xs */
+  &--xs {
+    padding: var(--gl-badge-spacing-xs-v) var(--gl-badge-spacing-xs-h);
+    height: var(--gl-badge-spacing-xs-mh);
+    max-height: var(--gl-badge-spacing-xs-mh);
+    font-size: var(--gl-badge-font-size-xs);
+    line-height: var(--gl-badge-line-height-xs);
+  }
+  
+  /* Modifier: badge--s */
+  &--s {
+    padding: var(--gl-badge-spacing-s-v) var(--gl-badge-spacing-s-h);
+    height: var(--gl-badge-spacing-s-mh);
+    max-height: var(--gl-badge-spacing-s-mh);
+    font-size: var(--gl-badge-font-size-s);
+    line-height: var(--gl-badge-line-height-s);
+  }
+  
+  /* Modifier: badge--m */
+  &--m {
+    padding: var(--gl-badge-spacing-m-v) var(--gl-badge-spacing-m-h);
+    height: var(--gl-badge-spacing-m-mh);
+    max-height: var(--gl-badge-spacing-m-mh);
+    font-size: var(--gl-badge-font-size-m);
+    line-height: var(--gl-badge-line-height-m);
+  }
+  
+  /* Modifier: badge--l */
+  &--l {
+    padding: var(--gl-badge-spacing-l-v) var(--gl-badge-spacing-l-h);
+    height: var(--gl-badge-spacing-l-mh);
+    max-height: var(--gl-badge-spacing-l-mh);
+    font-size: var(--gl-badge-font-size-l);
+    line-height: var(--gl-badge-line-height-l);
+  }
+  
+  /* Modifier: badge--xl */
+  &--xl {
+    padding: var(--gl-badge-spacing-xl-v) var(--gl-badge-spacing-xl-h);
+    height: var(--gl-badge-spacing-xl-mh);
+    max-height: var(--gl-badge-spacing-xl-mh);
+    font-size: var(--gl-badge-font-size-xl);
+    line-height: var(--gl-badge-line-height-xl);
+  }
+
+  /* ===== Shape Modifiers ===== */
+  
+  /* Modifier: badge--pill (default) */
+  &--pill {
+    border-radius: var(--gl-badge-radius);
+  }
+  
+  /* Modifier: badge--rounded */
+  &--rounded {
+    border-radius: var(--gl-badge-radius-rounded);
+  }
+  
+  /* Modifier: badge--square */
+  &--square {
+    border-radius: var(--gl-badge-radius-square);
+  }
+
+  /* ===== Variant Modifiers ===== */
+  
+  /* Modifier: badge--primary */
+  &--primary {
+    background-color: var(--btn-primary-bg);
+    border-color: var(--btn-primary-border);
+    color: var(--btn-primary-text);
+  }
+  
+  /* Modifier: badge--secondary */
+  &--secondary {
+    background-color: var(--btn-secondary-bg);
+    border-color: var(--btn-secondary-border);
+    color: var(--btn-secondary-text);
+  }
+  
+  /* Modifier: badge--success */
+  &--success {
+    background-color: var(--btn-success-bg);
+    border-color: var(--btn-success-border);
+    color: var(--btn-success-text);
+  }
+  
+  /* Modifier: badge--warning */
+  &--warning {
+    background-color: var(--btn-warning-bg);
+    border-color: var(--btn-warning-border);
+    color: var(--btn-warning-text);
+  }
+  
+  /* Modifier: badge--error */
+  &--error {
+    background-color: var(--btn-danger-bg);
+    border-color: var(--btn-danger-border);
+    color: var(--btn-danger-text);
+  }
+  
+  /* Modifier: badge--info */
+  &--info {
+    background-color: var(--primary-06);
+    border-color: var(--primary-06);
+    color: var(--neutral-01);
+  }
+  
+  /* Modifier: badge--neutral */
+  &--neutral {
+    background-color: var(--neutral-06);
+    border-color: var(--neutral-06);
+    color: var(--neutral-01);
+  }
+
+  /* ===== Outline Variant Modifiers ===== */
+  
+  /* Modifier: badge--outline-primary */
+  &--outline-primary {
+    background-color: transparent;
+    color: var(--btn-primary-bg);
+    border-color: var(--btn-primary-bg);
+  }
+  
+  /* Modifier: badge--outline-secondary */
+  &--outline-secondary {
+    background-color: transparent;
+    color: var(--btn-secondary-bg);
+    border-color: var(--btn-secondary-bg);
+  }
+  
+  /* Modifier: badge--outline-success */
+  &--outline-success {
+    background-color: transparent;
+    color: var(--btn-success-bg);
+    border-color: var(--btn-success-bg);
+  }
+  
+  /* Modifier: badge--outline-warning */
+  &--outline-warning {
+    background-color: transparent;
+    color: var(--btn-warning-bg);
+    border-color: var(--btn-warning-bg);
+  }
+  
+  /* Modifier: badge--outline-error */
+  &--outline-error {
+    background-color: transparent;
+    color: var(--btn-danger-bg);
+    border-color: var(--btn-danger-bg);
+  }
+  
+  /* Modifier: badge--outline-info */
+  &--outline-info {
+    background-color: transparent;
+    color: var(--primary-06);
+    border-color: var(--primary-06);
+  }
+  
+  /* Modifier: badge--outline-neutral */
+  &--outline-neutral {
+    background-color: transparent;
+    color: var(--neutral-06);
+    border-color: var(--neutral-06);
+  }
+
+  /* ===== State Modifiers ===== */
+  
+  /* Modifier: badge--icon-only */
+  &--icon-only {
+    padding: 0;
+    
+    &.badge--xs {
+      width: var(--gl-badge-spacing-xs-mh);
+      height: var(--gl-badge-spacing-xs-mh);
+    }
+    
+    &.badge--s {
+      width: var(--gl-badge-spacing-s-mh);
+      height: var(--gl-badge-spacing-s-mh);
+    }
+    
+    &.badge--m {
+      width: var(--gl-badge-spacing-m-mh);
+      height: var(--gl-badge-spacing-m-mh);
+    }
+    
+    &.badge--l {
+      width: var(--gl-badge-spacing-l-mh);
+      height: var(--gl-badge-spacing-l-mh);
+    }
+    
+    &.badge--xl {
+      width: var(--gl-badge-spacing-xl-mh);
+      height: var(--gl-badge-spacing-xl-mh);
+    }
+  }
+  
+  /* Modifier: badge--removable */
+  &--removable {
+    padding-right: var(--spacing-2);
+  }
+
+  /* ===== Elements ===== */
+  
+  /* Element: badge__content */
+  &__content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-4);
+  }
+  
+  /* Element: badge__remove */
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--spacing-4);
+    padding: 0;
+    width: 1.2em;
+    height: 1.2em;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    &:focus-visible {
+      outline: 1px solid currentColor;
+      outline-offset: 1px;
+    }
+  }
+  
+  /* Element: badge__remove-icon */
+  &__remove-icon {
+    font-size: 0.8em;
+    line-height: 1;
+    font-weight: bold;
+  }
+
+  /* ===== Accessibility Enhancements ===== */
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    border-width: 2px;
+    
+    &:focus-visible {
+      outline-width: 3px;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .badge__remove {
+      transition: none;
+    }
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    &:focus-visible {
+      outline-color: var(--primary-04);
+    }
+  }
+}
+
+/* ===== Badge Group Support ===== */
+.badge-group {
+  display: inline-flex;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+  .badge {
+    /* Ensure minimum touch target on mobile for removable badges */
+    &--removable .badge__remove {
+      min-width: 24px;
+      min-height: 24px;
+    }
+  }
+}

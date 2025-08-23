@@ -1,0 +1,35 @@
+/* ===== Transition & Animation Tokens ===== */
+:root {
+  /* Transition durations */
+  --transition-fast: 0.15s;
+  --transition-normal: 0.2s;
+  --transition-slow: 0.3s;
+  --transition-slower: 0.5s;
+
+  /* Transition timing functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Common transition combinations */
+  --transition-colors: color var(--transition-fast) var(--ease-in-out),
+                      background-color var(--transition-fast) var(--ease-in-out),
+                      border-color var(--transition-fast) var(--ease-in-out);
+  
+  --transition-transform: transform var(--transition-fast) var(--ease-in-out);
+  
+  --transition-opacity: opacity var(--transition-fast) var(--ease-in-out);
+  
+  --transition-all: all var(--transition-normal) var(--ease-in-out);
+  
+  --transition-shadow: box-shadow var(--transition-fast) var(--ease-in-out);
+
+  /* Animation durations */
+  --animation-fast: 0.3s;
+  --animation-normal: 0.5s;
+  --animation-slow: 1s;
+  --animation-slower: 2s;
+}

@@ -1,0 +1,49 @@
+/* ===== Buttons - Settings ===== */
+:root {
+  /* ===== Spacing ===== */
+  /* xs */
+  --gl-btn-spacing-xs-h: var(--spacing-8);
+  --gl-btn-spacing-xs-v: var(--spacing-8);
+  /* s */
+  --gl-btn-spacing-s-h: var(--spacing-8);
+  --gl-btn-spacing-s-v: var(--spacing-10);
+  /* m */
+  --gl-btn-spacing-m-h: var(--spacing-12);
+  --gl-btn-spacing-m-v: var(--spacing-10);
+  /* l */
+  --gl-btn-spacing-l-h: var(--spacing-8);
+  --gl-btn-spacing-l-v: var(--spacing-12);
+  /* xl */
+  --gl-btn-spacing-xl-h: var(--spacing-10);
+  --gl-btn-spacing-xl-v: var(--spacing-14);
+  
+  /* ===== Shadow ===== */
+  --gl-btn-shadow-x: 0px;
+  --gl-btn-shadow-y: 0px;
+  --gl-btn-shadow-blur: 0px;
+  --gl-btn-shadow-spread: 0px;
+  
+  /* ===== Max Height ===== */
+  --gl-btn-spacing-xs-mh: var(--spacing-32);
+  --gl-btn-spacing-s-mh: var(--spacing-36);
+  --gl-btn-spacing-m-mh: var(--spacing-40);
+  --gl-btn-spacing-l-mh: var(--spacing-44);
+  --gl-btn-spacing-xl-mh: var(--spacing-48);
+  
+  /* ===== Font Sizes ===== */
+  --gl-btn-font-size-xs: var(--text-sm-size);
+  --gl-btn-font-size-s: var(--text-md-size);
+  --gl-btn-font-size-m: var(--text-lg-size);
+  --gl-btn-font-size-l: var(--text-xl-size);
+  --gl-btn-font-size-xl: var(--text-xl-size);
+  
+  /* ===== Line Heights ===== */
+  --gl-btn-line-height-xs: var(--text-xs-line);
+  --gl-btn-line-height-s: var(--text-sm-line);
+  --gl-btn-line-height-m: var(--text-md-line);
+  --gl-btn-line-height-l: var(--text-md-line);
+  --gl-btn-line-height-xl: var(--text-md-line);
+  
+  /* ===== Font Weight Settings ===== */
+  --gl-btn-font-weight: 500;
+}

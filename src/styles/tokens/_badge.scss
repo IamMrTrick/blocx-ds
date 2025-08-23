@@ -1,0 +1,48 @@
+/* ===== Badge - Settings ===== */
+:root {
+  /* ===== Spacing ===== */
+  /* xs */
+  --gl-badge-spacing-xs-h: var(--spacing-6);
+  --gl-badge-spacing-xs-v: var(--spacing-2);
+  /* s */
+  --gl-badge-spacing-s-h: var(--spacing-8);
+  --gl-badge-spacing-s-v: var(--spacing-4);
+  /* m */
+  --gl-badge-spacing-m-h: var(--spacing-10);
+  --gl-badge-spacing-m-v: var(--spacing-6);
+  /* l */
+  --gl-badge-spacing-l-h: var(--spacing-12);
+  --gl-badge-spacing-l-v: var(--spacing-8);
+  /* xl */
+  --gl-badge-spacing-xl-h: var(--spacing-14);
+  --gl-badge-spacing-xl-v: var(--spacing-10);
+  
+  /* ===== Max Height ===== */
+  --gl-badge-spacing-xs-mh: var(--spacing-16);
+  --gl-badge-spacing-s-mh: var(--spacing-20);
+  --gl-badge-spacing-m-mh: var(--spacing-24);
+  --gl-badge-spacing-l-mh: var(--spacing-28);
+  --gl-badge-spacing-xl-mh: var(--spacing-32);
+  
+  /* ===== Font Sizes ===== */
+  --gl-badge-font-size-xs: var(--text-xs-size);
+  --gl-badge-font-size-s: var(--text-sm-size);
+  --gl-badge-font-size-m: var(--text-md-size);
+  --gl-badge-font-size-l: var(--text-lg-size);
+  --gl-badge-font-size-xl: var(--text-xl-size);
+  
+  /* ===== Line Heights ===== */
+  --gl-badge-line-height-xs: var(--text-xs-line);
+  --gl-badge-line-height-s: var(--text-sm-line);
+  --gl-badge-line-height-m: var(--text-md-line);
+  --gl-badge-line-height-l: var(--text-lg-line);
+  --gl-badge-line-height-xl: var(--text-xl-line);
+  
+  /* ===== Font Weight Settings ===== */
+  --gl-badge-font-weight: 500;
+  
+  /* ===== Border Radius ===== */
+  --gl-badge-radius: var(--radius-full);
+  --gl-badge-radius-rounded: var(--radius-md);
+  --gl-badge-radius-square: var(--radius-sm);
+}

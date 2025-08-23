@@ -1,0 +1,30 @@
+// Z-index tokens
+// Consistent layering system for stacking contexts
+
+:root {
+  // Base z-index scale
+  --z-auto: auto;
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+
+  // Semantic z-index layers
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+
+  // Component-specific z-index
+  --z-header: var(--z-fixed);
+  --z-sidebar: var(--z-fixed);
+  --z-overlay: var(--z-modal-backdrop);
+  --z-drawer: var(--z-modal);
+  --z-notification: var(--z-toast);
+}
