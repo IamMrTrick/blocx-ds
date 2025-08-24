@@ -1,10 +1,10 @@
 // Global styles
 // Base element styles and global defaults
 
-@import '../tokens/colors';
-@import '../tokens/typography';
-@import '../tokens/spacing';
-@import '../tools/mixins';
+@use '../tokens/colors';
+@use '../tokens/typography';
+@use '../tokens/spacing';
+@use '../tools/mixins';
 
 // HTML and Body
 html {
@@ -23,17 +23,17 @@ body {
 
 // Typography
 h1 {
-  @include heading-1;
+  @include mixins.heading-1;
   margin-bottom: var(--spacing-24);
 }
 
 h2 {
-  @include heading-2;
+  @include mixins.heading-2;
   margin-bottom: var(--spacing-20);
 }
 
 h3 {
-  @include heading-3;
+  @include mixins.heading-3;
   margin-bottom: var(--spacing-16);
 }
 
@@ -59,7 +59,7 @@ h6 {
 }
 
 p {
-  @include body-text;
+  @include mixins.body-text;
   margin-bottom: var(--spacing-16);
 }
 
@@ -68,7 +68,7 @@ a {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
-  @include transition(color);
+  @include mixins.transition(color);
 
   &:hover {
     color: var(--link-hover);
@@ -150,7 +150,7 @@ select {
   border-radius: var(--gl-radius-input);
   padding: var(--spacing-8) var(--spacing-12);
   font-size: var(--font-size-base);
-  @include transition(border-color);
+  @include mixins.transition(border-color);
 
   &:focus {
     outline: none;

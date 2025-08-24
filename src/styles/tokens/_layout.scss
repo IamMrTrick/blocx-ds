@@ -7,7 +7,7 @@
   --content-width-xl: 1600px;  /* Ultra-wide screens */
   
   /* ===== Main Content Width ===== */
-  --content-width-main: var(--content-width-lg);
+  --content-width-main: var(--content-width-xl);
   
   /* Boxed-page frame (outer padding around the entire page). */
   --page-frame: 0px;
@@ -56,6 +56,9 @@
   
   /* Sidebar presence toggle (0 = none, 1 = present) */
   --has-sidebar: 0;
+  
+  /* Sidebar width when present */
+  --sidebar-width: 280px;
   
   /* Content width considering sidebar when present */
   --content-effective: calc(

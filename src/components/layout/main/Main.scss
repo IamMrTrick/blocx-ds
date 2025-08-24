@@ -1,0 +1,141 @@
+/* ===== Main Component ===== */
+.main {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  
+  /* Width modifiers */
+  &--sm {
+    max-width: var(--content-width-sm);
+    margin-inline: auto;
+  }
+  
+  &--md {
+    max-width: var(--content-width-md);
+    margin-inline: auto;
+  }
+  
+  &--lg {
+    max-width: var(--content-width-lg);
+    margin-inline: auto;
+  }
+  
+  &--xl {
+    max-width: var(--content-width-xl);
+    margin-inline: auto;
+  }
+  
+  &--full {
+    max-width: 100%;
+  }
+  
+  &--fluid {
+    max-width: none;
+    width: 100%;
+  }
+  
+  /* Padding modifiers */
+  &--padding-sm {
+    padding: var(--spacing-16);
+  }
+  
+  &--padding-md {
+    padding: var(--spacing-24);
+  }
+  
+  &--padding-lg {
+    padding: var(--spacing-32);
+  }
+  
+  &--padding-xl {
+    padding: var(--spacing-40);
+  }
+  
+  /* Layout context modifiers */
+  &--with-header {
+    padding-top: var(--header-height, var(--spacing-64));
+  }
+  
+  &--with-footer {
+    padding-bottom: var(--footer-height, var(--spacing-48));
+  }
+  
+  &--with-sidebar {
+    margin-left: var(--sidebar-width, 280px);
+    width: calc(100% - var(--sidebar-width, 280px));
+    
+    @media (max-width: 768px) {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+  
+  /* Centered modifier */
+  &--centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .main {
+    &--xl {
+      max-width: var(--content-width-lg);
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .main {
+    &--lg,
+    &--xl {
+      max-width: var(--content-width-md);
+    }
+    
+    &--padding-lg,
+    &--padding-xl {
+      padding: var(--spacing-24);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    &--sm,
+    &--md,
+    &--lg,
+    &--xl {
+      max-width: 100%;
+      padding-inline: var(--gutter-inline);
+    }
+    
+    &--padding-md,
+    &--padding-lg,
+    &--padding-xl {
+      padding: var(--spacing-16);
+    }
+    
+    &--with-header {
+      padding-top: var(--spacing-16);
+    }
+    
+    &--with-footer {
+      padding-bottom: var(--spacing-16);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    &--padding-sm,
+    &--padding-md,
+    &--padding-lg,
+    &--padding-xl {
+      padding: var(--spacing-12);
+    }
+  }
+}

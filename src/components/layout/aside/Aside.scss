@@ -1,0 +1,203 @@
+/* ===== Aside Component ===== */
+.aside {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--gl-radius-wrapper);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+  }
+  
+  /* Position modifiers */
+  &--left {
+    order: -1;
+  }
+  
+  &--right {
+    order: 1;
+  }
+  
+  /* Width modifiers */
+  &--sm {
+    width: 240px;
+    min-width: 240px;
+  }
+  
+  &--md {
+    width: 280px;
+    min-width: 280px;
+  }
+  
+  &--lg {
+    width: 320px;
+    min-width: 320px;
+  }
+  
+  &--xl {
+    width: 360px;
+    min-width: 360px;
+  }
+  
+  /* Sticky modifier */
+  &--sticky {
+    position: sticky;
+    top: var(--spacing-20);
+    height: fit-content;
+    max-height: calc(100vh - var(--spacing-40));
+    overflow-y: auto;
+  }
+  
+  /* Collapsible modifier */
+  &--collapsible {
+    transition: var(--transition-layout);
+    
+    .aside__toggle {
+      display: flex;
+    }
+  }
+  
+  /* Collapsed state */
+  &--collapsed {
+    width: var(--spacing-48);
+    min-width: var(--spacing-48);
+    
+    .aside__content {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-100%);
+    }
+    
+    .aside__toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
+  
+  /* Toggle button */
+  &__toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-32);
+    height: var(--spacing-32);
+    margin: var(--spacing-8);
+    padding: 0;
+    background-color: var(--color-surface-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--gl-radius-btn);
+    cursor: pointer;
+    transition: var(--transition-base);
+    
+    &:hover {
+      background-color: var(--color-surface-hover);
+      border-color: var(--color-border-hover);
+    }
+    
+    &:focus {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+  }
+  
+  /* Toggle icon */
+  &__toggle-icon {
+    width: var(--spacing-16);
+    height: var(--spacing-16);
+    background-color: var(--color-text);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E") no-repeat center;
+    mask-size: contain;
+    transition: var(--transition-base);
+  }
+  
+  /* Content wrapper */
+  &__content {
+    flex: 1;
+    padding: var(--spacing-16);
+    transition: var(--transition-layout);
+    overflow: hidden;
+  }
+}
+
+/* Responsive behavior */
+@media (max-width: 1024px) {
+  .aside {
+    &--lg,
+    &--xl {
+      width: 280px;
+      min-width: 280px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: var(--z-sidebar);
+    transform: translateX(-100%);
+    transition: transform var(--transition-layout);
+    
+    &--right {
+      left: auto;
+      right: 0;
+      transform: translateX(100%);
+    }
+    
+    &--collapsed {
+      transform: translateX(-100%);
+      
+      &.aside--right {
+        transform: translateX(100%);
+      }
+    }
+    
+    &:not(&--collapsed) {
+      transform: translateX(0);
+    }
+    
+    &--sm,
+    &--md,
+    &--lg,
+    &--xl {
+      width: 280px;
+      min-width: 280px;
+    }
+    
+    &--sticky {
+      position: fixed;
+      top: 0;
+      height: 100vh;
+      max-height: 100vh;
+    }
+    
+    &__toggle {
+      display: flex;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .aside {
+    &--sm,
+    &--md,
+    &--lg,
+    &--xl {
+      width: 260px;
+      min-width: 260px;
+    }
+  }
+}

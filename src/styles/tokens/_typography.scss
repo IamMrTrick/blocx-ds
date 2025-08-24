@@ -51,6 +51,12 @@
   --letter-spacing-wide: 0.025em;
   --letter-spacing-wider: 0.05em;
   --letter-spacing-widest: 0.1em;
+
+  /* === Aliases used in some components === */
+  --text-xs: var(--text-xs-size);
+  --text-sm: var(--text-sm-size);
+  --text-base: var(--text-lg-size);
+  --text-lg: var(--text-xl-size);
 }
 
 /* === Step 1: Upgrade to fluid sizes with max() / min() === */

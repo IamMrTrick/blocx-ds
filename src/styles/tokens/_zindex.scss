@@ -24,6 +24,9 @@
   // Component-specific z-index
   --z-header: var(--z-fixed);
   --z-sidebar: var(--z-fixed);
+  --z-navigation: var(--z-sticky);
+  --z-breadcrumbs: var(--z-10);
+  --z-pagination: var(--z-10);
   --z-overlay: var(--z-modal-backdrop);
   --z-drawer: var(--z-modal);
   --z-notification: var(--z-toast);

@@ -70,29 +70,29 @@
 /* Section background utilities */
 .section {
   &__bg {
-    background-color: var(--color-background);
+    background-color: var(--bg-primary);
     
     &--primary {
-      background-color: var(--color-primary);
-      color: var(--color-on-primary);
+      background-color: var(--primary-05);
+      color: var(--text-inverse);
     }
     
     &--secondary {
-      background-color: var(--color-secondary);
-      color: var(--color-on-secondary);
+      background-color: var(--secondary-05);
+      color: var(--text-primary);
     }
     
     &--gray {
-      background-color: var(--color-gray-50);
+      background-color: var(--gray-02);
     }
     
     &--white {
-      background-color: var(--color-white);
+      background-color: var(--white);
     }
     
     &--black {
-      background-color: var(--color-black);
-      color: var(--color-white);
+      background-color: var(--black);
+      color: var(--white);
     }
   }
 }

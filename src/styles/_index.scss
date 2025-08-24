@@ -1,52 +1,57 @@
 // Main SCSS entry point
-// Import all SCSS files in the correct order
+// Use all SCSS files in the correct order
 
 // 1. Tokens (variables, colors, typography, etc.)
-@import 'tokens/colors';
-@import 'tokens/typography';
-@import 'tokens/spacing';
-@import 'tokens/radius';
-@import 'tokens/transitions';
-@import 'tokens/zindex';
-@import 'tokens/layout';
-@import 'tokens/button';
-@import 'tokens/badge';
-@import 'tokens/input';
-@import 'tokens/header';
-@import 'tokens/icons';
-@import 'tokens/navigation';
+@use 'tokens/colors';
+@use 'tokens/typography';
+@use 'tokens/spacing';
+@use 'tokens/radius';
+@use 'tokens/transitions';
+@use 'tokens/zindex';
+@use 'tokens/layout';
+@use 'tokens/button';
+@use 'tokens/badge';
+@use 'tokens/input';
+@use 'tokens/header';
+@use 'tokens/icons';
+@use 'tokens/navigation';
 
 // 2. Tools (mixins, functions)
-@import 'tools/mixins';
-@import 'tools/functions';
+@use 'tools/mixins';
+@use 'tools/functions';
 
 // 3. Base styles
-@import 'base/reset';
-@import 'base/globals';
+@use 'base/reset';
+@use 'base/globals';
 
 // 4. Utilities
-@import 'utilities/spacing-utils';
-@import 'utilities/radius-utils';
-@import 'utilities/color-utils';
-@import 'utilities/layout-utils';
-@import 'utilities/section-utils';
-@import 'utilities/main-layout-utils';
-@import 'utilities/display-utils';
-@import 'utilities/text-utils';
-@import 'utilities/icon-utils';
-@import 'utilities/visually-hidden';
+@use 'utilities/spacing-utils';
+@use 'utilities/radius-utils';
+@use 'utilities/color-utils';
+@use 'utilities/layout-utils';
+@use 'utilities/section-utils';
+@use 'utilities/main-layout-utils';
+@use 'utilities/display-utils';
+@use 'utilities/text-utils';
+@use 'utilities/icon-utils';
+@use 'utilities/visually-hidden';
 
 // 5. Components
 // UI Components
-@import '../components/ui/button/Button';
-@import '../components/ui/badge/Badge';
+@use '../components/ui/button/Button';
+@use '../components/ui/badge/Badge';
 
 // Form Components
-@import '../components/ui/forms/form/Form';
-@import '../components/ui/forms/input/Input';
-@import '../components/ui/forms/text-area/TextArea';
-@import '../components/ui/forms/select/Select';
-@import '../components/ui/forms/checkbox/Checkbox';
-@import '../components/ui/forms/radiobutton/RadioButton';
-@import '../components/ui/forms/otp/OTP';
+@use '../components/ui/forms/form/Form';
+@use '../components/ui/forms/input/Input';
+@use '../components/ui/forms/text-area/TextArea';
+@use '../components/ui/forms/select/Select';
+@use '../components/ui/forms/checkbox/Checkbox';
+@use '../components/ui/forms/radiobutton/RadioButton';
+@use '../components/ui/forms/otp/OTP';
+
+// Layout Components
+@use '../components/layout/row/Row';
+@use '../components/layout/col/Col';
+@use '../components/footer/Footer';
 

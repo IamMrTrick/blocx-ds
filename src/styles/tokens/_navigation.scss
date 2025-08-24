@@ -5,72 +5,80 @@
   /* ===== Navigation Colors ===== */
   /* Link colors */
   --nav-link-color: var(--text-primary);
-  --nav-link-hover-color: var(--text-primary);
+  --nav-link-hover-color: var(--primary-05);
   --nav-link-current-color: var(--primary-05);
+  --nav-link-active-color: var(--primary-05);
   
   /* Link backgrounds */
-  --nav-link-hover-bg: var(--bg-secondary);
-  --nav-link-current-bg: var(--primary-01);
+  --nav-link-hover-bg: var(--transparent-primary-10);
+  --nav-link-current-bg: var(--transparent-primary-10);
+  --nav-link-active-bg: var(--transparent-primary-20);
   
   /* Focus ring */
   --nav-link-focus-ring: var(--primary-05);
   
   /* Footer navigation */
-  --nav-footer-link-color: var(--text-secondary);
-  --nav-footer-link-hover-color: var(--text-primary);
-  --nav-footer-link-font-size: var(--font-size-sm);
+  --nav-footer-link-color: var(--color-text-secondary);
+  --nav-footer-link-hover-color: var(--color-text);
+  --nav-footer-link-font-size: var(--text-sm);
   
   /* Breadcrumb navigation */
-  --nav-breadcrumb-link-color: var(--text-secondary);
-  --nav-breadcrumb-link-hover-color: var(--text-primary);
-  --nav-breadcrumb-link-font-size: var(--font-size-sm);
-  --nav-separator-color: var(--text-muted);
+  --nav-breadcrumb-link-color: var(--color-text-secondary);
+  --nav-breadcrumb-link-hover-color: var(--color-text);
+  --nav-breadcrumb-link-font-size: var(--text-sm);
+  --nav-separator-color: var(--color-text-muted);
   
   /* Pagination navigation */
-  --nav-pagination-border: var(--border-color);
-  --nav-pagination-hover-bg: var(--bg-secondary);
-  --nav-pagination-hover-border: var(--primary-05);
-  --nav-pagination-radius: var(--radius-md);
+  --nav-pagination-border: var(--color-border);
+  --nav-pagination-hover-bg: var(--color-surface-hover);
+  --nav-pagination-hover-border: var(--color-primary);
+  --nav-pagination-radius: var(--gl-radius-btn);
   
   /* Table of contents */
-  --nav-toc-link-color: var(--text-secondary);
-  --nav-toc-link-hover-color: var(--text-primary);
-  --nav-toc-link-hover-bg: var(--bg-secondary);
-  --nav-toc-link-font-size: var(--font-size-sm);
+  --nav-toc-link-color: var(--color-text-secondary);
+  --nav-toc-link-hover-color: var(--color-text);
+  --nav-toc-link-hover-bg: var(--color-surface-hover);
+  --nav-toc-link-font-size: var(--text-sm);
   
   /* Counter colors */
-  --nav-counter-color: var(--text-muted);
+  --nav-counter-color: var(--color-text-muted);
   
   /* Expand button */
-  --nav-expand-color: var(--text-muted);
-  --nav-expand-hover-color: var(--text-primary);
-  --nav-expand-hover-bg: var(--bg-secondary);
-  --nav-expand-focus-ring: var(--primary-05);
+  --nav-expand-color: var(--color-text-muted);
+  --nav-expand-hover-color: var(--color-text);
+  --nav-expand-hover-bg: var(--color-surface-hover);
+  --nav-expand-focus-ring: var(--color-primary);
   
   /* Toggle button */
-  --nav-toggle-line-color: var(--text-primary);
-  --nav-toggle-hover-bg: var(--bg-secondary);
-  --nav-toggle-focus-ring: var(--primary-05);
+  --nav-toggle-line-color: var(--color-text);
+  --nav-toggle-hover-bg: var(--color-surface-hover);
+  --nav-toggle-focus-ring: var(--color-primary);
   
   /* Submenu */
   --nav-submenu-bg: var(--bg-primary);
-  --nav-submenu-border: var(--border-color);
-  --nav-submenu-radius: var(--radius-lg);
-  --nav-submenu-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  --nav-submenu-link-hover-bg: var(--bg-secondary);
+  --nav-submenu-border: var(--border-primary);
+  --nav-submenu-radius: var(--gl-radius-wrapper);
+  --nav-submenu-shadow: 0 8px 32px var(--transparent-black-10);
+  --nav-submenu-link-hover-bg: var(--nav-link-hover-bg);
+  --nav-submenu-backdrop: blur(20px);
+  
+  /* Multi-level submenu */
+  --nav-submenu-nested-bg: var(--bg-secondary);
+  --nav-submenu-nested-border: var(--border-secondary);
+  --nav-submenu-nested-shadow: 0 4px 16px var(--transparent-black-20);
   
   /* Mega menu */
-  --nav-mega-bg: var(--bg-primary);
-  --nav-mega-border: var(--border-color);
-  --nav-mega-radius: var(--radius-lg);
-  --nav-mega-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  --nav-mega-heading-color: var(--text-primary);
+  --nav-mega-bg: var(--color-surface);
+  --nav-mega-border: var(--color-border);
+  --nav-mega-radius: var(--gl-radius-wrapper);
+  --nav-mega-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --nav-mega-heading-color: var(--color-text);
   
   /* Mobile navigation */
-  --nav-mobile-bg: var(--bg-primary);
-  --nav-mobile-border: var(--border-color);
-  --nav-mobile-radius: var(--radius-lg);
-  --nav-mobile-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --nav-mobile-bg: var(--color-surface);
+  --nav-mobile-border: var(--color-border);
+  --nav-mobile-radius: var(--gl-radius-wrapper);
+  --nav-mobile-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 
   /* ===== Navigation Spacing ===== */
   /* Gaps */
@@ -88,14 +96,14 @@
 
   /* ===== Navigation Typography ===== */
   /* Font sizes */
-  --nav-link-font-size: var(--font-size-base);
-  --nav-link-font-size-tablet: var(--font-size-sm);
-  --nav-link-font-size-mobile: var(--font-size-base);
-  --nav-text-font-size: var(--font-size-base);
+  --nav-link-font-size: var(--text-base);
+  --nav-link-font-size-tablet: var(--text-sm);
+  --nav-link-font-size-mobile: var(--text-base);
+  --nav-text-font-size: var(--text-base);
 
   /* ===== Navigation Dimensions ===== */
   /* Border radius */
-  --nav-link-radius: var(--radius-md);
+  --nav-link-radius: var(--gl-radius-btn);
   
   /* Heights */
   --nav-link-min-height: 44px;

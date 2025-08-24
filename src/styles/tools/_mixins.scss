@@ -1,10 +1,10 @@
 // SCSS Mixins
 // Reusable mixins for common patterns and behaviors
 
-@import '../tokens/colors';
-@import '../tokens/typography';
-@import '../tokens/spacing';
-@import '../tokens/radius';
+@use '../tokens/colors';
+@use '../tokens/typography';
+@use '../tokens/spacing';
+@use '../tokens/radius';
 
 // Flexbox mixins
 @mixin flex-center {

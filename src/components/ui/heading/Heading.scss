@@ -1,0 +1,185 @@
+/* ===== Heading Component ===== */
+@use '../../../styles/tokens/typography';
+@use '../../../styles/tokens/colors';
+
+.heading {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-sans);
+  line-height: var(--line-height-snug);
+  color: var(--text-primary);
+  letter-spacing: var(--letter-spacing-tight);
+
+  /* Size variants */
+  &--size-h1 {
+    font-size: var(--heading-01-size);
+    line-height: var(--heading-01-line);
+  }
+
+  &--size-h2 {
+    font-size: var(--heading-02-size);
+    line-height: var(--heading-02-line);
+  }
+
+  &--size-h3 {
+    font-size: var(--heading-03-size);
+    line-height: var(--heading-03-line);
+  }
+
+  &--size-h4 {
+    font-size: var(--heading-04-size);
+    line-height: var(--heading-04-line);
+  }
+
+  &--size-h5 {
+    font-size: var(--heading-05-size);
+    line-height: var(--heading-05-line);
+  }
+
+  &--size-h6 {
+    font-size: var(--heading-06-size);
+    line-height: var(--heading-06-line);
+  }
+
+  /* Weight variants */
+  &--weight-normal {
+    font-weight: var(--font-weight-normal);
+  }
+
+  &--weight-medium {
+    font-weight: var(--font-weight-medium);
+  }
+
+  &--weight-semibold {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &--weight-bold {
+    font-weight: var(--font-weight-bold);
+  }
+
+  &--weight-extrabold {
+    font-weight: var(--font-weight-extrabold);
+  }
+
+  &--weight-black {
+    font-weight: var(--font-weight-black);
+  }
+
+  /* Semantic heading styles */
+  &[data-semantic="display"] {
+    font-weight: var(--font-weight-black);
+    letter-spacing: var(--letter-spacing-tight);
+    
+    &.heading--size-h1 {
+      font-size: clamp(2.5rem, 2rem + 3vw, 4rem);
+    }
+  }
+
+  &[data-semantic="title"] {
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  &[data-semantic="subtitle"] {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    &--size-h1 {
+      font-size: var(--heading-02-size);
+      line-height: var(--heading-02-line);
+    }
+
+    &--size-h2 {
+      font-size: var(--heading-03-size);
+      line-height: var(--heading-03-line);
+    }
+
+    &--size-h3 {
+      font-size: var(--heading-04-size);
+      line-height: var(--heading-04-line);
+    }
+  }
+
+  @media (max-width: 480px) {
+    &--size-h1 {
+      font-size: var(--heading-03-size);
+      line-height: var(--heading-03-line);
+    }
+
+    &--size-h2 {
+      font-size: var(--heading-04-size);
+      line-height: var(--heading-04-line);
+    }
+
+    &--size-h3 {
+      font-size: var(--heading-05-size);
+      line-height: var(--heading-05-line);
+    }
+
+    &--size-h4 {
+      font-size: var(--heading-06-size);
+      line-height: var(--heading-06-line);
+    }
+  }
+
+  /* Spacing utilities for headings */
+  &.heading {
+    &--spaced-top {
+      margin-top: var(--spacing-32);
+    }
+
+    &--spaced-bottom {
+      margin-bottom: var(--spacing-16);
+    }
+
+    &--spaced {
+      margin-top: var(--spacing-32);
+      margin-bottom: var(--spacing-16);
+    }
+  }
+
+  /* Focus styles for accessibility */
+  &:focus-visible {
+    outline: 2px solid var(--primary-05);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+/* Heading hierarchy styles */
+.heading-hierarchy {
+  .heading--size-h1 + .heading--size-h2 {
+    margin-top: var(--spacing-24);
+  }
+
+  .heading--size-h2 + .heading--size-h3 {
+    margin-top: var(--spacing-20);
+  }
+
+  .heading--size-h3 + .heading--size-h4 {
+    margin-top: var(--spacing-16);
+  }
+
+  .heading--size-h4 + .heading--size-h5 {
+    margin-top: var(--spacing-12);
+  }
+
+  .heading--size-h5 + .heading--size-h6 {
+    margin-top: var(--spacing-8);
+  }
+}

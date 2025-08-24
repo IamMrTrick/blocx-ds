@@ -154,10 +154,10 @@
   --btn-primary-text-disabled: var(--primary-04);
   --btn-primary-border: var(--btn-primary-bg);
   --btn-primary-border-hover: var(--btn-primary-bg-hover);
-  --btn-primary-border-active: var(---btn-primary-bg-active);
+  --btn-primary-border-active: var(--btn-primary-bg-active);
   --btn-primary-border-disabled: var(--btn-primary-bg-disabled);
   --btn-primary-icon: var(--btn-primary-text);
-  --btn-primary-icon-hover: var(---btn-primary-text-hover);
+  --btn-primary-icon-hover: var(--btn-primary-text-hover);
   --btn-primary-icon-active: var(--btn-primary-text-active);
   --btn-primary-icon-disabled: var(--btn-primary-text-disabled);
   
@@ -173,8 +173,8 @@
   --btn-secondary-border: var(--btn-secondary-bg);
   --btn-secondary-border-hover: var(--btn-secondary-bg-hover);
   --btn-secondary-border-active: var(--btn-secondary-bg-active);
-  --btn-secondary-border-disabled: var(---btn-secondary-bg-disabled);
-  --btn-secondary-icon: var(---btn-secondary-text);
+  --btn-secondary-border-disabled: var(--btn-secondary-bg-disabled);
+  --btn-secondary-icon: var(--btn-secondary-text);
   --btn-secondary-icon-hover: var(--btn-secondary-text-hover);
   --btn-secondary-icon-active: var(--btn-secondary-text-active);
   --btn-secondary-icon-disabled: var(--btn-secondary-text-disabled);
@@ -397,6 +397,41 @@
   --shadow-btn-warning: var(--transparent-warning-30);
   --shadow-btn-error: var(--transparent-error-30);
   --shadow-btn-info: var(--transparent-info-30);
+
+  /* ===== Aliases for legacy component tokens (mapping) ===== */
+  /* Surface aliases */
+  --color-surface: var(--bg-primary);
+  --color-surface-secondary: var(--bg-secondary);
+  --color-surface-tertiary: var(--bg-tertiary);
+  --color-surface-hover: var(--bg-secondary);
+  
+  /* Text aliases */
+  --color-text: var(--text-primary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-muted: var(--text-muted);
+  --color-text-placeholder: var(--text-tertiary);
+  
+  /* Border aliases */
+  --color-border: var(--border-primary);
+  --color-border-default: var(--border-primary);
+  --color-border-subtle: var(--border-light);
+  
+  /* Brand aliases */
+  --color-primary: var(--primary-05);
+  --color-primary-hover: var(--primary-06);
+  --color-primary-500: var(--primary-05);
+  --color-primary-600: var(--primary-06);
+  --color-primary-100: var(--primary-01);
+  --color-primary-contrast: var(--text-inverse);
+  --color-primary-rgb: 94, 39, 213;
+  
+  --color-secondary: var(--secondary-05);
+  --color-secondary-contrast: var(--base-black);
+  
+  /* Status aliases */
+  --color-danger: var(--error-06);
 }
 
 /* ===== Dark Theme Override ===== */
@@ -419,9 +454,7 @@
   --primary-09: #22085b;
   --primary-10: #22085b;
   
-
   
-
   
   
   

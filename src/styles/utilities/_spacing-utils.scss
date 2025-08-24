@@ -1,7 +1,7 @@
 // Spacing utilities
 // Helper classes for margins and padding
 
-@import '../tokens/spacing';
+@use '../tokens/spacing';
 
 // Margin utilities
 .m-none { margin: var(--spacing-none); }
