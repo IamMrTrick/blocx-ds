@@ -59,148 +59,76 @@ export const Footer: React.FC<FooterProps> = ({
     }
   };
 
-  const footerClasses = [
-    'footer',
-    className
-  ].filter(Boolean).join(' ');
+  const footerClasses = ['footer', className].filter(Boolean).join(' ');
 
   return (
     <footer className={footerClasses}>
       <div className="footer__container">
-        {/* Main Footer Content */}
+        {/* Main Footer Content (Grid) */}
         <div className="footer__main">
-          <Row gap="lg" className="footer__content">
-            {/* Company Info */}
-            <Col lg={4} md={6} className="footer__section">
+          <div className="footer__content">
+            {/* Brand */}
+            <section className="footer__section" aria-label="About">
               <div className="footer__brand">
-                <Heading level={3} size="h4" className="footer__brand-name">
-                  {companyName}
-                </Heading>
-                <Text size="sm" className="footer__description">
-                  {description}
-                </Text>
+                <Heading level={3} size="h4" className="footer__brand-name">{companyName}</Heading>
+                <Text size="sm" className="footer__description">{description}</Text>
               </div>
-
-              {/* Social Links */}
               {socialLinks.length > 0 && (
                 <div className="footer__social">
-                  <Nav
-                    items={socialLinks}
-                    variant="horizontal"
-                    size="sm"
-                    showIcons={true}
-                    showBadges={false}
-                    className="footer__social-nav"
-                  />
+                  <Nav items={socialLinks} variant="horizontal" size="sm" showIcons={true} showBadges={false} className="footer__social-nav" />
                 </div>
               )}
-            </Col>
+            </section>
 
-            {/* Company Links */}
+            {/* Company */}
             {links.company && links.company.length > 0 && (
-              <Col lg={2} md={3} sm={6} className="footer__section">
-                <Heading level={4} size="h6" className="footer__section-title">
-                  Company
-                </Heading>
-                <Nav
-                  items={links.company}
-                  variant="vertical"
-                  size="sm"
-                  showIcons={false}
-                  showBadges={false}
-                  className="footer__nav"
-                />
-              </Col>
+              <section className="footer__section" aria-label="Company">
+                <Heading level={4} size="h6" className="footer__section-title">Company</Heading>
+                <Nav items={links.company} variant="vertical" size="sm" showIcons={false} showBadges={false} className="footer__nav" />
+              </section>
             )}
 
-            {/* Products Links */}
+            {/* Products */}
             {links.products && links.products.length > 0 && (
-              <Col lg={2} md={3} sm={6} className="footer__section">
-                <Heading level={4} size="h6" className="footer__section-title">
-                  Products
-                </Heading>
-                <Nav
-                  items={links.products}
-                  variant="vertical"
-                  size="sm"
-                  showIcons={false}
-                  showBadges={false}
-                  className="footer__nav"
-                />
-              </Col>
+              <section className="footer__section" aria-label="Products">
+                <Heading level={4} size="h6" className="footer__section-title">Products</Heading>
+                <Nav items={links.products} variant="vertical" size="sm" showIcons={false} showBadges={false} className="footer__nav" />
+              </section>
             )}
 
-            {/* Resources Links */}
+            {/* Resources */}
             {links.resources && links.resources.length > 0 && (
-              <Col lg={2} md={3} sm={6} className="footer__section">
-                <Heading level={4} size="h6" className="footer__section-title">
-                  Resources
-                </Heading>
-                <Nav
-                  items={links.resources}
-                  variant="vertical"
-                  size="sm"
-                  showIcons={false}
-                  showBadges={false}
-                  className="footer__nav"
-                />
-              </Col>
+              <section className="footer__section" aria-label="Resources">
+                <Heading level={4} size="h6" className="footer__section-title">Resources</Heading>
+                <Nav items={links.resources} variant="vertical" size="sm" showIcons={false} showBadges={false} className="footer__nav" />
+              </section>
             )}
 
-            {/* Newsletter Signup */}
+            {/* Newsletter */}
             {showNewsletter && (
-              <Col lg={2} md={6} className="footer__section">
-                <Heading level={4} size="h6" className="footer__section-title">
-                  {newsletterTitle}
-                </Heading>
-                <Text size="sm" className="footer__newsletter-description">
-                  {newsletterDescription}
-                </Text>
+              <section className="footer__section" aria-label="Newsletter">
+                <Heading level={4} size="h6" className="footer__section-title">{newsletterTitle}</Heading>
+                <Text size="sm" className="footer__newsletter-description">{newsletterDescription}</Text>
                 <form className="footer__newsletter-form" onSubmit={handleNewsletterSubmit}>
                   <div className="footer__newsletter-input-group">
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Enter your email"
-                      className="footer__newsletter-input"
-                      required
-                      aria-label="Email address for newsletter"
-                    />
-                    <button
-                      type="submit"
-                      className="footer__newsletter-button"
-                      aria-label="Subscribe to newsletter"
-                    >
-                      Subscribe
-                    </button>
+                    <input type="email" name="email" placeholder="Enter your email" className="footer__newsletter-input" required aria-label="Email address for newsletter" />
+                    <button type="submit" className="footer__newsletter-button" aria-label="Subscribe to newsletter">Subscribe</button>
                   </div>
                 </form>
-              </Col>
+              </section>
             )}
-          </Row>
+          </div>
         </div>
 
         {/* Footer Bottom */}
         <div className="footer__bottom">
           <Row justify="between" align="center" className="footer__bottom-content">
             <Col span="auto">
-              <Text size="xs" className="footer__copyright">
-                {copyrightText}
-              </Text>
+              <Text size="xs" className="footer__copyright">{copyrightText}</Text>
             </Col>
-            
-            {/* Legal Links */}
             {links.legal && links.legal.length > 0 && (
               <Col span="auto">
-                <Nav
-                  items={links.legal}
-                  variant="horizontal"
-                  size="sm"
-                  showIcons={false}
-                  showBadges={false}
-                  gap="sm"
-                  className="footer__legal-nav"
-                />
+                <Nav items={links.legal} variant="horizontal" size="sm" showIcons={false} showBadges={false} gap="sm" className="footer__legal-nav" />
               </Col>
             )}
           </Row>

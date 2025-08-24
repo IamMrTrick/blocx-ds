@@ -2,6 +2,7 @@
 export * from './button';
 export * from './badge';
 export * from './icon';
+export * from './card';
 
 // Typography Components
 export * from './text';
@@ -15,3 +16,4 @@ export * from './nav';
 
 // Disclosures
 export * from './accordion';
+export * from './tabs';

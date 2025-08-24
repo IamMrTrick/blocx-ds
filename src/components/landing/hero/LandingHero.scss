@@ -1,0 +1,49 @@
+/* ===== Landing Hero (BEM) ===== */
+
+.landing-hero {
+  text-align: center;
+  padding-block: calc(var(--section-gap) * 1.5);
+  position: relative;
+}
+
+/* subtle background glow using tokens */
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 60% at 50% 0%, var(--transparent-primary-10) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.landing-hero__eyebrow {
+  margin-bottom: var(--spacing-16);
+}
+
+.landing-hero__title {
+  margin: 0 0 var(--spacing-16) 0;
+}
+
+.landing-hero__subtitle {
+  margin: 0 auto var(--spacing-24) auto;
+  max-width: 720px;
+  color: var(--text-secondary);
+}
+
+.landing-hero__cta {
+  display: inline-flex;
+  gap: var(--spacing-12);
+}
+
+.landing-hero__tags {
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: center;
+  margin-top: var(--spacing-20);
+}
+
+@media (max-width: 768px) {
+  .landing-hero__subtitle {
+    padding-inline: var(--spacing-12);
+  }
+}
