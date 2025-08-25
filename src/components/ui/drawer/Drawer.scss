@@ -40,8 +40,7 @@
   backdrop-filter: var(--_backdrop-blur) saturate(120%);
   -webkit-backdrop-filter: var(--_backdrop-blur) saturate(120%);
   opacity: 0;
-  transition: opacity 0.3s ease-out,
-              backdrop-filter 0.3s ease-out;
+  transition: opacity 0.3s ease-out;
 }
 
 .drawer--open .drawer__backdrop { 
@@ -191,7 +190,7 @@
 
 /* Advanced drag visual feedback */
 .drawer__panel[data-dragging="true"] {
-  transition: none !important; /* Disable transitions during drag */
+  transition: transform 0s linear, opacity 0s linear; /* Ensure no cross-fade */
 }
 
 /* Ensure content remains clickable */
@@ -202,16 +201,7 @@
 }
 
 /* Wrong direction drag feedback - subtle visual cue */
-.drawer__panel[data-dragging="true"][data-drag-progress="0"] {
-  /* Add subtle shake/vibration effect for wrong direction */
-  animation: wrongDirectionFeedback 0.1s ease-out;
-}
-
-@keyframes wrongDirectionFeedback {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(0.95); }
-  100% { filter: brightness(1); }
-}
+/* Removed wrong-direction feedback at start to prevent flicker on first touch */
 
 /* Drag indicator - shows progress and direction */
 .drawer__drag-indicator {

@@ -393,16 +393,30 @@ export const Drawer: React.FC<DrawerProps> = ({
           case 'bottom': return `translate3d(0, ${dragState.offset}px, 0)`;
         }
       })();
-      const scalePart = dragState.progress === 0 && dragState.wrongDirectionScale !== 1 ? (() => {
+
+      // iOS-like stretch effect
+      const shouldScaleWrong = dragState.progress === 0 && dragState.wrongDirectionScale > 1.001;
+      const shouldScaleOver = dragState.progress > 1; // over-drag beyond full travel
+
+      let scaleValue: number | undefined;
+      if (shouldScaleWrong) {
+        scaleValue = dragState.wrongDirectionScale; // up to ~1.015
+      } else if (shouldScaleOver) {
+        const extra = Math.min(Math.max(dragState.progress - 1, 0), 0.2); // 0..0.2
+        scaleValue = 1 + extra * 0.075; // max ~1.015
+      }
+
+      const scalePart = typeof scaleValue === 'number' ? (() => {
         switch (side) {
           case 'left':
           case 'right':
-            return ` scaleX(${dragState.wrongDirectionScale})`;
+            return ` scaleX(${scaleValue})`;
           case 'top':
           case 'bottom':
-            return ` scaleY(${dragState.wrongDirectionScale})`;
+            return ` scaleY(${scaleValue})`;
         }
       })() : '';
+
       return `${translatePart}${scalePart}`.trim();
     })(),
     transformOrigin: (() => {
