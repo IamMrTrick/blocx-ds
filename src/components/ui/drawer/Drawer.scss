@@ -2,20 +2,20 @@
 
 .drawer {
   /* Local vars - Enhanced for modern look */
-  --_backdrop-bg: rgba(0, 0, 0, 0.4);
-  --_backdrop-blur: blur(8px);
-  --_panel-bg: rgba(255, 255, 255, 0.95);
-  --_panel-bg-dark: rgba(30, 30, 30, 0.95);
-  --_panel-color: var(--text-primary);
+  --_backdrop-bg: var(--transparent-black-50);
+  --_backdrop-blur: blur(12px);
+  --_panel-bg: var(--color-surface);
+  --_panel-bg-dark: var(--bg-primary);
+  --_panel-color: var(--color-text);
   --_panel-radius: var(--gl-radius-wrapper);
-  --_panel-border: 1px solid rgba(255, 255, 255, 0.2);
-  --_panel-border-dark: 1px solid rgba(255, 255, 255, 0.1);
-  --_shadow: 0 32px 64px rgba(0, 0, 0, 0.12), 
-             0 16px 32px rgba(0, 0, 0, 0.08),
-             0 8px 16px rgba(0, 0, 0, 0.04);
-  --_shadow-hover: 0 40px 80px rgba(0, 0, 0, 0.16), 
-                   0 20px 40px rgba(0, 0, 0, 0.12),
-                   0 10px 20px rgba(0, 0, 0, 0.08);
+  --_panel-border: 1px solid var(--color-border-subtle);
+  --_panel-border-dark: 1px solid var(--border-secondary);
+  --_shadow: 0 32px 64px var(--shadow-lg), 
+             0 16px 32px var(--shadow-md),
+             0 8px 16px var(--shadow-sm);
+  --_shadow-hover: 0 40px 80px var(--shadow-xl), 
+                   0 20px 40px var(--shadow-lg),
+                   0 10px 20px var(--shadow-md);
   --_gap: var(--spacing-12);
   --_pad: var(--spacing-20);
   --_panel-w: min(86vw, 420px);
@@ -37,8 +37,8 @@
   position: absolute;
   inset: 0;
   background: var(--_backdrop-bg);
-  backdrop-filter: var(--_backdrop-blur);
-  -webkit-backdrop-filter: var(--_backdrop-blur);
+  backdrop-filter: var(--_backdrop-blur) saturate(120%);
+  -webkit-backdrop-filter: var(--_backdrop-blur) saturate(120%);
   opacity: 0;
   transition: opacity 0.3s ease-out,
               backdrop-filter 0.3s ease-out;
@@ -131,9 +131,7 @@
   backface-visibility: hidden;
 }
 
-.drawer--mounted .drawer__panel {
-  /* keep initial transform based on side until open */
-}
+
 
 .drawer--open .drawer__panel {
   opacity: 1;
