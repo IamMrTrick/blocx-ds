@@ -110,7 +110,10 @@ function useAdvancedDrag(
     startPoint: 0,
     lastPoint: 0,
     lastTime: 0,
-    velocityHistory: [] as number[]
+    velocityHistory: [] as number[],
+    scrollEl: null as HTMLElement | null,
+    startedInScrollableBody: false,
+    startScrollTop: 0
   });
 
   useEffect(() => {
@@ -147,11 +150,16 @@ function useAdvancedDrag(
       }
       
       const point = getPoint(e);
+      const panelEl = el as HTMLElement;
+      const bodyEl = target.closest('.drawer__body') as HTMLElement | null;
       dragData.current = {
         startPoint: point,
         lastPoint: point,
         lastTime: Date.now(),
-        velocityHistory: []
+        velocityHistory: [],
+        scrollEl: bodyEl,
+        startedInScrollableBody: !!bodyEl,
+        startScrollTop: bodyEl ? bodyEl.scrollTop : 0
       };
       
       setDragState(prev => ({ ...prev, isDragging: true }));
@@ -163,8 +171,7 @@ function useAdvancedDrag(
 
     function onPointerMove(e: PointerEvent | TouchEvent) {
       if (!dragData.current.startPoint) return;
-      
-      e.preventDefault();
+
       const point = getPoint(e);
       const now = Date.now();
       const timeDelta = now - dragData.current.lastTime;
@@ -199,6 +206,46 @@ function useAdvancedDrag(
         case 'right': naturalDelta = totalDelta; break;
         case 'top': naturalDelta = -totalDelta; break;
         case 'bottom': naturalDelta = totalDelta; break;
+      }
+
+      // Decide whether to prevent default scrolling based on bottom-sheet state
+      const panelEl = el as HTMLElement;
+      const sheetScrollState = panelEl?.getAttribute('data-sheet-scroll');
+      const isSheetFreeScroll = side === 'bottom' && sheetScrollState === 'free';
+      const bodyEl = dragData.current.scrollEl;
+      const isAtTop = bodyEl ? bodyEl.scrollTop <= 0 : true;
+      // When free-scroll:
+      // - Upward small drags near top: intercept (stretch), else allow scroll
+      // - Downward small drags near top: intercept (close), else allow scroll
+      let shouldIntercept = true;
+      if (isSheetFreeScroll) {
+        const SMALL_DRAG_PX = 24;
+        if (naturalDelta < 0) {
+          // upward
+          shouldIntercept = isAtTop && Math.abs(naturalDelta) <= SMALL_DRAG_PX;
+        } else {
+          // downward
+          shouldIntercept = isAtTop && Math.abs(naturalDelta) <= SMALL_DRAG_PX;
+        }
+      }
+      if (shouldIntercept) {
+        e.preventDefault();
+      } else {
+        // Let content scroll naturally and don't apply drawer transforms
+        dragData.current.lastPoint = point;
+        dragData.current.lastTime = now;
+        if (dragState.isDragging) {
+          setDragState(prev => ({
+            ...prev,
+            isDragging: false,
+            offset: 0,
+            velocity: 0,
+            progress: 0,
+            resistance: 1,
+            wrongDirectionScale: 1
+          }));
+        }
+        return;
       }
 
       // Handle both correct and wrong direction drags
@@ -273,7 +320,10 @@ function useAdvancedDrag(
         startPoint: 0,
         lastPoint: 0,
         lastTime: 0,
-        velocityHistory: []
+        velocityHistory: [],
+        scrollEl: null,
+        startedInScrollableBody: false,
+        startScrollTop: 0
       };
     }
 
@@ -327,6 +377,20 @@ export const Drawer: React.FC<DrawerProps> = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const isBottomSide = side === 'bottom';
+  // Bottom-sheet dynamic height management (two-state behavior)
+  const [sheetHeightPx, setSheetHeightPx] = useState<number | null>(null);
+  const [isSheetExpanding, setIsSheetExpanding] = useState(false);
+  const [sheetStretchScale, setSheetStretchScale] = useState(1);
+  const sheetMaxHeightPxRef = useRef<number>(0);
+  const sheetContentHeightPxRef = useRef<number>(0);
+  const sheetDragRef = useRef<{
+    active: boolean;
+    startY: number;
+    startHeight: number;
+    startedOnBody?: boolean;
+    startScrollTop?: number;
+  } | null>(null);
 
   // Handle opening/closing animations with safe initial mount
   const isFirstMountRef = useRef(true);
@@ -405,6 +469,115 @@ export const Drawer: React.FC<DrawerProps> = ({
     };
   }, [shouldRender]);
 
+  // Initialize bottom-sheet height and constraints when opened and for bottom side
+  useLayoutEffect(() => {
+    if (!shouldRender || !isBottomSide) {
+      setSheetHeightPx(null);
+      setIsSheetExpanding(false);
+      setSheetStretchScale(1);
+      return;
+    }
+    const panel = panelRef.current;
+    if (!panel) return;
+    const viewportH = window.innerHeight || document.documentElement.clientHeight;
+    // Keep a very small gap from top for status bar and aesthetic (~2%)
+    const maxH = Math.max(0, Math.floor(viewportH * 0.90));
+    sheetMaxHeightPxRef.current = maxH;
+    // Measure full content height of the panel
+    const fullContentH = panel.scrollHeight;
+    sheetContentHeightPxRef.current = fullContentH;
+    // Initial height: content-fit up to 60% viewport for long content, else content height
+    const initialH = Math.min(fullContentH, Math.floor(viewportH * 0.60));
+    setSheetHeightPx(initialH);
+    setIsSheetExpanding(false);
+    setSheetStretchScale(1);
+  }, [shouldRender, isBottomSide]);
+
+  // Bottom-sheet upward drag to expand until max height; only for bottom side
+  useEffect(() => {
+    if (!shouldRender || !isBottomSide) return;
+    const el = panelRef.current as HTMLDivElement | null;
+    if (!el) return;
+    const target = el as HTMLDivElement;
+
+    function onTouchStart(ev: TouchEvent | PointerEvent) {
+      const y = 'touches' in ev ? (ev.touches[0]?.clientY ?? 0) : (ev as PointerEvent).clientY;
+      const currentHeight = sheetHeightPx ?? target.getBoundingClientRect().height;
+      const startTarget = ev.target as HTMLElement | null;
+      const bodyEl = startTarget?.closest('.drawer__body') as HTMLElement | null;
+      sheetDragRef.current = {
+        active: true,
+        startY: y,
+        startHeight: currentHeight,
+        startedOnBody: !!bodyEl,
+        startScrollTop: bodyEl ? bodyEl.scrollTop : 0,
+      };
+      setIsSheetExpanding(true);
+    }
+    function onTouchMove(ev: TouchEvent | PointerEvent) {
+      if (!sheetDragRef.current?.active) return;
+      const y = 'touches' in ev ? (ev.touches[0]?.clientY ?? 0) : (ev as PointerEvent).clientY;
+      const dy = sheetDragRef.current.startY - y; // up = positive
+      if (dy <= 0) return; // only handle upward expand here
+      const maxH = sheetMaxHeightPxRef.current || target.getBoundingClientRect().height;
+      const desiredH = sheetDragRef.current.startHeight + dy;
+      const newH = Math.max(0, Math.min(maxH, desiredH));
+      const atLimit = newH >= maxH - 0.5;
+      const startedOnBody = !!sheetDragRef.current.startedOnBody;
+      const startScrollTop = sheetDragRef.current.startScrollTop || 0;
+
+      // If at max height and the gesture started on body with existing scroll (>0), allow native scroll
+      if (atLimit && startedOnBody && startScrollTop > 0) {
+        setIsSheetExpanding(false);
+        return; // do not preventDefault; let content scroll
+      }
+
+      setSheetHeightPx(newH);
+
+      // Compute stretch when attempting to go beyond max height
+      const overDrag = Math.max(0, desiredH - maxH);
+      const STRETCH_ZONE_PX = 100;
+      const STRETCH_MAX = 0.02; // up to +2% scale
+      const stretchRatio = Math.min(overDrag / STRETCH_ZONE_PX, 1);
+      setSheetStretchScale(1 + stretchRatio * STRETCH_MAX);
+
+      // At limit: only block small upward drags to keep stretch; otherwise allow scroll
+      if (atLimit) {
+        const SMALL_UPWARD_PX = 24;
+        if (dy <= SMALL_UPWARD_PX) {
+          ev.preventDefault();
+        }
+        return;
+      }
+
+      // Not at limit: expanding height, block default to avoid page scroll
+      ev.preventDefault();
+    }
+    function onTouchEnd() {
+      if (!sheetDragRef.current) return;
+      sheetDragRef.current.active = false;
+      setIsSheetExpanding(false);
+      // Reset stretch on release
+      setSheetStretchScale(1);
+    }
+
+    target.addEventListener('touchstart', onTouchStart, { passive: true });
+    target.addEventListener('touchmove', onTouchMove as EventListener, { passive: false });
+    target.addEventListener('touchend', onTouchEnd);
+    target.addEventListener('pointerdown', onTouchStart as EventListener);
+    target.addEventListener('pointermove', onTouchMove as EventListener);
+    target.addEventListener('pointerup', onTouchEnd as EventListener);
+
+    return () => {
+      target.removeEventListener('touchstart', onTouchStart as EventListener);
+      target.removeEventListener('touchmove', onTouchMove as EventListener);
+      target.removeEventListener('touchend', onTouchEnd as EventListener);
+      target.removeEventListener('pointerdown', onTouchStart as EventListener);
+      target.removeEventListener('pointermove', onTouchMove as EventListener);
+      target.removeEventListener('pointerup', onTouchEnd as EventListener);
+    };
+  }, [shouldRender, isBottomSide, sheetHeightPx]);
+
   const handleBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!dismissible) return;
     if (e.target === e.currentTarget) onClose();
@@ -480,6 +653,18 @@ export const Drawer: React.FC<DrawerProps> = ({
     transition: 'none'
   } : {};
 
+  const effectiveMaxForScroll = (() => {
+    const maxH = sheetMaxHeightPxRef.current || 0;
+    const contentH = sheetContentHeightPxRef.current || 0;
+    if (maxH === 0) return contentH;
+    return Math.min(maxH, contentH);
+  })();
+  const isSheetScrollableLocked = isBottomSide
+    && (sheetHeightPx ?? 0) < effectiveMaxForScroll;
+
+  const STRETCH_READY_PX = 64;
+  const atStretchZone = isBottomSide && (sheetHeightPx ?? 0) >= (effectiveMaxForScroll - STRETCH_READY_PX);
+
   const content = (
     <div className={[block, className].filter(Boolean).join(' ')} role="presentation">
       {backdrop && (
@@ -498,9 +683,32 @@ export const Drawer: React.FC<DrawerProps> = ({
         aria-labelledby={ariaLabel ? undefined : ariaLabelledby || `${id}-title`}
         aria-describedby={ariaDescribedby || `${id}-description`}
         tabIndex={-1}
-        style={dragStyle}
+        style={{
+          ...(() => {
+            // Apply stretch scale only at top (stretch zone) for bottom sheet
+            if (dragState.isDragging && side === 'bottom' && atStretchZone) {
+              const baseTransform = (() => {
+                if (dragState.offset === 0) return '';
+                return `translate3d(0, ${dragState.offset}px, 0)`;
+              })();
+              const scaleValue = Math.max(1, Math.min(sheetStretchScale, 1.02));
+              return {
+                transform: `${baseTransform} scaleY(${scaleValue})`.trim(),
+                transformOrigin: 'center bottom',
+                transition: 'none',
+                opacity: 1,
+                willChange: 'transform',
+              } as React.CSSProperties;
+            }
+            return dragStyle;
+          })(),
+          ...(isBottomSide && sheetHeightPx !== null ? { height: `${sheetHeightPx}px` } : {}),
+          ...(isBottomSide && sheetMaxHeightPxRef.current > 0 ? { maxHeight: `${sheetMaxHeightPxRef.current}px` } : {}),
+        }}
         data-drag-progress={dragState.progress}
         data-dragging={dragState.isDragging}
+        data-sheet={isBottomSide ? 'true' : undefined}
+        data-sheet-scroll={isBottomSide ? (isSheetScrollableLocked ? 'locked' : 'free') : undefined}
       >
         {dragState.isDragging && dragState.progress > 0 && (
           <div className="drawer__drag-indicator" data-side={side}>
