@@ -316,6 +316,12 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function TimePi
     }
   }, [value, format, showSeconds]);
   
+  // Handle dropdown close
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+    onOpenChange?.(false);
+  }, [onOpenChange]);
+  
   // Handle outside clicks
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -328,7 +334,7 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function TimePi
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
   
   // Handle escape key
   useEffect(() => {
@@ -343,7 +349,7 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function TimePi
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
     }
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
   
   // Handle dropdown open/close
   const handleOpen = useCallback(() => {
@@ -351,11 +357,6 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function TimePi
     setIsOpen(true);
     onOpenChange?.(true);
   }, [disabled, loading, onOpenChange]);
-  
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-    onOpenChange?.(false);
-  }, [onOpenChange]);
   
   const handleToggle = useCallback(() => {
     if (isOpen) {
@@ -542,6 +543,7 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function TimePi
           aria-describedby={describedByIds || undefined}
           aria-labelledby={label ? labelId : undefined}
           aria-expanded={isOpen}
+          aria-controls={isOpen ? dropdownId : undefined}
           aria-haspopup="listbox"
           role="combobox"
           {...props}

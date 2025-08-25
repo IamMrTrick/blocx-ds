@@ -1,13 +1,12 @@
 'use client';
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import { Nav as PrimaryNav, type PrimaryNavItem } from '@/components/ui/nav/primary-nav/PrimaryNav';
+import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderRight, HeaderMobileToggle } from './Header';
+import { HeaderNavMenu, HeaderMobileMenu } from './components';
+import type { PrimaryNavItem } from '@/components/ui/nav/primary-nav/PrimaryNav';
 
-export interface HeaderNavMenuProps {
-  activeId?: string;
-}
-
-const items: PrimaryNavItem[] = [
+// Navigation items (shared between desktop and mobile)
+const navigationItems: PrimaryNavItem[] = [
   { id: 'home', label: 'Home', href: '/' },
   {
     id: 'foundations',
@@ -127,11 +126,25 @@ const items: PrimaryNavItem[] = [
   { id: 'playground', label: 'Playground', href: '/playground' },
 ];
 
-export const HeaderNavMenu: React.FC<HeaderNavMenuProps> = ({ activeId }) => {
+export interface HeaderWithMobileMenuProps {
+  /** Custom className */
+  className?: string;
+  /** Header variant */
+  variant?: 'default' | 'transparent' | 'minimal';
+  /** Whether header should be sticky */
+  sticky?: boolean;
+}
+
+export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
+  className = '',
+  variant = 'default',
+  sticky = false,
+}) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const computedActiveId = useMemo(() => {
-    if (activeId) return activeId;
+  // Calculate active navigation ID
+  const activeId = useMemo(() => {
     if (!pathname) return undefined;
     if (pathname === '/') return 'home';
     if (pathname.startsWith('/foundations')) return 'foundations';
@@ -160,23 +173,52 @@ export const HeaderNavMenu: React.FC<HeaderNavMenuProps> = ({ activeId }) => {
     }
     if (pathname.startsWith('/components')) return 'components';
     return undefined;
-  }, [activeId, pathname]);
+  }, [pathname]);
+
+  const handleMobileMenuToggle = () => {
+    console.log('Toggle clicked, current state:', isMobileMenuOpen);
+    setIsMobileMenuOpen(prev => {
+      const newState = !prev;
+      console.log('New state:', newState);
+      return newState;
+    });
+  };
+
+  const handleMobileMenuClose = () => {
+    console.log('Closing mobile menu');
+    setIsMobileMenuOpen(false);
+  };
 
   return (
-    <PrimaryNav
-      items={items}
-      activeId={computedActiveId}
-      layout="gap"
-      gap="md"
-      dropdownTrigger="hover"
-      dropdownDelay={350}
-      variant="horizontal"
-      size="md"
-      collapsible={true}
-    />
+    <>
+      <Header className={className} variant={variant} sticky={sticky}>
+        <HeaderMiddle>
+          <HeaderContainer>
+            <HeaderLeft>
+              <HeaderLogo alt="Blocx" href="/" />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderNavMenu activeId={activeId} />
+            </HeaderCenter>
+            <HeaderRight>
+              <HeaderMobileToggle
+                isOpen={isMobileMenuOpen}
+                onToggle={handleMobileMenuToggle}
+                aria-controls="mobile-navigation-menu"
+              />
+            </HeaderRight>
+          </HeaderContainer>
+        </HeaderMiddle>
+      </Header>
+
+      <HeaderMobileMenu
+        items={navigationItems}
+        isOpen={isMobileMenuOpen}
+        onClose={handleMobileMenuClose}
+        activeId={activeId}
+      />
+    </>
   );
 };
 
-export default HeaderNavMenu;
-
-
+export default HeaderWithMobileMenu;

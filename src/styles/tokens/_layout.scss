@@ -1,13 +1,14 @@
 /* ===== Layout Settings ===== */
 :root {
-  /* ===== Content Widths ===== */
-  --content-width-sm: 1140px;  /* Small desktop / compact layout */
-  --content-width-md: 1280px;  /* Standard desktop */
-  --content-width-lg: 1440px;  /* Large desktop / widescreen */
-  --content-width-xl: 1600px;  /* Ultra-wide screens */
+  /* ===== Content Widths (Fixed for Grid System) ===== */
+  --content-width-sm: 540px;   /* xs breakpoint container */
+  --content-width-md: 720px;   /* sm breakpoint container */  
+  --content-width-lg: 960px;   /* md breakpoint container */
+  --content-width-xl: 1140px;  /* lg breakpoint container */
+  --content-width-xxl: 1320px; /* xl breakpoint container */
   
-  /* ===== Main Content Width ===== */
-  --content-width-main: var(--content-width-xl);
+  /* ===== Main Content Width (Bootstrap-style) ===== */
+  --content-width-main: var(--content-width-xxl);
   
   /* Boxed-page frame (outer padding around the entire page). */
   --page-frame: 0px;
@@ -64,4 +65,27 @@
   --content-effective: calc(
     var(--page-max-inline) - (var(--has-sidebar) * (var(--sidebar-width) + var(--layout-gap)))
   );
+
+  /* ===== Grid System Tokens (Fixed & Stable) ===== */
+  /* Bootstrap-style breakpoints */
+  --grid-breakpoint-sm: 576px;
+  --grid-breakpoint-md: 768px;
+  --grid-breakpoint-lg: 992px;
+  --grid-breakpoint-xl: 1200px;
+  --grid-breakpoint-xxl: 1400px;
+
+  /* Fixed container max-widths for each breakpoint */
+  --grid-container-sm: var(--content-width-sm);
+  --grid-container-md: var(--content-width-md);
+  --grid-container-lg: var(--content-width-lg);
+  --grid-container-xl: var(--content-width-xl);
+  --grid-container-xxl: var(--content-width-xxl);
+  
+  /* Fixed gutter system (no fluid sizing) */
+  --grid-gutter-base: var(--spacing-24);     /* 24px base gutter */
+  --grid-gutter-sm: var(--spacing-16);       /* 16px smaller gutter */
+  --grid-gutter-lg: var(--spacing-32);       /* 32px larger gutter */
+  
+  /* Bootstrap-style container padding (fixed) */
+  --grid-container-padding: var(--spacing-12); /* 12px on each side */
 }

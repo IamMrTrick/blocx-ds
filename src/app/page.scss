@@ -1,11 +1,12 @@
-/* ===== Blocx Landing Page ===== */
+/* ===== Blocx Landing Page - Elegant Edition ===== */
+@use './components/components.scss';
 
 .landing {
   width: 100%;
   display: block;
+  overflow-x: hidden;
+  position: relative;
 }
-
-@import './components/components.scss';
 
 /* Token-based container */
 .landing__container {
@@ -16,19 +17,32 @@
 }
 
 /* Anchor scroll offset for fixed headers */
-#what-is, #building-blocks, #principles, #cta, #why-bem, #tokens, #features, #faq {
-  scroll-margin-top: var(--spacing-64);
+#features, #component-categories, #principles, #get-started {
+  scroll-margin-top: var(--spacing-80);
 }
 
-/* Section rhythm */
-#what-is + #why-bem,
-#why-bem + #tokens,
-#tokens + #features,
-#features + #building-blocks,
-#building-blocks + #faq,
-#faq + #principles,
-#principles + #cta {
-  margin-top: var(--section-gap);
+/* Section rhythm and background patterns */
+.landing [data-variant="content"] {
+  position: relative;
+}
+
+/* Alternating section backgrounds for visual hierarchy */
+#component-categories {
+  background: var(--bg-secondary);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      var(--border-light) 20%, 
+      var(--border-light) 80%, 
+      transparent 100%);
+  }
 }
 
 /* Content sections */
@@ -67,50 +81,148 @@
   box-shadow: 0 8px 24px var(--transparent-black-10);
 }
 
-/* Features cards grid */
+/* ===== Feature Cards Section ===== */
+.landing__feature-cards {
+  margin-top: var(--spacing-48);
+}
+
+.landing__feature-card {
+  position: relative;
+  transition: all var(--transition-fast) var(--ease-in-out);
+  border: 1px solid var(--border-light);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px var(--transparent-black-20);
+    border-color: var(--border-active);
+  }
+}
+
+.landing__feature-icon {
+  margin-bottom: var(--spacing-16);
+  text-align: center;
+  
+  .badge {
+    font-size: var(--font-size-xl);
+    padding: var(--spacing-12);
+    border-radius: var(--gl-radius-full);
+  }
+}
+
+.landing__feature-link {
+  display: block;
+  margin-top: var(--spacing-20);
+  text-decoration: none;
+  
+  .button {
+    width: 100%;
+    justify-content: space-between;
+    
+    &:hover {
+      background-color: var(--bg-tertiary);
+    }
+  }
+}
+
+/* ===== Component Categories Section ===== */
+.landing__tabs-list {
+  justify-content: center;
+  margin-bottom: var(--spacing-32);
+}
+
+.landing__component-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-20);
+  margin-top: var(--spacing-24);
+}
+
+@media (min-width: 576px) {
+  .landing__component-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 992px) {
+  .landing__component-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.landing__component-tags {
+  display: flex;
+  gap: var(--spacing-6);
+  margin-top: var(--spacing-12);
+  flex-wrap: wrap;
+}
+
+/* ===== Design Principles Section ===== */
+.landing__principle {
+  text-align: center;
+  padding: var(--spacing-20);
+  transition: transform var(--transition-fast) var(--ease-in-out);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.landing__principle-icon {
+  margin-bottom: var(--spacing-16);
+  
+  .badge {
+    font-size: var(--font-size-2xl);
+    padding: var(--spacing-16);
+    border-radius: var(--gl-radius-full);
+    box-shadow: 0 8px 16px var(--transparent-primary-20);
+  }
+}
+
+/* ===== CTA Section ===== */
+.landing__cta-text {
+  margin-bottom: var(--spacing-32);
+  color: var(--text-secondary);
+}
+
+.landing__cta-actions {
+  display: flex;
+  gap: var(--spacing-16);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-32);
+  
+  a {
+    text-decoration: none;
+  }
+}
+
+.landing__cta-badges {
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: center;
+  flex-wrap: wrap;
+  
+  .badge {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+  }
+}
+
+/* Legacy cards grid support */
 .landing__cards-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--spacing-24);
 }
+
 @media (min-width: 576px) {
   .landing__cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
 @media (min-width: 992px) {
   .landing__cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-/* FAQ spacing */
-.landing__faq {
-  max-width: 840px;
-  margin: 0 auto;
-}
-.landing__faq .accordion { margin-top: var(--spacing-16); }
-
-/* Principles */
-.landing__list {
-  margin: var(--spacing-16) auto 0 auto;
-  max-width: 720px;
-  padding-left: var(--spacing-20);
-  list-style: disc;
-  color: var(--text-primary);
-}
-
-.landing__list li + li { margin-top: var(--spacing-12); }
-
-/* CTA box */
-.landing__cta-box {
+/* ===== Text Utilities ===== */
+.text-center {
   text-align: center;
-  padding: var(--spacing-32);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--gl-radius-wrapper);
-}
-
-.landing__cta {
-  display: inline-flex;
-  gap: var(--spacing-8);
-  margin-top: var(--spacing-12);
 }
 
 /* Responsive */

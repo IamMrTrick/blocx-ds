@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { ToastData } from './types';
+import { ToastData, ToastPosition } from './types';
 
 interface ToastItemProps {
   toast: ToastData;
   index: number;
   removeToast: (id: string) => void;
   isVisible: boolean;
+  position: ToastPosition;
 }
 
-export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemProps) {
+export function ToastItem({ toast, index, removeToast, isVisible, position }: ToastItemProps) {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -49,7 +50,13 @@ export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemPro
       if (remaining > 0) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
-        handleRemove();
+        // Smooth exit in the same direction as its container
+        setIsRemoving(true);
+        if (toastRef.current) {
+          toastRef.current.classList.add('toast--removing');
+        }
+        // delay a bit to render class then remove
+        setTimeout(() => removeToast(toast.id), 280);
       }
     };
 
@@ -80,11 +87,14 @@ export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemPro
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [dragExitTarget, setDragExitTarget] = useState<number | null>(null);
 
 
 
   const handleDragStart = useCallback((clientX: number) => {
     if (!toast.dismissible) return;
+    // reset any previous exit target if reusing component in edge cases
+    setDragExitTarget(null);
     setDragStart(clientX);
     setIsDragging(true);
   }, [toast.dismissible]);
@@ -104,7 +114,16 @@ export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemPro
     
     // Dismiss if dragged more than 100px horizontally
     if (absDistance > 100) {
-      handleRemove();
+      // Continue from current drag position and slide out in the same direction
+      setIsRemoving(true);
+      setIsDragging(false);
+      const width = toastRef.current?.offsetWidth ?? 400;
+      const target = (deltaX > 0 ? 1 : -1) * (width + 120);
+      setDragExitTarget(target);
+      // remove after transition completes
+      window.setTimeout(() => {
+        removeToast(toast.id);
+      }, 280);
     } else {
       // Snap back to original position
       setDragOffset(0);
@@ -112,7 +131,7 @@ export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemPro
     
     setDragStart(null);
     setIsDragging(false);
-  }, [dragStart, toast.dismissible, handleRemove]);
+  }, [dragStart, toast.dismissible, removeToast, toast.id]);
 
   // Pointer Events
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
@@ -205,7 +224,8 @@ export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemPro
   const toastClasses = [
     'toast',
     `toast--${toast.type}`,
-    isRemoving && 'toast--removing',
+    isRemoving && dragExitTarget === null && 'toast--removing',
+    dragExitTarget !== null && 'toast--drag-exit',
     !isVisible && 'toast--hidden',
     index > 0 && 'toast--stacked'
   ].filter(Boolean).join(' ');
@@ -221,6 +241,11 @@ export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemPro
     }),
     ...(dragStart !== null && {
       transition: 'none'
+    }),
+    ...(dragExitTarget !== null && {
+      transform: `translateX(${dragExitTarget}px)`,
+      opacity: 0,
+      transition: 'transform 0.25s cubic-bezier(0.4, 0, 1, 1), opacity 0.25s cubic-bezier(0.4, 0, 1, 1)'
     })
   };
 

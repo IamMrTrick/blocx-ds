@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import './Header.scss';
 
 // ===== Header Base Component =====
@@ -216,7 +217,7 @@ export const HeaderLogo: React.FC<HeaderLogoProps> = ({
   return (
     <a href={href} className={`header__logo ${className}`.trim()}>
       {src ? (
-        <img src={src} alt={alt} className="header__logo-img" />
+        <Image src={src} alt={alt} className="header__logo-img" width={150} height={40} />
       ) : children ? (
         children
       ) : (

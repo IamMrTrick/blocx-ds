@@ -1,0 +1,233 @@
+/* ===== Mobile Navigation (inside Drawer) ===== */
+.mobile-nav {
+  /* Navigation wrapper inside drawer */
+  
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ===== Mobile Navigation Items ===== */
+  &__item {
+    position: relative;
+
+    &--level-0 {
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    &--level-1 {
+      background: var(--color-surface-secondary);
+      border-radius: var(--gl-radius-sm);
+      margin: var(--spacing-2) 0;
+    }
+
+    &--level-2 {
+      background: var(--color-surface-tertiary);
+      border-radius: var(--gl-radius-sm);
+      margin: var(--spacing-2) 0;
+    }
+  }
+
+  /* ===== Mobile Navigation Links ===== */
+  &__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-16) var(--spacing-20);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: var(--text-base-size);
+    font-weight: var(--font-weight-medium);
+    transition: all 0.2s ease;
+    position: relative;
+
+    /* Level-specific padding */
+    .mobile-nav__item--level-1 & {
+      padding-left: var(--spacing-40);
+      font-size: var(--text-sm-size);
+      font-weight: var(--font-weight-normal);
+    }
+
+    .mobile-nav__item--level-2 & {
+      padding-left: var(--spacing-56);
+      font-size: var(--text-sm-size);
+      font-weight: var(--font-weight-normal);
+    }
+
+    &:hover {
+      background: var(--color-surface-hover);
+      color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: -2px;
+      background: var(--color-surface-hover);
+    }
+
+    &--active {
+      background: var(--color-primary-subtle);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--color-primary);
+      }
+    }
+  }
+
+  /* ===== Mobile Navigation Toggles (for items with children) ===== */
+  &__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--spacing-16) var(--spacing-20);
+    background: none;
+    border: none;
+    color: var(--color-text);
+    text-align: left;
+    font-size: var(--text-base-size);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    /* Level-specific padding */
+    .mobile-nav__item--level-1 & {
+      padding-left: var(--spacing-40);
+      font-size: var(--text-sm-size);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .mobile-nav__item--level-2 & {
+      padding-left: var(--spacing-56);
+      font-size: var(--text-sm-size);
+      font-weight: var(--font-weight-normal);
+    }
+
+    &:hover {
+      background: var(--color-surface-hover);
+      color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: -2px;
+      background: var(--color-surface-hover);
+    }
+
+    &--active {
+      background: var(--color-primary-subtle);
+      color: var(--color-primary);
+    }
+  }
+
+  &__label {
+    flex: 1;
+  }
+
+  &__chevron {
+    margin-left: var(--spacing-8);
+    transition: transform 0.2s ease;
+    color: var(--color-text-secondary);
+  }
+
+  &__external {
+    margin-left: var(--spacing-8);
+    color: var(--color-text-secondary);
+  }
+
+  /* ===== Mobile Navigation Submenus ===== */
+  &__submenu {
+    list-style: none;
+    margin: 0;
+    padding: var(--spacing-8) 0;
+    animation: slideDown 0.2s ease-out;
+
+    &--level-1 {
+      background: var(--color-surface-secondary);
+      border-radius: var(--gl-radius-sm);
+      margin-top: var(--spacing-4);
+    }
+
+    &--level-2 {
+      background: var(--color-surface-tertiary);
+      border-radius: var(--gl-radius-sm);
+      margin-top: var(--spacing-4);
+    }
+  }
+}
+
+/* Backdrop and animations now handled by Drawer component */
+
+/* ===== Animations ===== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 480px) {
+  .mobile-nav {
+    &__link,
+    &__toggle {
+      padding: var(--spacing-12) var(--spacing-16);
+    }
+
+    &__item--level-1 &__link,
+    &__item--level-1 &__toggle {
+      padding-left: var(--spacing-32);
+    }
+
+    &__item--level-2 &__link,
+    &__item--level-2 &__toggle {
+      padding-left: var(--spacing-40);
+    }
+  }
+}
+
+/* ===== Accessibility ===== */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav__submenu,
+  .mobile-nav__chevron {
+    transition: none;
+    animation: none;
+  }
+
+  .mobile-nav__submenu {
+    max-height: none;
+  }
+}
+
+/* ===== High Contrast Mode ===== */
+@media (prefers-contrast: high) {
+  .mobile-nav__item--level-0 {
+    border-bottom-width: 2px;
+  }
+
+  .mobile-nav__link--active::before {
+    width: 6px;
+  }
+}

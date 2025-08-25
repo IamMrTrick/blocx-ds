@@ -356,7 +356,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
       updateValidity(newErrors);
       return Object.keys(newErrors).length === 0;
     }
-  }, [state.values, state.errors, validateSingleField, updateValidity]);
+  }, [state.values, state.errors, validateSingleField, updateValidity, validationRules]);
   
   // Register field
   const register = useCallback((name: string, rules?: ValidationRule) => {
@@ -409,7 +409,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
       },
       error: state.errors[name]?.message
     };
-  }, [state.values, state.errors, state.touched, validateOnChange, validateOnBlur, showErrorsImmediately, validateSingleField, validate, onChange]);
+  }, [state.values, state.errors, validateOnChange, validateOnBlur, showErrorsImmediately, validateSingleField, validate, onChange]);
   
   // Set field value
   const setValue = useCallback((name: string, value: unknown) => {

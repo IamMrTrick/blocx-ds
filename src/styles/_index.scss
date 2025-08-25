@@ -46,6 +46,9 @@
 @use '../components/ui/drawer/Drawer';
 @use '../components/ui/toast/Toast';
 
+// Showcase Components
+@use '../components/showcase/ComponentShowcase';
+
 // Form Components
 @use '../components/ui/forms/form/Form';
 @use '../components/ui/forms/input/Input';
@@ -59,9 +62,12 @@
 @use '../components/ui/forms/time-picker/TimePicker';
 
 // Layout Components
+@use '../components/layout/section/Section';
 @use '../components/layout/row/Row';
 @use '../components/layout/col/Col';
 @use '../components/footer/Footer';
+@use '../components/ui/nav/social-links/SocialLinks';
+@use '../components/header/components/HeaderMobileMenu';
 
 
 // 6. Demo pages (components showcase)

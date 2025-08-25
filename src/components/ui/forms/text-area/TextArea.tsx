@@ -224,7 +224,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextAre
     if (autoResize) {
       adjustHeight();
     }
-  }, [adjustHeight, currentValue]);
+  }, [adjustHeight, currentValue, autoResize]);
   
   // Build aria-describedby
   const describedByIds = [

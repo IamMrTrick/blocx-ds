@@ -401,6 +401,11 @@
     animation: toast-exit-top-right 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
   }
 
+  // Drag exit should not re-trigger keyframe; handled inline style
+  &--drag-exit {
+    animation: none !important;
+  }
+
 // انیمیشن exit مخصوص هر موقعیت
 .toast-container--top-right .toast--removing {
   animation: toast-exit-top-right 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;

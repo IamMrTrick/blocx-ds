@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
 import { ToastData, ToastOptions, ToastContextType, ToastPosition, ToastState } from './types';
 import { ToastContainer } from './ToastContainer';
 import { setToastFunctions } from './toast';
@@ -59,14 +59,7 @@ export function ToastProvider({
     position
   });
 
-  const timersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
-
   const removeToast = useCallback((id: string) => {
-    const timer = timersRef.current.get(id);
-    if (timer) {
-      clearTimeout(timer);
-      timersRef.current.delete(id);
-    }
     dispatch({ type: 'REMOVE_TOAST', id });
   }, []);
 
@@ -87,32 +80,13 @@ export function ToastProvider({
 
     dispatch({ type: 'ADD_TOAST', toast });
 
-    // Auto remove toast after duration (unless duration is 0 for persistent)
-    if (toast.duration && toast.duration > 0) {
-      const timer = setTimeout(() => {
-        removeToast(id);
-      }, toast.duration);
-      
-      timersRef.current.set(id, timer);
-    }
-
     return id;
   }, [duration, removeToast]);
 
   const removeAll = useCallback(() => {
-    // Clear all timers
-    timersRef.current.forEach(timer => clearTimeout(timer));
-    timersRef.current.clear();
     dispatch({ type: 'REMOVE_ALL' });
   }, []);
-
-  // Cleanup timers on unmount
-  useEffect(() => {
-    return () => {
-      timersRef.current.forEach(timer => clearTimeout(timer));
-      timersRef.current.clear();
-    };
-  }, []);
+  
 
   // Handle escape key
   useEffect(() => {

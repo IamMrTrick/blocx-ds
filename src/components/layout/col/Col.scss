@@ -1,18 +1,14 @@
 /* ===== Col Component (BEM + Bootstrap-Style Grid) ===== */
 .col {
+  box-sizing: border-box;
+  /* Default: Equal-width flexible column */
   flex: 1 0 0%;
   min-width: 0;
   position: relative;
-  /*
-   * Default to auto width so multiple columns can sit side-by-side
-   * without requiring explicit span classes. Specific span modifiers
-   * (e.g., .col--md-6) still set explicit widths at breakpoints.
-   */
   width: auto;
-  padding-right: calc(var(--layout-gap) * 0.5);
-  padding-left: calc(var(--layout-gap) * 0.5);
+  /* No padding by default - Row handles spacing with gap */
   
-  /* Span modifiers (Bootstrap-style grid) */
+  /* Explicit span modifiers (Bootstrap-style 12-column grid) */
   &--1 { flex: 0 0 8.333333%; max-width: 8.333333%; }
   &--2 { flex: 0 0 16.666667%; max-width: 16.666667%; }
   &--3 { flex: 0 0 25%; max-width: 25%; }

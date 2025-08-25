@@ -1,64 +1,123 @@
 /* ===== Footer Component ===== */
+/* Three-tier footer structure with proper BEM methodology */
+
 .footer {
-  background-color: var(--bg-secondary);
-  border-top: 1px solid var(--border-primary);
+  /* Main footer landmark */
+  width: 100%;
   margin-top: auto;
 
-  &__container {
+  /* ===== Footer Top Bar (Optional) ===== */
+  &__top {
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  /* ===== Footer Middle Bar (Core) ===== */
+  &__middle {
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  /* ===== Footer Bottom Bar (Required) ===== */
+  &__bottom {
+    /* Styling handled by Section component */
+  }
+
+  /* ===== Bar Layout ===== */
+  &__bar {
+    /* Base bar styles */
     width: 100%;
-    max-width: var(--content-effective);
-    margin-inline: auto;
-    padding-inline: var(--gutter-inline);
-  }
 
-  &__main {
-    padding-block: var(--spacing-48) var(--spacing-40);
-  }
-
-  /* Use CSS Grid to ensure multi-column layout even when some groups are missing */
-  &__content {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-24);
-
-    @media (min-width: 576px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    &--top {
+      /* Specific styles for top bar */
     }
-    @media (min-width: 768px) {
-      grid-template-columns: 2fr 1fr 1fr 1fr; /* brand + three columns */
+
+    &--middle {
+      /* Specific styles for middle bar */
     }
-    @media (min-width: 992px) {
-      grid-template-columns: 2fr 1fr 1fr 1fr; /* keep balance on large */
+
+    &--bottom {
+      /* Specific styles for bottom bar */
     }
   }
 
-  &__section {
+  /* ===== Left/Center/Right Layout ===== */
+  &__left {
+    /* Handled by Col component */
+  }
+
+  &__center {
+    /* Handled by Col component */
+  }
+
+  &__right {
+    /* Handled by Col component */
+  }
+
+  /* ===== Newsletter Section (Footer Top) ===== */
+  &__newsletter {
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  &__newsletter-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-16);
+    line-height: var(--line-height-relaxed);
+  }
+
+  &__newsletter-form {
     display: flex;
-    flex-direction: column;
-    gap: var(--spacing-20);
-  }
+    align-items: center;
+    gap: var(--spacing-12);
+    max-width: 560px;
+    margin: 0 auto;
 
-  /* ===== Brand Section ===== */
-  &__brand { display: flex; flex-direction: column; gap: var(--spacing-12); }
-  &__brand-name { color: var(--text-primary); margin: 0; }
-  &__description { color: var(--text-secondary); line-height: var(--line-height-relaxed); max-width: 280px; }
-
-  /* ===== Social Links ===== */
-  &__social { margin-top: var(--spacing-16); }
-  &__social-nav {
-    .nav__list { gap: var(--spacing-12); }
-    .nav__link {
-      display: flex; align-items: center; justify-content: center;
-      width: 40px; height: 40px; border-radius: var(--gl-radius-btn);
-      background-color: var(--bg-tertiary); color: var(--text-secondary);
-      transition: var(--transition-all);
-      &:hover, &:focus-visible { background-color: var(--primary-01); color: var(--primary-06); transform: translateY(-2px); }
+    @media (max-width: 576px) {
+      flex-direction: column;
+      gap: var(--spacing-12);
     }
-    .nav__icon { width: 18px; height: 18px; }
   }
 
-  /* ===== Section Titles ===== */
-  &__section-title {
+  &__newsletter-input { flex: 1; }
+
+  &__newsletter-button {
+    padding: var(--spacing-12) var(--spacing-24);
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--btn-primary-border);
+    border-radius: var(--gl-radius-btn);
+    font-size: var(--text-sm-size);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-all);
+    white-space: nowrap;
+
+    &:hover {
+      background-color: var(--btn-primary-bg-hover);
+      border-color: var(--btn-primary-border-hover);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--btn-primary-border-active);
+      outline-offset: 2px;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 576px) {
+      width: 100%;
+    }
+  }
+
+  /* ===== Navigation Sections ===== */
+  &__nav {
+    /* Navigation wrapper */
+  }
+
+  &__heading {
     color: var(--text-primary);
     font-weight: var(--font-weight-semibold);
     margin: 0 0 var(--spacing-16) 0;
@@ -67,34 +126,151 @@
     font-size: var(--text-sm-size);
   }
 
-  /* ===== Navigation Links ===== */
-  &__nav {
-    .nav__list { display: flex; flex-direction: column; gap: var(--spacing-8); list-style: none; margin: 0; padding: 0; }
-    .nav__link { display: inline-block; color: var(--text-secondary); text-decoration: none; font-size: var(--text-sm-size); line-height: var(--line-height-normal); padding: var(--spacing-4) 0; transition: color var(--transition-fast) var(--ease-in-out); &:hover, &:focus-visible { color: var(--primary-06); } }
+  &__nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-8);
   }
 
-  /* ===== Newsletter Section ===== */
-  &__newsletter-description { color: var(--text-secondary); line-height: var(--line-height-relaxed); margin-bottom: var(--spacing-16); }
-  &__newsletter-form { width: 100%; }
-  &__newsletter-input-group { display: flex; flex-direction: column; gap: var(--spacing-8); width: 100%; }
-  &__newsletter-input { width: 100%; padding: var(--spacing-12) var(--spacing-16); border: 1px solid var(--border-primary); border-radius: var(--gl-radius-input); background-color: var(--bg-primary); color: var(--text-primary); font-size: var(--text-sm-size); transition: border-color var(--transition-fast) var(--ease-in-out); &::placeholder { color: var(--text-tertiary); } &:focus { outline: none; border-color: var(--primary-05); box-shadow: 0 0 0 3px var(--transparent-primary-10); } }
-  &__newsletter-button { width: 100%; padding: var(--spacing-12) var(--spacing-20); background-color: var(--primary-05); color: var(--white); border: none; border-radius: var(--gl-radius-btn); font-size: var(--text-sm-size); font-weight: var(--font-weight-medium); cursor: pointer; transition: var(--transition-all); &:hover { background-color: var(--primary-06); transform: translateY(-1px); } &:focus-visible { outline: 2px solid var(--primary-05); outline-offset: 2px; } &:active { transform: translateY(0); } }
+  &__nav-item {
+    /* List item styling handled by list */
+  }
 
-  /* ===== Footer Bottom ===== */
-  &__bottom { padding-block: var(--spacing-20); border-top: 1px solid var(--border-primary); }
-  &__bottom-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-  &__copyright { color: var(--text-tertiary); margin: 0; }
-  &__legal-nav { .nav__list { display: flex; gap: var(--spacing-20); list-style: none; margin: 0; padding: 0; } .nav__link { color: var(--text-tertiary); text-decoration: none; font-size: var(--text-xs-size); transition: color var(--transition-fast) var(--ease-in-out); &:hover, &:focus-visible { color: var(--primary-05); } } }
+  &__link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm-size);
+    line-height: var(--line-height-normal);
+    padding: var(--spacing-4) 0;
+    transition: color var(--transition-fast) var(--ease-in-out);
+    display: inline-block;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--primary-06);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-05);
+      outline-offset: 2px;
+      border-radius: var(--gl-radius-sm);
+    }
+  }
+
+  /* ===== Contact & Address ===== */
+  &__contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-24);
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      gap: var(--spacing-48);
+    }
+  }
+
+  &__address {
+    font-style: normal;
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+    font-size: var(--text-sm-size);
+
+    strong {
+      color: var(--text-primary);
+      font-weight: var(--font-weight-semibold);
+      display: block;
+      margin-bottom: var(--spacing-8);
+    }
+  }
+
+  &__phone {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--primary-06);
+      text-decoration: underline;
+    }
+  }
+
+  /* ===== Social Links ===== */
+  /* Social links now come from SocialLinks component styles */
+
+  /* ===== Copyright ===== */
+  &__copyright {
+    color: var(--text-tertiary);
+    margin: 0;
+    font-size: var(--text-xs-size);
+  }
+
+  /* ===== Legal Navigation ===== */
+  &__separator {
+    color: var(--text-tertiary);
+    margin: 0 var(--spacing-4);
+  }
+
+  /* ===== Back to Top ===== */
+  &__backtotop {
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: var(--text-xs-size);
+    padding: var(--spacing-4) var(--spacing-8);
+    border-radius: var(--gl-radius-sm);
+    transition: var(--transition-fast);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--primary-05);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-05);
+      outline-offset: 2px;
+    }
+  }
 
   /* ===== Responsive Design ===== */
   @media (max-width: 768px) {
-    &__main { padding-block: var(--spacing-32) var(--spacing-24); }
-    &__bottom-content { flex-direction: column; gap: var(--spacing-16); text-align: center; }
-    &__newsletter-input-group { flex-direction: column; }
+    &__contact {
+      text-align: center;
+    }
+
+    &__social {
+      justify-content: center;
+    }
+
+    &__bar--bottom {
+      .row {
+        flex-direction: column;
+        gap: var(--spacing-16);
+        text-align: center;
+      }
+    }
   }
-  @media (min-width: 768px) {
-    &__newsletter-input-group { flex-direction: row; }
-    &__newsletter-input { flex: 1; margin-bottom: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; }
-    &__newsletter-button { flex-shrink: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; }
-  }
+}
+
+/* ===== Screen Reader Only ===== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== Footer Section Variants ===== */
+/* These work with the Section component */
+.section--footer {
+  /* Custom footer section styling if needed */
 }

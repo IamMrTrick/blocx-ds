@@ -589,6 +589,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
           tabIndex={disabled ? -1 : 0}
           role="combobox"
           aria-expanded={isOpen}
+          aria-controls={isOpen ? dropdownId : undefined}
           aria-haspopup="listbox"
           aria-labelledby={label ? labelId : undefined}
           aria-describedby={describedByIds || undefined}

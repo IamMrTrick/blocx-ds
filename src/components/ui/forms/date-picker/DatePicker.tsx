@@ -306,6 +306,12 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function DatePi
     }
   }, [value, format]);
   
+  // Handle calendar close
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+    onOpenChange?.(false);
+  }, [onOpenChange]);
+  
   // Handle outside clicks
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -318,7 +324,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function DatePi
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
   
   // Handle escape key
   useEffect(() => {
@@ -333,7 +339,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function DatePi
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
     }
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
   
   // Handle calendar open/close
   const handleOpen = useCallback(() => {
@@ -341,11 +347,6 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function DatePi
     setIsOpen(true);
     onOpenChange?.(true);
   }, [disabled, loading, onOpenChange]);
-  
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-    onOpenChange?.(false);
-  }, [onOpenChange]);
   
   const handleToggle = useCallback(() => {
     if (isOpen) {
@@ -572,6 +573,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function DatePi
           aria-labelledby={label ? labelId : undefined}
           aria-expanded={isOpen}
           aria-haspopup="dialog"
+          aria-controls={isOpen ? calendarId : undefined}
           role="combobox"
           {...props}
         />
@@ -688,6 +690,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function DatePi
                 <button
                   key={date.getTime()}
                   type="button"
+                  role="gridcell"
                   className={createBemClass('datepicker-calendar__day', undefined, [
                     isSelected && 'selected',
                     isTodayDate && 'today',

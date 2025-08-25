@@ -1,8 +1,27 @@
-/* ===== Row Component ===== */
+/* ===== Row Component (Bootstrap-style Grid) ===== */
 .row {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  
+  /* Bootstrap-style: Row acts as responsive container */
+  max-width: var(--grid-container-xxl);
+  margin-inline: auto;
+  padding-inline: var(--grid-container-padding);
+  
+  /* Unified gutter variables (Bootstrap-like) */
+  --gutter-x: 0px;
+  --gutter-y: 0px;
+  /* Apply gutters with negative margins so columns always sum to 100% */
+  margin-top: calc(-1 * var(--gutter-y));
+  margin-right: calc(-0.5 * var(--gutter-x));
+  margin-left: calc(-0.5 * var(--gutter-x));
+  
+  > .col {
+    padding-right: calc(var(--gutter-x) * 0.5);
+    padding-left: calc(var(--gutter-x) * 0.5);
+    margin-top: var(--gutter-y);
+  }
   
   /* Fluid modifier - full width without max-width */
   &--fluid {
@@ -34,65 +53,69 @@
   &--nowrap { flex-wrap: nowrap; }
   &--wrap-reverse { flex-wrap: wrap-reverse; }
   
-  /* Gap modifiers - using CSS gap instead of margins */
-  &--gap-xs { gap: var(--spacing-4); }
-  &--gap-sm { gap: var(--spacing-8); }
-  &--gap-md { gap: var(--spacing-16); }
-  &--gap-lg { gap: var(--spacing-24); }
-  &--gap-xl { gap: var(--spacing-32); }
+  /* Gap modifiers mapped to gutter vars (no CSS gap to avoid wrapping) */
+  &--gap-none { --gutter-x: 0px; --gutter-y: 0px; }
+  &--gap-xs { --gutter-x: var(--spacing-4); --gutter-y: var(--spacing-4); }
+  &--gap-sm { --gutter-x: var(--grid-gutter-sm); --gutter-y: var(--grid-gutter-sm); }
+  &--gap-md { --gutter-x: var(--grid-gutter-base); --gutter-y: var(--grid-gutter-base); }
+  &--gap-lg { --gutter-x: var(--grid-gutter-lg); --gutter-y: var(--grid-gutter-lg); }
+  &--gap-xl { --gutter-x: var(--spacing-40); --gutter-y: var(--spacing-40); }
   
-  /* Bootstrap-style gutter system */
-  &--gutter {
-    margin-left: calc(var(--layout-gap) * -0.5);
-    margin-right: calc(var(--layout-gap) * -0.5);
-    
-    > * {
-      padding-left: calc(var(--layout-gap) * 0.5);
-      padding-right: calc(var(--layout-gap) * 0.5);
-    }
-  }
-  
-  &--no-gutters {
-    margin-left: 0;
-    margin-right: 0;
-    
-    > * {
-      padding-left: 0;
-      padding-right: 0;
-    }
+  /* Synonyms for gutter system */
+  &--gutter { --gutter-x: var(--grid-gutter-base); --gutter-y: var(--grid-gutter-base); }
+  &--gutter-sm { --gutter-x: var(--grid-gutter-sm); --gutter-y: var(--grid-gutter-sm); }
+  &--no-gutters { --gutter-x: 0px; --gutter-y: 0px; }
+}
+
+/* ===== Responsive Container Breakpoints ===== */
+
+/* XXL screens and up (1400px+) */
+@media (min-width: 1400px) {
+  .row:not(.row--fluid) {
+    max-width: var(--grid-container-xxl);
   }
 }
 
-/* Responsive behavior */
-@media (max-width: 768px) {
-  .row {
-    &--column-mobile {
-      flex-direction: column;
-    }
-    
-    &--gap-lg,
-    &--gap-xl {
-      gap: var(--spacing-16);
-    }
-    
-    &--gutter {
-      margin-left: calc(var(--layout-gap) * -0.25);
-      margin-right: calc(var(--layout-gap) * -0.25);
-      
-      > * {
-        padding-left: calc(var(--layout-gap) * 0.25);
-        padding-right: calc(var(--layout-gap) * 0.25);
-      }
-    }
+/* XL screens (1200px - 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .row:not(.row--fluid) {
+    max-width: var(--grid-container-xl);
   }
 }
 
-@media (max-width: 480px) {
+/* Large screens (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .row:not(.row--fluid) {
+    max-width: var(--grid-container-lg);
+  }
+}
+
+/* Medium screens (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .row:not(.row--fluid) {
+    max-width: var(--grid-container-md);
+  }
+}
+
+/* Small screens (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .row:not(.row--fluid) {
+    max-width: var(--grid-container-sm);
+  }
+}
+
+/* Extra small screens (below 576px) */
+@media (max-width: 575px) {
   .row {
-    &--gap-md,
-    &--gap-lg,
-    &--gap-xl {
-      gap: var(--spacing-8);
+    &:not(.row--fluid) {
+      max-width: 100%;
+      padding-inline: var(--spacing-16);
     }
+    
+    &--column-mobile { flex-direction: column; }
+    
+    /* Use smaller gutters on very small screens when large requested */
+    &--gap-lg, &--gap-xl { --gutter-x: var(--grid-gutter-sm); --gutter-y: var(--grid-gutter-sm); }
+    &--gutter { --gutter-x: var(--grid-gutter-sm); --gutter-y: var(--grid-gutter-sm); }
   }
 }

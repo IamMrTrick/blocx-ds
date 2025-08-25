@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../styles/_index.scss";
-import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderNavMenu } from '@/components/header';
+import { HeaderWithMobileMenu } from '@/components/header/HeaderWithMobileMenu';
 import { Footer } from '@/components/footer';
 import { Main } from '@/components/layout';
 import { ToastProvider } from '@/components/ui/toast';
@@ -18,18 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr">
       <body>
-        <Header>
-          <HeaderMiddle>
-            <HeaderContainer>
-              <HeaderLeft>
-                <HeaderLogo alt="Blocx" href="/" />
-              </HeaderLeft>
-              <HeaderCenter>
-                <HeaderNavMenu />
-              </HeaderCenter>
-            </HeaderContainer>
-          </HeaderMiddle>
-        </Header>
+        <HeaderWithMobileMenu sticky={true} />
         <ToastProvider>
           <Main width="full" id="main">
             {children}

@@ -1,0 +1,271 @@
+/* ===== Component Showcase Styles ===== */
+
+.component-showcase {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* ===== Hero Section ===== */
+.component-showcase__hero {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  border-bottom: 1px solid var(--border-light);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--border-primary) 50%, transparent 100%);
+  }
+}
+
+.component-showcase__header {
+  text-align: center;
+  padding: var(--spacing-32) 0;
+}
+
+.component-showcase__category {
+  margin-bottom: var(--spacing-12);
+}
+
+.component-showcase__title {
+  margin-bottom: var(--spacing-16);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.component-showcase__description {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ===== Main Content ===== */
+.component-showcase__content {
+  padding: var(--spacing-48) 0;
+}
+
+.component-showcase__section-title {
+  margin-bottom: var(--spacing-24);
+  text-align: center;
+}
+
+.component-showcase__demo-container {
+  margin-bottom: var(--spacing-48);
+}
+
+.component-showcase__demo {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--gl-radius-cards);
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-16);
+  flex-wrap: wrap;
+  
+  /* Add subtle pattern background */
+  background-image: 
+    radial-gradient(circle at 1px 1px, var(--border-light) 1px, transparent 0);
+  background-size: 20px 20px;
+  background-repeat: repeat;
+}
+
+/* ===== Examples Section ===== */
+.component-showcase__examples {
+  margin-top: var(--spacing-32);
+  display: grid;
+  gap: var(--spacing-32);
+}
+
+.component-showcase__example {
+  border: 1px solid var(--border-light);
+  border-radius: var(--gl-radius-cards);
+  overflow: hidden;
+}
+
+.component-showcase__example-header {
+  padding: var(--spacing-20);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.component-showcase__example-description {
+  margin-top: var(--spacing-8);
+  color: var(--text-secondary);
+}
+
+.component-showcase__example-demo {
+  background: var(--bg-primary);
+  border: none;
+  border-radius: 0;
+  text-align: center;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-12);
+  flex-wrap: wrap;
+}
+
+.component-showcase__code {
+  background: var(--gray-12);
+  color: var(--gray-01);
+  border: none;
+  border-radius: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  
+  pre {
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    
+    code {
+      font-size: var(--font-size-sm);
+      line-height: 1.5;
+      color: var(--gray-03);
+    }
+  }
+}
+
+/* ===== Props Table ===== */
+.component-showcase__props {
+  margin-top: var(--spacing-32);
+}
+
+.component-showcase__props-table {
+  border: 1px solid var(--border-light);
+  border-radius: var(--gl-radius-cards);
+  overflow: hidden;
+}
+
+.component-showcase__props-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.component-showcase__props-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16);
+  border-bottom: 1px solid var(--border-light);
+  align-items: start;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:nth-child(even) {
+    background: var(--bg-secondary);
+  }
+}
+
+.component-showcase__prop-name {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  
+  code {
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+    padding: var(--spacing-2) var(--spacing-6);
+    border-radius: var(--gl-radius-sm);
+    font-size: var(--font-size-sm);
+  }
+}
+
+.component-showcase__prop-type code,
+.component-showcase__prop-default code {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  padding: var(--spacing-2) var(--spacing-6);
+  border-radius: var(--gl-radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+.component-showcase__prop-description {
+  color: var(--text-secondary);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .component-showcase__header {
+    padding: var(--spacing-24) 0;
+  }
+  
+  .component-showcase__content {
+    padding: var(--spacing-32) 0;
+  }
+  
+  .component-showcase__demo {
+    min-height: 160px;
+    padding: var(--spacing-24);
+  }
+  
+  .component-showcase__example-demo {
+    min-height: 100px;
+  }
+  
+  .component-showcase__props-header,
+  .component-showcase__props-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+    padding: var(--spacing-12);
+  }
+  
+  .component-showcase__props-header {
+    display: none;
+  }
+  
+  .component-showcase__props-row {
+    display: flex;
+    flex-direction: column;
+    
+    &::before {
+      content: attr(data-label);
+      font-weight: 600;
+      font-size: var(--font-size-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--spacing-4);
+    }
+  }
+}
+
+/* ===== Dark Theme Support ===== */
+@media (prefers-color-scheme: dark) {
+  .component-showcase__demo {
+    background-image: 
+      radial-gradient(circle at 1px 1px, var(--gray-11) 1px, transparent 0);
+  }
+  
+  .component-showcase__code {
+    background: var(--gray-11);
+    
+    pre code {
+      color: var(--gray-04);
+    }
+  }
+}

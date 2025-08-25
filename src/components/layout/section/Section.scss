@@ -3,12 +3,10 @@
   width: 100%;
   position: relative;
   
-  /* Container wrapper */
+  /* Container wrapper - NO constraints by default, let Row/Col handle layout */
   &__container {
     width: 100%;
-    max-width: var(--content-effective);
-    margin-inline: auto;
-    padding-inline: var(--gutter-inline);
+    /* Remove automatic constraints - Row/Col will handle spacing and width */
   }
   
   /* Variant modifiers */

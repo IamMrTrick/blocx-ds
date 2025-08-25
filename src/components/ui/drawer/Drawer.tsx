@@ -204,13 +204,13 @@ function useAdvancedDrag(
         adjustedOffset = naturalDelta * resistance;
         progress = Math.min(rawProgress, 1 + MAX_RESISTANCE_ZONE);
       } else {
-        // Wrong direction - use scale feedback instead of movement
+        // Wrong direction - use subtle scale feedback instead of movement
         const wrongDirectionDelta = Math.abs(naturalDelta);
         const maxWrongDrag = maxDistance * 0.1; // Max 10% for scale calculation
         const wrongProgress = Math.min(wrongDirectionDelta / maxWrongDrag, 1);
         
-        // Calculate scale factor (slightly expand in the correct direction)
-        const scaleAmount = 1 + (wrongProgress * 0.03); // Max 3% expansion
+        // Calculate scale factor (slightly expand in the drag axis)
+        const scaleAmount = 1 + (wrongProgress * 0.015); // Max 1.5% expansion
         
         adjustedOffset = 0; // No movement for wrong direction
         progress = 0; // No closing progress for wrong direction
@@ -313,22 +313,31 @@ export const Drawer: React.FC<DrawerProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
 
-  // Handle opening/closing animations
+  // Handle opening/closing animations with safe initial mount
+  const isFirstMountRef = useRef(true);
   useEffect(() => {
     if (open) {
-      // Opening: render immediately, then animate in
       setShouldRender(true);
-      // Small delay to ensure DOM is ready
-      const timer = setTimeout(() => {
-        setIsAnimating(true);
-      }, 10);
-      return () => clearTimeout(timer);
+      let raf1 = 0; let raf2 = 0;
+      raf1 = requestAnimationFrame(() => {
+        // Force layout so initial transform is applied
+        const panel = panelRef.current;
+        if (panel) {
+          // Reset inline transform so CSS side transform takes effect for new side
+          panel.style.transform = '';
+          void panel.getBoundingClientRect();
+        }
+        raf2 = requestAnimationFrame(() => {
+          setIsAnimating(true);
+          isFirstMountRef.current = false;
+        });
+      });
+      return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
     } else {
-      // Closing: animate out, then stop rendering
       setIsAnimating(false);
       const timer = setTimeout(() => {
         setShouldRender(false);
-      }, 400); // Match animation duration
+      }, 400);
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -366,6 +375,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   if (!portalRef.current || !shouldRender) return null;
 
   const block = bem('drawer', [
+    'mounted',
     isAnimating && 'open',
     `side-${side}`,
     size === 'fullscreen' ? 'fullscreen' : `size-${size}`,
@@ -374,25 +384,26 @@ export const Drawer: React.FC<DrawerProps> = ({
   // Apply advanced drag transforms with resistance and progress feedback
   const dragStyle: React.CSSProperties = dragState.isDragging ? {
     transform: (() => {
-      const translatePart = dragState.offset !== 0 ? (() => {
+      const translatePart = (() => {
+        if (dragState.offset === 0) return '';
         switch (side) {
-          case 'left': return `translateX(${-dragState.offset}px)`;
-          case 'right': return `translateX(${dragState.offset}px)`;
-          case 'top': return `translateY(${-dragState.offset}px)`;
-          case 'bottom': return `translateY(${dragState.offset}px)`;
+          case 'left': return `translate3d(${-dragState.offset}px, 0, 0)`;
+          case 'right': return `translate3d(${dragState.offset}px, 0, 0)`;
+          case 'top': return `translate3d(0, ${-dragState.offset}px, 0)`;
+          case 'bottom': return `translate3d(0, ${dragState.offset}px, 0)`;
         }
-      })() : '';
-      
+      })();
       const scalePart = dragState.progress === 0 && dragState.wrongDirectionScale !== 1 ? (() => {
         switch (side) {
-          case 'left': 
-          case 'right': return `scaleX(${dragState.wrongDirectionScale})`;
+          case 'left':
+          case 'right':
+            return ` scaleX(${dragState.wrongDirectionScale})`;
           case 'top':
-          case 'bottom': return `scaleY(${dragState.wrongDirectionScale})`;
+          case 'bottom':
+            return ` scaleY(${dragState.wrongDirectionScale})`;
         }
       })() : '';
-      
-      return [translatePart, scalePart].filter(Boolean).join(' ');
+      return `${translatePart}${scalePart}`.trim();
     })(),
     transformOrigin: (() => {
       switch (side) {
@@ -403,7 +414,7 @@ export const Drawer: React.FC<DrawerProps> = ({
       }
     })(),
     transition: 'none', // Disable transitions during drag
-    opacity: Math.max(0.3, 1 - dragState.progress * 0.7), // Fade out during drag
+    opacity: 1, // Keep content fully visible during drag
     willChange: 'transform, opacity', // Optimize for animations
   } : {
     willChange: 'auto' // Reset when not dragging

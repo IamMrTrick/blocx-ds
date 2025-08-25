@@ -28,10 +28,10 @@ export const Col: React.FC<ColProps> = ({
 }) => {
   const colClasses = [
     'col',
-    span !== 'auto' && span !== 'full' && `col--${span}`,
+    // Handle span prop
+    span !== 'auto' && span !== 'full' && typeof span === 'number' && `col--${span}`,
     span === 'full' && 'col--12',
-    offset > 0 && `col--offset-${offset}`,
-    order !== undefined && `col--order-${order}`,
+    // Handle responsive props
     sm && sm !== 'auto' && sm !== 'full' && `col--sm-${sm}`,
     sm === 'full' && 'col--sm-12',
     md && md !== 'auto' && md !== 'full' && `col--md-${md}`,
@@ -40,6 +40,10 @@ export const Col: React.FC<ColProps> = ({
     lg === 'full' && 'col--lg-12',
     xl && xl !== 'auto' && xl !== 'full' && `col--xl-${xl}`,
     xl === 'full' && 'col--xl-12',
+    // Handle offset and order
+    offset > 0 && `col--offset-${offset}`,
+    order !== undefined && `col--order-${order}`,
+    // Handle alignment
     align && `col--align-${align}`,
     className
   ].filter(Boolean).join(' ');

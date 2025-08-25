@@ -9,7 +9,7 @@ export interface RowProps {
   direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
   wrap?: 'wrap' | 'nowrap' | 'wrap-reverse';
   gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  gutter?: boolean;
+  gutter?: boolean | 'sm';
   noGutters?: boolean;
   fluid?: boolean;
 }
@@ -21,8 +21,8 @@ export const Row: React.FC<RowProps> = ({
   align = 'stretch',
   direction = 'row',
   wrap = 'wrap',
-  gap = 'none',
-  gutter = true,
+  gap = 'md',
+  gutter = false,
   noGutters = false,
   fluid = false,
 }) => {
@@ -33,7 +33,8 @@ export const Row: React.FC<RowProps> = ({
     direction !== 'row' && `row--${direction}`,
     wrap !== 'wrap' && `row--${wrap}`,
     gap !== 'none' && `row--gap-${gap}`,
-    gutter && !noGutters && 'row--gutter',
+    gutter === true && !noGutters && 'row--gutter',
+    gutter === 'sm' && !noGutters && 'row--gutter-sm',
     noGutters && 'row--no-gutters',
     fluid && 'row--fluid',
     className

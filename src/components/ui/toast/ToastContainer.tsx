@@ -73,6 +73,7 @@ export function ToastContainer({ toasts, position, removeToast, visibleToasts }:
           index={index}
           removeToast={removeToast}
           isVisible={index < visibleToasts}
+          position={position}
         />
       ))}
     </div>,
