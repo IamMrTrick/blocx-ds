@@ -13,7 +13,17 @@
   padding: var(--spacing-16);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-8);
+  gap: 0; // stack like cards without gaps
+
+  // Stack density: collapsed by default, expands on hover to reveal items
+  --stack-gap-collapsed: 80px; // heavier overlap (very compact)
+  --stack-gap-expanded: 16px;  // relaxed overlap to preview layers
+  --stack-gap: var(--stack-gap-collapsed);
+
+  &:hover,
+  &:has(.toast:hover) {
+    --stack-gap: var(--stack-gap-expanded);
+  }
 
   // Position variants
   &--top-left {
@@ -78,17 +88,17 @@
   max-width: 480px;
   overflow: hidden;
   cursor: grab;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease, margin 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   user-select: none;
   will-change: transform, opacity;
   touch-action: pan-x; // Allow horizontal pan for drag
   -webkit-touch-callout: none; // Disable iOS callout
   -webkit-user-select: none; // Disable text selection
   
-  // فعلاً margin منفی رو حذف می‌کنم
-  // &:not(:first-child) {
-  //   margin-top: -60px;
-  // }
+  // overlap like card stack
+  &:not(:first-child) {
+    margin-top: calc(var(--stack-gap) * -1);
+  }
 
   &:active {
     cursor: grabbing;
@@ -354,40 +364,20 @@
   }
 
   // States - مثل کارت‌های پاسور روی هم
-  &:nth-child(1) {
-    transform: translateY(0) scale(1);
-    z-index: 5;
-    opacity: 1;
-  }
-  
-  &:nth-child(2) {
-    transform: translateY(-8px) scale(0.96);
-    z-index: 4;
-    opacity: 0.92;
-  }
-  
-  &:nth-child(3) {
-    transform: translateY(-14px) scale(0.92);
-    z-index: 3;
-    opacity: 0.84;
-  }
-  
-  &:nth-child(4) {
-    transform: translateY(-18px) scale(0.88);
-    z-index: 2;
-    opacity: 0.76;
-  }
-  
-  &:nth-child(5) {
-    transform: translateY(-20px) scale(0.84);
-    z-index: 1;
-    opacity: 0.68;
-  }
-  
-  &:nth-child(n+6) {
-    transform: translateY(-22px) scale(0.8);
-    z-index: 0;
-    opacity: 0.6;
+  // Collapsed by default; container :hover reveals more layers
+  &:nth-child(1) { transform: translateY(0) scale(1) perspective(1000px) rotateX(0deg); z-index: 50; opacity: 1; }
+  &:nth-child(2) { transform: translateY(-2px) scale(0.997) perspective(1000px) rotateX(-1deg); z-index: 40; opacity: 0.96; }
+  &:nth-child(3) { transform: translateY(-3px) scale(0.994) perspective(1000px) rotateX(-2deg); z-index: 30; opacity: 0.92; }
+  &:nth-child(4) { transform: translateY(-4px) scale(0.991) perspective(1000px) rotateX(-3deg); z-index: 20; opacity: 0.88; }
+  &:nth-child(5) { transform: translateY(-5px) scale(0.988) perspective(1000px) rotateX(-4deg); z-index: 10; opacity: 0.84; }
+  &:nth-child(n+6) { transform: translateY(-6px) scale(0.985) perspective(1000px) rotateX(-5deg); z-index: 0; opacity: 0.8; }
+
+  .toast-container:hover & {
+    &:nth-child(2) { transform: translateY(-10px) scale(0.97) perspective(1000px) rotateX(-2deg); }
+    &:nth-child(3) { transform: translateY(-18px) scale(0.94) perspective(1000px) rotateX(-4deg); }
+    &:nth-child(4) { transform: translateY(-24px) scale(0.91) perspective(1000px) rotateX(-6deg); }
+    &:nth-child(5) { transform: translateY(-28px) scale(0.88) perspective(1000px) rotateX(-8deg); }
+    &:nth-child(n+6) { transform: translateY(-30px) scale(0.85) perspective(1000px) rotateX(-10deg); }
   }
 
   &--hidden {
@@ -432,29 +422,17 @@
 }
   
   // انیمیشن enter بر اساس موقعیت container
-  .toast-container--top-right & {
-    animation: toast-enter-top-right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .toast-container--top-right & { animation: toast-enter-top-right 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
   
-  .toast-container--top-left & {
-    animation: toast-enter-top-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .toast-container--top-left & { animation: toast-enter-top-left 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
   
-  .toast-container--top-center & {
-    animation: toast-enter-top-center 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .toast-container--top-center & { animation: toast-enter-top-center 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
   
-  .toast-container--bottom-right & {
-    animation: toast-enter-bottom-right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .toast-container--bottom-right & { animation: toast-enter-bottom-right 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
   
-  .toast-container--bottom-left & {
-    animation: toast-enter-bottom-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .toast-container--bottom-left & { animation: toast-enter-bottom-left 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
   
-  .toast-container--bottom-center & {
-    animation: toast-enter-bottom-center 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .toast-container--bottom-center & { animation: toast-enter-bottom-center 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
 }
 
 // Animations برای موقعیت‌های مختلف
