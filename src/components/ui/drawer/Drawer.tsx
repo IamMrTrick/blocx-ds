@@ -365,6 +365,31 @@ export const Drawer: React.FC<DrawerProps> = ({
   // Always call the hook; enable/disable via flag to satisfy hooks rule
   useFocusTrap(panelRef as React.RefObject<HTMLElement>, shouldRender && trapFocus, initialFocusRef);
 
+  // Temporarily disable browser pull-to-refresh/overscroll while drawer is open
+  useEffect(() => {
+    if (!shouldRender) return;
+    const htmlStyle = document.documentElement.style;
+    const bodyStyle = document.body.style;
+    const prevHtml = htmlStyle.getPropertyValue('overscroll-behavior');
+    const prevHtmlY = htmlStyle.getPropertyValue('overscroll-behavior-y');
+    const prevBody = bodyStyle.getPropertyValue('overscroll-behavior');
+    const prevBodyY = bodyStyle.getPropertyValue('overscroll-behavior-y');
+    htmlStyle.setProperty('overscroll-behavior', 'none');
+    htmlStyle.setProperty('overscroll-behavior-y', 'none');
+    bodyStyle.setProperty('overscroll-behavior', 'none');
+    bodyStyle.setProperty('overscroll-behavior-y', 'none');
+    return () => {
+      if (prevHtml) htmlStyle.setProperty('overscroll-behavior', prevHtml);
+      else htmlStyle.removeProperty('overscroll-behavior');
+      if (prevHtmlY) htmlStyle.setProperty('overscroll-behavior-y', prevHtmlY);
+      else htmlStyle.removeProperty('overscroll-behavior-y');
+      if (prevBody) bodyStyle.setProperty('overscroll-behavior', prevBody);
+      else bodyStyle.removeProperty('overscroll-behavior');
+      if (prevBodyY) bodyStyle.setProperty('overscroll-behavior-y', prevBodyY);
+      else bodyStyle.removeProperty('overscroll-behavior-y');
+    };
+  }, [shouldRender]);
+
   const handleBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!dismissible) return;
     if (e.target === e.currentTarget) onClose();
