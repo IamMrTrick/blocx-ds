@@ -1,7 +1,16 @@
 'use client';
 
-import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
+import './Drawer.scss';
 
 type DrawerSide = 'left' | 'right' | 'top' | 'bottom';
 type DrawerSize = 's' | 'm' | 'l' | 'xl' | 'fullscreen';
@@ -11,65 +20,69 @@ export interface DrawerProps {
   onClose: () => void;
   side?: DrawerSide;
   size?: DrawerSize;
-  dismissible?: boolean;
   swipeToClose?: boolean;
+  dismissible?: boolean;
   backdrop?: boolean;
   trapFocus?: boolean;
-  initialFocusRef?: React.RefObject<HTMLElement>;
   className?: string;
   backdropClassName?: string;
   panelClassName?: string;
+  children?: React.ReactNode;
   'aria-label'?: string;
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
-  children: React.ReactNode;
 }
 
-const bem = (block: string, modifiers: Array<string | false | undefined>) => {
+function bem(block: string, modifiers: Array<string | false | undefined>) {
   const base = block;
-  const mods = modifiers.filter(Boolean).map(m => `${base}--${m}`);
+  const mods = modifiers.filter(Boolean).map(mod => `${base}--${mod}`);
   return [base, ...mods].join(' ');
-};
-
-type FocusableRef = React.RefObject<HTMLElement> | React.MutableRefObject<HTMLElement>;
+}
 
 function useLockBodyScroll(active: boolean) {
   useLayoutEffect(() => {
     if (!active) return;
-    const prev = document.documentElement.style.overflow;
+    const originalOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
-    return () => { document.documentElement.style.overflow = prev; };
+    return () => {
+      document.documentElement.style.overflow = originalOverflow;
+    };
   }, [active]);
 }
 
-function useFocusTrap(containerRef: FocusableRef, active: boolean, initialFocusRef?: React.RefObject<HTMLElement>) {
+function useFocusTrap(containerRef: React.RefObject<HTMLElement>, active: boolean) {
   useEffect(() => {
     if (!active) return;
-    const container = containerRef.current as HTMLElement | null;
+    const container = containerRef.current;
     if (!container) return;
 
-    const selectors = [
+    const focusableSelectors = [
       'a[href]',
-      'button:not([disabled])',
+      'area[href]',
       'input:not([disabled])',
       'select:not([disabled])',
       'textarea:not([disabled])',
+      'button:not([disabled])',
+      'iframe',
+      'object',
+      'embed',
       '[tabindex]:not([tabindex="-1"])',
+      '[contenteditable]'
     ].join(',');
 
-    const getFocusable = () => Array.from(container.querySelectorAll<HTMLElement>(selectors))
+    const getFocusable = () => Array.from(container.querySelectorAll<HTMLElement>(focusableSelectors))
       .filter(el => !el.hasAttribute('disabled') && el.tabIndex !== -1 && !el.hasAttribute('inert'));
 
     const focusables = getFocusable();
-    const toFocus = initialFocusRef?.current || focusables[0] || container;
+    const toFocus = focusables[0] || container;
     toFocus?.focus();
 
-    function onKeyDown(e: KeyboardEvent) {
+    function handleKeyDown(e: KeyboardEvent) {
       if (e.key !== 'Tab') return;
       const list = getFocusable();
       if (list.length === 0) {
         e.preventDefault();
-        container?.focus();
+        container.focus();
         return;
       }
       const first = list[0];
@@ -79,291 +92,36 @@ function useFocusTrap(containerRef: FocusableRef, active: boolean, initialFocusR
           e.preventDefault();
           last.focus();
         }
-      } else if (document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     }
 
-    container.addEventListener('keydown', onKeyDown);
-    return () => container.removeEventListener('keydown', onKeyDown);
-  }, [containerRef, active, initialFocusRef]);
+    container.addEventListener('keydown', handleKeyDown);
+    return () => container.removeEventListener('keydown', handleKeyDown);
+  }, [containerRef, active]);
 }
 
-// Advanced drag physics with momentum, resistance, and visual feedback
-function useAdvancedDrag(
-  handleRef: React.RefObject<HTMLElement> | React.MutableRefObject<HTMLElement>,
-  side: DrawerSide,
-  active: boolean,
-  onClose: () => void
-) {
-  const [dragState, setDragState] = useState({
-    isDragging: false,
-    offset: 0,
-    velocity: 0,
-    progress: 0,
-    resistance: 1,
-    wrongDirectionScale: 1
-  });
-
-  const dragData = useRef({
-    startPoint: 0,
-    lastPoint: 0,
-    lastTime: 0,
-    velocityHistory: [] as number[],
-    scrollEl: null as HTMLElement | null,
-    startedInScrollableBody: false,
-    startScrollTop: 0
-  });
-
-  useEffect(() => {
-    if (!active) return;
-    const el = handleRef.current;
-    if (!el) return;
-
-    const CLOSE_THRESHOLD = 0.4; // 40% drag to close
-    const VELOCITY_THRESHOLD = 0.5; // Fast swipe threshold
-    const MAX_RESISTANCE_ZONE = 0.2; // 20% over-drag with resistance
-
-    function getPoint(e: PointerEvent | TouchEvent) {
-      const point = 'touches' in e ? e.touches[0] : e;
-      return side === 'left' || side === 'right' ? point.clientX : point.clientY;
-    }
-
-    function getMaxDragDistance() {
-      const rect = el.getBoundingClientRect();
-      return side === 'left' || side === 'right' ? rect.width : rect.height;
-    }
-
-    function calculateResistance(progress: number) {
-      if (progress <= 1) return 1;
-      // Apply exponential resistance for over-drag
-      const overDrag = progress - 1;
-      return Math.max(0.1, 1 - (overDrag / MAX_RESISTANCE_ZONE) * 0.9);
-    }
-
-    function onPointerStart(e: PointerEvent | TouchEvent) {
-      // Only start drag if not clicking on interactive elements
-      const target = e.target as HTMLElement;
-      if (target.closest('button, a, input, select, textarea, [role="button"]')) {
-        return; // Allow normal click behavior
-      }
-      
-      const point = getPoint(e);
-      const panelEl = el as HTMLElement;
-      const bodyEl = target.closest('.drawer__body') as HTMLElement | null;
-      dragData.current = {
-        startPoint: point,
-        lastPoint: point,
-        lastTime: Date.now(),
-        velocityHistory: [],
-        scrollEl: bodyEl,
-        startedInScrollableBody: !!bodyEl,
-        startScrollTop: bodyEl ? bodyEl.scrollTop : 0
-      };
-      
-      setDragState(prev => ({ ...prev, isDragging: true }));
-      
-      if ('setPointerCapture' in el && 'pointerId' in e) {
-        el.setPointerCapture((e as PointerEvent).pointerId);
-      }
-    }
-
-    function onPointerMove(e: PointerEvent | TouchEvent) {
-      if (!dragData.current.startPoint) return;
-
-      const point = getPoint(e);
-      const now = Date.now();
-      const timeDelta = now - dragData.current.lastTime;
-      
-      if (timeDelta > 0) {
-        const pointDelta = point - dragData.current.lastPoint;
-        const rawVelocity = pointDelta / timeDelta; // px/ms
-        // Project velocity into the drawer close direction
-        const directionalVelocity = (() => {
-          switch (side) {
-            case 'left': return -rawVelocity;   // left closes when moving left (negative Y), invert
-            case 'right': return rawVelocity;   // right closes when moving right
-            case 'top': return -rawVelocity;    // top closes when moving up
-            case 'bottom': return rawVelocity;  // bottom closes when moving down
-          }
-        })();
-
-        // Keep velocity history for momentum calculation (directional)
-        dragData.current.velocityHistory.push(directionalVelocity);
-        if (dragData.current.velocityHistory.length > 5) {
-          dragData.current.velocityHistory.shift();
-        }
-      }
-
-      const totalDelta = point - dragData.current.startPoint;
-      const maxDistance = getMaxDragDistance();
-      
-      // Calculate natural drag direction
-      let naturalDelta: number;
-      switch (side) {
-        case 'left': naturalDelta = -totalDelta; break;
-        case 'right': naturalDelta = totalDelta; break;
-        case 'top': naturalDelta = -totalDelta; break;
-        case 'bottom': naturalDelta = totalDelta; break;
-      }
-
-      // Decide whether to prevent default scrolling based on bottom-sheet state
-      const panelEl = el as HTMLElement;
-      const sheetScrollState = panelEl?.getAttribute('data-sheet-scroll');
-      const isSheetFreeScroll = side === 'bottom' && sheetScrollState === 'free';
-      const bodyEl = dragData.current.scrollEl;
-      const isAtTop = bodyEl ? bodyEl.scrollTop <= 0 : true;
-      // When free-scroll:
-      // - Upward small drags near top: intercept (stretch), else allow scroll
-      // - Downward small drags near top: intercept (close), else allow scroll
-      let shouldIntercept = true;
-      if (isSheetFreeScroll) {
-        const SMALL_DRAG_PX = 24;
-        if (naturalDelta < 0) {
-          // upward
-          shouldIntercept = isAtTop && Math.abs(naturalDelta) <= SMALL_DRAG_PX;
-        } else {
-          // downward
-          shouldIntercept = isAtTop && Math.abs(naturalDelta) <= SMALL_DRAG_PX;
-        }
-      }
-      if (shouldIntercept) {
-        e.preventDefault();
-      } else {
-        // Let content scroll naturally and don't apply drawer transforms
-        dragData.current.lastPoint = point;
-        dragData.current.lastTime = now;
-        if (dragState.isDragging) {
-          setDragState(prev => ({
-            ...prev,
-            isDragging: false,
-            offset: 0,
-            velocity: 0,
-            progress: 0,
-            resistance: 1,
-            wrongDirectionScale: 1
-          }));
-        }
-        return;
-      }
-
-      // Handle both correct and wrong direction drags
-      let adjustedOffset: number;
-      let progress: number;
-      let resistance: number;
-      
-      if (naturalDelta >= 0) {
-        // Correct direction - normal drag behavior
-        const rawProgress = naturalDelta / maxDistance;
-        resistance = calculateResistance(rawProgress);
-        adjustedOffset = naturalDelta * resistance;
-        progress = Math.min(rawProgress, 1 + MAX_RESISTANCE_ZONE);
-      } else {
-        // Wrong direction - use subtle scale feedback instead of movement
-        const wrongDirectionDelta = Math.abs(naturalDelta);
-        const maxWrongDrag = maxDistance * 0.1; // Max 10% for scale calculation
-        const wrongProgress = Math.min(wrongDirectionDelta / maxWrongDrag, 1);
-        
-        // Calculate scale factor (slightly expand in the drag axis)
-        const scaleAmount = 1 + (wrongProgress * 0.015); // Max 1.5% expansion
-        
-        adjustedOffset = 0; // No movement for wrong direction
-        progress = 0; // No closing progress for wrong direction
-        resistance = scaleAmount;
-      }
-
-      setDragState({
-        isDragging: true,
-        offset: adjustedOffset,
-        velocity: dragData.current.velocityHistory.slice(-1)[0] || 0, // directional last velocity
-        progress,
-        resistance,
-        wrongDirectionScale: resistance
-      });
-
-      dragData.current.lastPoint = point;
-      dragData.current.lastTime = now;
-    }
-
-    function onPointerEnd() {
-      if (!dragData.current.startPoint) return;
-
-      const { velocityHistory } = dragData.current;
-      // Use the maximum directional velocity over the last few samples
-      const maxDirectionalVelocity = velocityHistory.length > 0
-        ? Math.max(0, ...velocityHistory)
-        : 0;
-
-      // Only close if:
-      // - Drag progressed sufficiently in the close direction, OR
-      // - Velocity in the close direction is high enough and user moved at least a tiny bit in that direction
-      const MIN_PROGRESS_FOR_VELOCITY_CLOSE = 0.02;
-      const shouldClose = (dragState.progress >= CLOSE_THRESHOLD) 
-        || (maxDirectionalVelocity >= VELOCITY_THRESHOLD && dragState.progress >= MIN_PROGRESS_FOR_VELOCITY_CLOSE);
-
-      if (shouldClose) {
-        onClose();
-      }
-
-      // Reset drag state
-      setDragState({
-        isDragging: false,
-        offset: 0,
-        velocity: 0,
-        progress: 0,
-        resistance: 1,
-        wrongDirectionScale: 1
-      });
-
-      dragData.current = {
-        startPoint: 0,
-        lastPoint: 0,
-        lastTime: 0,
-        velocityHistory: [],
-        scrollEl: null,
-        startedInScrollableBody: false,
-        startScrollTop: 0
-      };
-    }
-
-    // Support both pointer and touch events directly on panel
-    el.addEventListener('pointerdown', onPointerStart);
-    el.addEventListener('pointermove', onPointerMove);
-    el.addEventListener('pointerup', onPointerEnd);
-    el.addEventListener('pointercancel', onPointerEnd);
-    
-    el.addEventListener('touchstart', onPointerStart, { passive: false });
-    el.addEventListener('touchmove', onPointerMove, { passive: false });
-    el.addEventListener('touchend', onPointerEnd);
-    el.addEventListener('touchcancel', onPointerEnd);
-
-    return () => {
-      el.removeEventListener('pointerdown', onPointerStart);
-      el.removeEventListener('pointermove', onPointerMove);
-      el.removeEventListener('pointerup', onPointerEnd);
-      el.removeEventListener('pointercancel', onPointerEnd);
-      
-      el.removeEventListener('touchstart', onPointerStart);
-      el.removeEventListener('touchmove', onPointerMove);
-      el.removeEventListener('touchend', onPointerEnd);
-      el.removeEventListener('touchcancel', onPointerEnd);
-    };
-  }, [handleRef, side, active, onClose, dragState.progress]);
-
-  return dragState;
-}
+// Map default bottom-sheet heights by size (must mirror Drawer.scss)
+const BOTTOM_SHEET_BASE_HEIGHT_VH: Record<Exclude<DrawerSize, 'fullscreen'>, number> = {
+  s: 55,
+  m: 65,
+  l: 75,
+  xl: 88,
+};
 
 export const Drawer: React.FC<DrawerProps> = ({
   open,
   onClose,
-  side = 'left',
+  side = 'right',
   size = 'm',
-  dismissible = true,
   swipeToClose = true,
+  dismissible = true,
   backdrop = true,
-  trapFocus = true,
-  initialFocusRef,
+  trapFocus = false,
   className,
   backdropClassName,
   panelClassName,
@@ -375,53 +133,31 @@ export const Drawer: React.FC<DrawerProps> = ({
   const id = useId();
   const portalRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
-  const isBottomSide = side === 'bottom';
-  // Bottom-sheet dynamic height management (two-state behavior)
-  const [sheetHeightPx, setSheetHeightPx] = useState<number | null>(null);
-  const [isSheetExpanding, setIsSheetExpanding] = useState(false);
-  const [sheetStretchScale, setSheetStretchScale] = useState(1);
-  const sheetMaxHeightPxRef = useRef<number>(0);
-  const sheetContentHeightPxRef = useRef<number>(0);
-  const sheetDragRef = useRef<{
-    active: boolean;
-    startY: number;
-    startHeight: number;
-    startedOnBody?: boolean;
-    startScrollTop?: number;
-  } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle opening/closing animations with safe initial mount
-  const isFirstMountRef = useRef(true);
-  useEffect(() => {
-    if (open) {
-      setShouldRender(true);
-      let raf1 = 0; let raf2 = 0;
-      raf1 = requestAnimationFrame(() => {
-        // Force layout so initial transform is applied
-        const panel = panelRef.current;
-        if (panel) {
-          // Reset inline transform so CSS side transform takes effect for new side
-          panel.style.transform = '';
-          void panel.getBoundingClientRect();
-        }
-        raf2 = requestAnimationFrame(() => {
-          setIsAnimating(true);
-          isFirstMountRef.current = false;
-        });
-      });
-      return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
-    } else {
-      setIsAnimating(false);
-      const timer = setTimeout(() => {
-        setShouldRender(false);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [open]);
+  // Bottom-sheet behavior flags
+  const isBottomSheet = side === 'bottom' && size !== 'fullscreen';
+  const maxSheetHeightVh = 90; // requested max height
+  const baseSheetHeightVh = useMemo(() => {
+    if (!isBottomSheet) return 0;
+    return BOTTOM_SHEET_BASE_HEIGHT_VH[size as Exclude<DrawerSize, 'fullscreen'>] ?? 65;
+  }, [isBottomSheet, size]);
 
-  // create portal mount
+  // State for expansion and scroll gating
+  const [isExpandedSheet, setIsExpandedSheet] = useState(false);
+  const [sheetScrollState, setSheetScrollState] = useState<'locked' | 'free'>(isBottomSheet ? 'locked' : 'free');
+  const [inlinePanelHeightVh, setInlinePanelHeightVh] = useState<number | null>(null);
+
+  // Drag state
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartPointRef = useRef<number>(0);
+  const dragDeltaRef = useRef<number>(0); // positive == closing direction (down for bottom)
+  const isActiveDragRef = useRef<boolean>(false);
+  const lastMoveTsRef = useRef<number>(0);
+  const lastMoveDeltaRef = useRef<number>(0);
+  const startedOnScrollableRef = useRef<boolean>(false);
+
+  // Create portal root
   useEffect(() => {
     let root = document.getElementById('drawer-root');
     if (!root) {
@@ -432,247 +168,234 @@ export const Drawer: React.FC<DrawerProps> = ({
     portalRef.current = root as HTMLElement;
   }, []);
 
-  // esc to close
+  // ESC to close
   useEffect(() => {
     if (!open || !dismissible) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, dismissible, onClose]);
 
-  useLockBodyScroll(shouldRender);
-  // Always call the hook; enable/disable via flag to satisfy hooks rule
-  useFocusTrap(panelRef as React.RefObject<HTMLElement>, shouldRender && trapFocus, initialFocusRef);
+  // Lock body scroll while open
+  useLockBodyScroll(open);
+  // Focus trap
+  useFocusTrap(containerRef as React.RefObject<HTMLElement>, open && trapFocus);
 
-  // Temporarily disable browser pull-to-refresh/overscroll while drawer is open
+  // Reset state when opening/closing
   useEffect(() => {
-    if (!shouldRender) return;
-    const htmlStyle = document.documentElement.style;
-    const bodyStyle = document.body.style;
-    const prevHtml = htmlStyle.getPropertyValue('overscroll-behavior');
-    const prevHtmlY = htmlStyle.getPropertyValue('overscroll-behavior-y');
-    const prevBody = bodyStyle.getPropertyValue('overscroll-behavior');
-    const prevBodyY = bodyStyle.getPropertyValue('overscroll-behavior-y');
-    htmlStyle.setProperty('overscroll-behavior', 'none');
-    htmlStyle.setProperty('overscroll-behavior-y', 'none');
-    bodyStyle.setProperty('overscroll-behavior', 'none');
-    bodyStyle.setProperty('overscroll-behavior-y', 'none');
-    return () => {
-      if (prevHtml) htmlStyle.setProperty('overscroll-behavior', prevHtml);
-      else htmlStyle.removeProperty('overscroll-behavior');
-      if (prevHtmlY) htmlStyle.setProperty('overscroll-behavior-y', prevHtmlY);
-      else htmlStyle.removeProperty('overscroll-behavior-y');
-      if (prevBody) bodyStyle.setProperty('overscroll-behavior', prevBody);
-      else bodyStyle.removeProperty('overscroll-behavior');
-      if (prevBodyY) bodyStyle.setProperty('overscroll-behavior-y', prevBodyY);
-      else bodyStyle.removeProperty('overscroll-behavior-y');
-    };
-  }, [shouldRender]);
-
-  // Initialize bottom-sheet height and constraints when opened and for bottom side
-  useLayoutEffect(() => {
-    if (!shouldRender || !isBottomSide) {
-      setSheetHeightPx(null);
-      setIsSheetExpanding(false);
-      setSheetStretchScale(1);
-      return;
+    if (open) {
+      setIsExpandedSheet(false);
+      setSheetScrollState(isBottomSheet ? 'locked' : 'free');
+      setInlinePanelHeightVh(isBottomSheet ? baseSheetHeightVh : null);
+      dragDeltaRef.current = 0;
+      isActiveDragRef.current = false;
+      setIsDragging(false);
+    } else {
+      setInlinePanelHeightVh(null);
+      setIsExpandedSheet(false);
+      setSheetScrollState('free');
     }
+  }, [open, isBottomSheet, baseSheetHeightVh]);
+
+  // Helpers
+  const axis = side === 'left' || side === 'right' ? 'x' : 'y';
+
+  const getBodyScrollableEl = useCallback((): HTMLElement | null => {
+    const panel = panelRef.current;
+    if (!panel) return null;
+    return panel.querySelector('.drawer__body') as HTMLElement | null;
+  }, []);
+
+  const pxToVh = useCallback((px: number) => {
+    const vhUnit = window.innerHeight / 100;
+    return px / vhUnit;
+  }, []);
+
+  const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!swipeToClose) return;
+    if (e.button !== 0) return; // only primary
     const panel = panelRef.current;
     if (!panel) return;
-    const viewportH = window.innerHeight || document.documentElement.clientHeight;
-    // Keep a very small gap from top for status bar and aesthetic (~2%)
-    const maxH = Math.max(0, Math.floor(viewportH * 0.90));
-    sheetMaxHeightPxRef.current = maxH;
-    // Measure full content height of the panel
-    const fullContentH = panel.scrollHeight;
-    sheetContentHeightPxRef.current = fullContentH;
-    // Initial height: content-fit up to 60% viewport for long content, else content height
-    const initialH = Math.min(fullContentH, Math.floor(viewportH * 0.60));
-    setSheetHeightPx(initialH);
-    setIsSheetExpanding(false);
-    setSheetStretchScale(1);
-  }, [shouldRender, isBottomSide]);
 
-  // Bottom-sheet upward drag to expand until max height; only for bottom side
-  useEffect(() => {
-    if (!shouldRender || !isBottomSide) return;
-    const el = panelRef.current as HTMLDivElement | null;
-    if (!el) return;
-    const target = el as HTMLDivElement;
+    // Capture to keep events on Android
+    try { panel.setPointerCapture?.(e.pointerId); } catch {}
 
-    function onTouchStart(ev: TouchEvent | PointerEvent) {
-      const y = 'touches' in ev ? (ev.touches[0]?.clientY ?? 0) : (ev as PointerEvent).clientY;
-      const currentHeight = sheetHeightPx ?? target.getBoundingClientRect().height;
-      const startTarget = ev.target as HTMLElement | null;
-      const bodyEl = startTarget?.closest('.drawer__body') as HTMLElement | null;
-      sheetDragRef.current = {
-        active: true,
-        startY: y,
-        startHeight: currentHeight,
-        startedOnBody: !!bodyEl,
-        startScrollTop: bodyEl ? bodyEl.scrollTop : 0,
-      };
-      setIsSheetExpanding(true);
-    }
-    function onTouchMove(ev: TouchEvent | PointerEvent) {
-      if (!sheetDragRef.current?.active) return;
-      const y = 'touches' in ev ? (ev.touches[0]?.clientY ?? 0) : (ev as PointerEvent).clientY;
-      const dy = sheetDragRef.current.startY - y; // up = positive
-      if (dy <= 0) return; // only handle upward expand here
-      const maxH = sheetMaxHeightPxRef.current || target.getBoundingClientRect().height;
-      const desiredH = sheetDragRef.current.startHeight + dy;
-      const newH = Math.max(0, Math.min(maxH, desiredH));
-      const atLimit = newH >= maxH - 0.5;
-      const startedOnBody = !!sheetDragRef.current.startedOnBody;
-      const startScrollTop = sheetDragRef.current.startScrollTop || 0;
+    dragStartPointRef.current = axis === 'x' ? e.clientX : e.clientY;
+    dragDeltaRef.current = 0;
+    lastMoveTsRef.current = e.timeStamp;
+    lastMoveDeltaRef.current = 0;
 
-      // If at max height and the gesture started on body with existing scroll (>0), allow native scroll
-      if (atLimit && startedOnBody && startScrollTop > 0) {
-        setIsSheetExpanding(false);
-        return; // do not preventDefault; let content scroll
+    // Determine if started on scrollable area and can scroll
+    const body = getBodyScrollableEl();
+    const startedOnBody = !!body && body.contains(e.target as Node);
+    const bodyScrollTop = startedOnBody && body ? body.scrollTop : 0;
+    startedOnScrollableRef.current = startedOnBody && bodyScrollTop > 0 && isBottomSheet && isExpandedSheet;
+
+    isActiveDragRef.current = !startedOnScrollableRef.current;
+    setIsDragging(isActiveDragRef.current);
+  }, [axis, swipeToClose, getBodyScrollableEl, isBottomSheet, isExpandedSheet]);
+
+  const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!swipeToClose) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const start = dragStartPointRef.current;
+    const currentPoint = axis === 'x' ? e.clientX : e.clientY;
+    const delta = (currentPoint - start) * (axis === 'x' ? (side === 'right' ? 1 : -1) : (side === 'bottom' ? 1 : -1));
+    // Now, positive delta means moving toward closing direction regardless of side
+    dragDeltaRef.current = delta;
+
+    // Decide to intercept from scroll if user drags toward close and scroll is at top
+    if (!isActiveDragRef.current && startedOnScrollableRef.current) {
+      const body = getBodyScrollableEl();
+      const canIntercept = body && body.scrollTop <= 0 && delta > 0; // pulling down to close
+      if (canIntercept) {
+        isActiveDragRef.current = true;
+        setIsDragging(true);
+        // Lock internal scroll while dragging
+        setSheetScrollState('locked');
+      } else {
+        return; // let it scroll
       }
+    }
 
-      setSheetHeightPx(newH);
+    if (isActiveDragRef.current) {
+      // Prevent default scroll while dragging for Android consistency
+      if (typeof e.preventDefault === 'function') e.preventDefault();
+      lastMoveDeltaRef.current = delta;
+      lastMoveTsRef.current = e.timeStamp;
 
-      // Compute stretch when attempting to go beyond max height
-      const overDrag = Math.max(0, desiredH - maxH);
-      const STRETCH_ZONE_PX = 100;
-      const STRETCH_MAX = 0.02; // up to +2% scale
-      const stretchRatio = Math.min(overDrag / STRETCH_ZONE_PX, 1);
-      setSheetStretchScale(1 + stretchRatio * STRETCH_MAX);
-
-      // At limit: only block small upward drags to keep stretch; otherwise allow scroll
-      if (atLimit) {
-        const SMALL_UPWARD_PX = 24;
-        if (dy <= SMALL_UPWARD_PX) {
-          ev.preventDefault();
+      // Handle bottom-sheet specific expansion logic
+      if (isBottomSheet) {
+        // delta > 0 => moving down to close; delta < 0 => moving up (expand)
+        if (!isExpandedSheet && delta < 0) {
+          // Stretch height up to 90vh
+          const growVh = pxToVh(Math.abs(delta));
+          const nextVh = Math.min(maxSheetHeightVh, baseSheetHeightVh + growVh);
+          setInlinePanelHeightVh(nextVh);
+          setSheetScrollState(nextVh >= maxSheetHeightVh ? 'free' : 'locked');
+        } else if (isExpandedSheet && delta < 0) {
+          // Wrong direction while expanded (pushing up more) -> show subtle stretch via scale in render
+        } else if (isExpandedSheet && delta > 0) {
+          // Pulling down from expanded -> candidate to collapse/close. Keep height at max, we translate visually via style
         }
-        return;
       }
 
-      // Not at limit: expanding height, block default to avoid page scroll
-      ev.preventDefault();
+      // Trigger re-render via state change flag
+      setIsDragging(true);
     }
-    function onTouchEnd() {
-      if (!sheetDragRef.current) return;
-      sheetDragRef.current.active = false;
-      setIsSheetExpanding(false);
-      // Reset stretch on release
-      setSheetStretchScale(1);
+  }, [axis, side, swipeToClose, isBottomSheet, isExpandedSheet, baseSheetHeightVh, pxToVh, maxSheetHeightVh, getBodyScrollableEl]);
+
+  const onPointerUp = useCallback(() => {
+    if (!swipeToClose) return;
+    const delta = dragDeltaRef.current;
+
+    // Decide outcome based on state and delta
+    if (isBottomSheet) {
+      if (!isExpandedSheet) {
+        // We were collapsed and possibly expanded by dragging up
+        const grownByVh = (inlinePanelHeightVh ?? baseSheetHeightVh) - baseSheetHeightVh;
+        const expandedEnough = (baseSheetHeightVh + grownByVh) >= (baseSheetHeightVh + (maxSheetHeightVh - baseSheetHeightVh) * 0.35);
+        if (delta < 0 && expandedEnough) {
+          setIsExpandedSheet(true);
+          setInlinePanelHeightVh(maxSheetHeightVh);
+          setSheetScrollState('free');
+        } else {
+          // Snap back to base height
+          setIsExpandedSheet(false);
+          setInlinePanelHeightVh(baseSheetHeightVh);
+          setSheetScrollState('locked');
+        }
+      } else {
+        // Expanded state: dragging down
+        const closeThresholdPx = Math.max(40, window.innerHeight * 0.12);
+        const collapseThresholdPx = Math.max(24, window.innerHeight * 0.06);
+        if (delta > closeThresholdPx) {
+          onClose();
+        } else if (delta > collapseThresholdPx) {
+          // Collapse back to base height and lock scroll
+          setIsExpandedSheet(false);
+          setInlinePanelHeightVh(baseSheetHeightVh);
+          setSheetScrollState('locked');
+        } else {
+          // Stay expanded
+          setIsExpandedSheet(true);
+          setInlinePanelHeightVh(maxSheetHeightVh);
+          setSheetScrollState('free');
+        }
+      }
+    } else {
+      // Non-bottom sheets: simple close threshold
+      const panel = panelRef.current;
+      const panelLen = panel ? (axis === 'x' ? panel.offsetWidth : panel.offsetHeight) : 300;
+      const shouldClose = delta > panelLen * 0.25;
+      if (shouldClose) onClose();
     }
 
-    target.addEventListener('touchstart', onTouchStart, { passive: true });
-    target.addEventListener('touchmove', onTouchMove as EventListener, { passive: false });
-    target.addEventListener('touchend', onTouchEnd);
-    target.addEventListener('pointerdown', onTouchStart as EventListener);
-    target.addEventListener('pointermove', onTouchMove as EventListener);
-    target.addEventListener('pointerup', onTouchEnd as EventListener);
-
-    return () => {
-      target.removeEventListener('touchstart', onTouchStart as EventListener);
-      target.removeEventListener('touchmove', onTouchMove as EventListener);
-      target.removeEventListener('touchend', onTouchEnd as EventListener);
-      target.removeEventListener('pointerdown', onTouchStart as EventListener);
-      target.removeEventListener('pointermove', onTouchMove as EventListener);
-      target.removeEventListener('pointerup', onTouchEnd as EventListener);
-    };
-  }, [shouldRender, isBottomSide, sheetHeightPx]);
+    // Reset drag state
+    dragDeltaRef.current = 0;
+    isActiveDragRef.current = false;
+    setIsDragging(false);
+  }, [axis, swipeToClose, isBottomSheet, isExpandedSheet, inlinePanelHeightVh, baseSheetHeightVh, maxSheetHeightVh, onClose]);
 
   const handleBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!dismissible) return;
     if (e.target === e.currentTarget) onClose();
   }, [dismissible, onClose]);
 
-  const dragState = useAdvancedDrag(panelRef as React.RefObject<HTMLElement>, side, shouldRender && swipeToClose, onClose);
+  if (!portalRef.current) return null;
 
-  if (!portalRef.current || !shouldRender) return null;
-
-  const block = bem('drawer', [
-    'mounted',
-    isAnimating && 'open',
+  const blockClass = bem('drawer', [
+    open && 'open',
     `side-${side}`,
     size === 'fullscreen' ? 'fullscreen' : `size-${size}`,
   ]);
 
-  // Apply advanced drag transforms with resistance and progress feedback
-  const dragStyle: React.CSSProperties = dragState.isDragging ? {
-    transform: (() => {
-      const translatePart = (() => {
-        if (dragState.offset === 0) return '';
-        switch (side) {
-          case 'left': return `translate3d(${-dragState.offset}px, 0, 0)`;
-          case 'right': return `translate3d(${dragState.offset}px, 0, 0)`;
-          case 'top': return `translate3d(0, ${-dragState.offset}px, 0)`;
-          case 'bottom': return `translate3d(0, ${dragState.offset}px, 0)`;
-        }
-      })();
+  // Compute dynamic transform and scale while dragging
+  const delta = dragDeltaRef.current;
+  let transform = '';
+  let scaleTransform = '';
 
-      // iOS-like stretch effect
-      const shouldScaleWrong = dragState.progress === 0 && dragState.wrongDirectionScale > 1.001;
-      const shouldScaleOver = dragState.progress > 1; // over-drag beyond full travel
-
-      let scaleValue: number | undefined;
-      if (shouldScaleWrong) {
-        scaleValue = dragState.wrongDirectionScale; // up to ~1.015
-      } else if (shouldScaleOver) {
-        const extra = Math.min(Math.max(dragState.progress - 1, 0), 0.2); // 0..0.2
-        scaleValue = 1 + extra * 0.075; // max ~1.015
+  if (isDragging) {
+    if (axis === 'y') {
+      // Bottom or Top
+      const signedDelta = delta * (side === 'bottom' ? 1 : -1); // positive when moving away from open position
+      if (signedDelta >= 0) {
+        transform = `translate3d(0, ${signedDelta}px, 0)`;
+      } else {
+        // Wrong-direction stretch feedback using scale
+        const stretch = Math.min(Math.abs(signedDelta) / 200, 0.04);
+        scaleTransform = ` scale(${1 + stretch})`;
+        transform = 'translate3d(0, 0, 0)';
       }
-
-      const scalePart = typeof scaleValue === 'number' ? (() => {
-        switch (side) {
-          case 'left':
-          case 'right':
-            return ` scaleX(${scaleValue})`;
-          case 'top':
-          case 'bottom':
-            return ` scaleY(${scaleValue})`;
-        }
-      })() : '';
-
-      return `${translatePart}${scalePart}`.trim();
-    })(),
-    transformOrigin: (() => {
-      switch (side) {
-        case 'left': return 'left center';
-        case 'right': return 'right center';
-        case 'top': return 'center top';
-        case 'bottom': return 'center bottom';
+    } else {
+      // Left or Right
+      const signedDelta = delta * (side === 'right' ? 1 : -1);
+      if (signedDelta >= 0) {
+        transform = `translate3d(${signedDelta}px, 0, 0)`;
+      } else {
+        const stretch = Math.min(Math.abs(signedDelta) / 200, 0.04);
+        scaleTransform = ` scale(${1 + stretch})`;
+        transform = 'translate3d(0, 0, 0)';
       }
-    })(),
-    transition: 'none', // Disable transitions during drag
-    opacity: 1, // Keep content fully visible during drag
-    willChange: 'transform, opacity', // Optimize for animations
-  } : {
-    willChange: 'auto' // Reset when not dragging
-  };
+    }
+  }
 
-  // Backdrop opacity based on drag progress
-  const backdropStyle: React.CSSProperties = dragState.isDragging ? {
-    opacity: Math.max(0.1, 1 - dragState.progress * 0.9),
-    transition: 'none'
-  } : {};
+  const panelInlineStyle: React.CSSProperties = {};
+  if (transform) panelInlineStyle.transform = transform + scaleTransform;
+  if (isBottomSheet) {
+    const hVh = inlinePanelHeightVh ?? baseSheetHeightVh;
+    panelInlineStyle.height = `${hVh}vh`;
+    panelInlineStyle.touchAction = (sheetScrollState === 'free' ? 'pan-y' : 'none') as React.CSSProperties["touchAction"];
+  }
 
-  const effectiveMaxForScroll = (() => {
-    const maxH = sheetMaxHeightPxRef.current || 0;
-    const contentH = sheetContentHeightPxRef.current || 0;
-    if (maxH === 0) return contentH;
-    return Math.min(maxH, contentH);
-  })();
-  const isSheetScrollableLocked = isBottomSide
-    && (sheetHeightPx ?? 0) < effectiveMaxForScroll;
-
-  const STRETCH_READY_PX = 64;
-  const atStretchZone = isBottomSide && (sheetHeightPx ?? 0) >= (effectiveMaxForScroll - STRETCH_READY_PX);
-
-  const content = (
-    <div className={[block, className].filter(Boolean).join(' ')} role="presentation">
+  const container = (
+    <div ref={containerRef} className={[blockClass, className].filter(Boolean).join(' ')} role="presentation">
       {backdrop && (
-        <div 
-          className={["drawer__backdrop", backdropClassName].filter(Boolean).join(' ')} 
-          onClick={handleBackdropClick}
-          style={backdropStyle}
-        />
+        <div className={["drawer__backdrop", backdropClassName].filter(Boolean).join(' ')} onClick={handleBackdropClick} />
       )}
       <div
         ref={panelRef}
@@ -682,70 +405,38 @@ export const Drawer: React.FC<DrawerProps> = ({
         aria-label={ariaLabel}
         aria-labelledby={ariaLabel ? undefined : ariaLabelledby || `${id}-title`}
         aria-describedby={ariaDescribedby || `${id}-description`}
-        tabIndex={-1}
-        style={{
-          ...(() => {
-            // Apply stretch scale only at top (stretch zone) for bottom sheet
-            if (dragState.isDragging && side === 'bottom' && atStretchZone) {
-              const baseTransform = (() => {
-                if (dragState.offset === 0) return '';
-                return `translate3d(0, ${dragState.offset}px, 0)`;
-              })();
-              const scaleValue = Math.max(1, Math.min(sheetStretchScale, 1.02));
-              return {
-                transform: `${baseTransform} scaleY(${scaleValue})`.trim(),
-                transformOrigin: 'center bottom',
-                transition: 'none',
-                opacity: 1,
-                willChange: 'transform',
-              } as React.CSSProperties;
-            }
-            return dragStyle;
-          })(),
-          ...(isBottomSide && sheetHeightPx !== null ? { height: `${sheetHeightPx}px` } : {}),
-          ...(isBottomSide && sheetMaxHeightPxRef.current > 0 ? { maxHeight: `${sheetMaxHeightPxRef.current}px` } : {}),
-        }}
-        data-drag-progress={dragState.progress}
-        data-dragging={dragState.isDragging}
-        data-sheet={isBottomSide ? 'true' : undefined}
-        data-sheet-scroll={isBottomSide ? (isSheetScrollableLocked ? 'locked' : 'free') : undefined}
+        data-dragging={isDragging ? 'true' : undefined}
+        data-sheet={isBottomSheet ? 'true' : undefined}
+        data-sheet-scroll={isBottomSheet ? sheetScrollState : undefined}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={panelInlineStyle}
       >
-        {dragState.isDragging && dragState.progress > 0 && (
-          <div className="drawer__drag-indicator" data-side={side}>
-            <div 
-              className="drawer__drag-progress" 
-              style={{ 
-                '--progress': `${Math.min(dragState.progress * 100, 100)}%`,
-                '--resistance': dragState.resistance 
-              } as React.CSSProperties}
-            />
-          </div>
-        )}
+        {/* Drag indicator slot - optional; style controlled by SCSS */}
+        <div className="drawer__drag-indicator" data-side={side} aria-hidden>
+          <div className="drawer__drag-progress" />
+        </div>
         {children}
       </div>
     </div>
   );
 
-  return ReactDOM.createPortal(content, portalRef.current);
+  return ReactDOM.createPortal(container, portalRef.current);
 };
 
-export interface DrawerHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-}
+export type DrawerHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 export const DrawerHeader: React.FC<DrawerHeaderProps> = ({ className, ...props }) => (
   <div className={["drawer__header", className].filter(Boolean).join(' ')} {...props} />
 );
 
-export interface DrawerBodyProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-}
+export type DrawerBodyProps = React.HTMLAttributes<HTMLDivElement>;
 export const DrawerBody: React.FC<DrawerBodyProps> = ({ className, ...props }) => (
   <div className={["drawer__body", className].filter(Boolean).join(' ')} {...props} />
 );
 
-export interface DrawerFooterProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-}
+export type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement>;
 export const DrawerFooter: React.FC<DrawerFooterProps> = ({ className, ...props }) => (
   <div className={["drawer__footer", className].filter(Boolean).join(' ')} {...props} />
 );
@@ -755,11 +446,10 @@ export const DrawerTitle: React.FC<DrawerTitleProps> = ({ className, as: Tag = '
   <Tag id={id} className={["drawer__title", className].filter(Boolean).join(' ')} {...props} />
 );
 
-export interface DrawerDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> { as?: 'p' | 'div' | 'span' }
+export interface DrawerDescriptionProps extends React.HTMLAttributes<HTMLElement> { as?: 'p' | 'div' | 'span' }
 export const DrawerDescription: React.FC<DrawerDescriptionProps> = ({ className, as: Tag = 'p', id, ...props }) => (
   <Tag id={id} className={["drawer__description", className].filter(Boolean).join(' ')} {...props} />
 );
 
 export default Drawer;
-
 
