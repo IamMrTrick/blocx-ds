@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "../styles/_index.scss";
-import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderNav } from '@/components/header';
+import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderNavMenu } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Main } from '@/components/layout';
+import { ToastProvider } from '@/components/ui/toast';
 
 export const metadata: Metadata = {
   title: "Blocx - Next.js Project",
@@ -24,14 +25,16 @@ export default function RootLayout({
                 <HeaderLogo alt="Blocx" href="/" />
               </HeaderLeft>
               <HeaderCenter>
-                <HeaderNav aria-label="Primary">{null}</HeaderNav>
+                <HeaderNavMenu />
               </HeaderCenter>
             </HeaderContainer>
           </HeaderMiddle>
         </Header>
-        <Main width="full">
-          {children}
-        </Main>
+        <ToastProvider>
+          <Main width="full" id="main">
+            {children}
+          </Main>
+        </ToastProvider>
         <Footer
           companyName="Blocx"
           description="Building the future of blockchain technology with innovative solutions and cutting-edge development tools."

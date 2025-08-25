@@ -1,0 +1,623 @@
+@use '../../../styles/tokens/colors';
+@use '../../../styles/tokens/spacing';
+@use '../../../styles/tokens/radius';
+@use '../../../styles/tokens/transitions';
+@use '../../../styles/tokens/zindex';
+
+// Toast Container
+.toast-container {
+  position: fixed;
+  z-index: var(--z-toast);
+  pointer-events: none;
+  max-width: 480px;
+  padding: var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+
+  // Position variants
+  &--top-left {
+    top: 0;
+    left: 0;
+  }
+
+  &--top-center {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &--top-right {
+    top: 0;
+    right: 0;
+  }
+
+  &--bottom-left {
+    bottom: 0;
+    left: 0;
+  }
+
+  &--bottom-center {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &--bottom-right {
+    bottom: 0;
+    right: 0;
+  }
+}
+
+// Hidden toasts counter
+.toast-hidden-counter {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+  pointer-events: auto;
+  margin-bottom: var(--spacing-8);
+}
+
+// Toast Item
+.toast {
+  position: relative;
+  pointer-events: auto;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.15),
+    0 10px 10px -5px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  min-width: 380px;
+  max-width: 480px;
+  overflow: hidden;
+  cursor: grab;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  will-change: transform, opacity;
+  touch-action: pan-x; // Allow horizontal pan for drag
+  -webkit-touch-callout: none; // Disable iOS callout
+  -webkit-user-select: none; // Disable text selection
+  
+  // فعلاً margin منفی رو حذف می‌کنم
+  // &:not(:first-child) {
+  //   margin-top: -60px;
+  // }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  // Dragging state
+  &[data-dragging="true"] {
+    cursor: grabbing;
+    transition: none;
+  }
+
+  // Progress bar
+  &__progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--border-secondary);
+    overflow: hidden;
+  }
+
+  &__progress-bar {
+    height: 100%;
+    background: var(--primary-09);
+    transition: width 0.1s linear;
+    animation: toast-progress 4s linear;
+  }
+
+  // Content wrapper
+  &__content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--spacing-16);
+    padding: var(--spacing-20) var(--spacing-24);
+    padding-top: var(--spacing-24); // Account for progress bar
+    position: relative;
+  }
+
+  // Icon
+  &__icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  // Text content
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: #1f2937;
+    margin-bottom: var(--spacing-4);
+  }
+
+  &__description {
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    color: #6b7280;
+  }
+
+  // Action button
+  &__action {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-6);
+    padding: var(--spacing-6) var(--spacing-12);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-top: 2px;
+
+    &:hover {
+      background: var(--bg-secondary);
+      border-color: var(--border-secondary);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  // Close button
+  &__close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 1);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  // Loading spinner
+  &__spinner {
+    animation: toast-spin 1s linear infinite;
+  }
+
+  // Type variants
+  &--success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    
+    .toast__icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .toast__title {
+      color: white;
+    }
+    
+    .toast__description {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .toast__progress-bar {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &--error {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    
+    .toast__icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .toast__title {
+      color: white;
+    }
+    
+    .toast__description {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .toast__progress-bar {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &--warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    
+    .toast__icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .toast__title {
+      color: white;
+    }
+    
+    .toast__description {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .toast__progress-bar {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &--info {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    
+    .toast__icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .toast__title {
+      color: white;
+    }
+    
+    .toast__description {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .toast__progress-bar {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &--loading {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    
+    .toast__icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .toast__title {
+      color: white;
+    }
+    
+    .toast__description {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .toast__progress-bar {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &--default {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    
+    .toast__icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .toast__title {
+      color: white;
+    }
+    
+    .toast__description {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .toast__progress-bar {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  // States - مثل کارت‌های پاسور روی هم
+  &:nth-child(1) {
+    transform: translateY(0) scale(1);
+    z-index: 5;
+    opacity: 1;
+  }
+  
+  &:nth-child(2) {
+    transform: translateY(-8px) scale(0.96);
+    z-index: 4;
+    opacity: 0.92;
+  }
+  
+  &:nth-child(3) {
+    transform: translateY(-14px) scale(0.92);
+    z-index: 3;
+    opacity: 0.84;
+  }
+  
+  &:nth-child(4) {
+    transform: translateY(-18px) scale(0.88);
+    z-index: 2;
+    opacity: 0.76;
+  }
+  
+  &:nth-child(5) {
+    transform: translateY(-20px) scale(0.84);
+    z-index: 1;
+    opacity: 0.68;
+  }
+  
+  &:nth-child(n+6) {
+    transform: translateY(-22px) scale(0.8);
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  &--hidden {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+    pointer-events: none;
+  }
+
+  &--removing {
+    // Default exit animation (top-right) - fallback
+    animation: toast-exit-top-right 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+  }
+
+// انیمیشن exit مخصوص هر موقعیت
+.toast-container--top-right .toast--removing {
+  animation: toast-exit-top-right 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+.toast-container--top-left .toast--removing {
+  animation: toast-exit-top-left 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+.toast-container--top-center .toast--removing {
+  animation: toast-exit-top-center 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+.toast-container--bottom-right .toast--removing {
+  animation: toast-exit-bottom-right 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+.toast-container--bottom-left .toast--removing {
+  animation: toast-exit-bottom-left 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+.toast-container--bottom-center .toast--removing {
+  animation: toast-exit-bottom-center 0.25s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+  
+  // انیمیشن enter بر اساس موقعیت container
+  .toast-container--top-right & {
+    animation: toast-enter-top-right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .toast-container--top-left & {
+    animation: toast-enter-top-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .toast-container--top-center & {
+    animation: toast-enter-top-center 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .toast-container--bottom-right & {
+    animation: toast-enter-bottom-right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .toast-container--bottom-left & {
+    animation: toast-enter-bottom-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .toast-container--bottom-center & {
+    animation: toast-enter-bottom-center 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+// Animations برای موقعیت‌های مختلف
+@keyframes toast-enter-top-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-exit-top-right {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+}
+
+@keyframes toast-enter-top-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-exit-top-left {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.9);
+  }
+}
+
+@keyframes toast-enter-top-center {
+  from {
+    opacity: 0;
+    transform: translateY(-100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-exit-top-center {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%) scale(0.9);
+  }
+}
+
+@keyframes toast-enter-bottom-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-exit-bottom-right {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+}
+
+@keyframes toast-enter-bottom-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-exit-bottom-left {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.9);
+  }
+}
+
+@keyframes toast-enter-bottom-center {
+  from {
+    opacity: 0;
+    transform: translateY(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-exit-bottom-center {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%) scale(0.9);
+  }
+}
+
+@keyframes toast-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes toast-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .toast-container {
+    left: var(--spacing-16) !important;
+    right: var(--spacing-16) !important;
+    max-width: none;
+    
+    &--top-center,
+    &--bottom-center {
+      transform: none;
+    }
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: none;
+  }
+}

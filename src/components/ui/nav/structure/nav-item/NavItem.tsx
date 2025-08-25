@@ -82,7 +82,7 @@ export const NavItem = forwardRef<
     // Handle Enter and Space for button-like behavior
     if (Component !== 'a' && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
-      onClick?.(event as any);
+      onClick?.(event as unknown as React.MouseEvent);
     }
     
     onKeyDown?.(event);
@@ -102,7 +102,7 @@ export const NavItem = forwardRef<
   ].filter(Boolean).join(' ');
 
   // Build props for the component
-  const componentProps: any = {
+  const componentProps: Record<string, unknown> = {
     className: navItemClasses,
     onClick: handleClick,
     onKeyDown: handleKeyDown,
@@ -137,7 +137,7 @@ export const NavItem = forwardRef<
         <Icon 
           name="loader" 
           className="nav-item__spinner" 
-          aria-hidden="true"
+          aria-hidden={true}
         />
       )}
 
@@ -146,7 +146,7 @@ export const NavItem = forwardRef<
         <Icon 
           name={icon} 
           className="nav-item__icon nav-item__icon--left"
-          aria-hidden="true"
+          aria-hidden={true}
         />
       )}
 
@@ -162,7 +162,7 @@ export const NavItem = forwardRef<
         <Icon 
           name={icon} 
           className="nav-item__icon nav-item__icon--right"
-          aria-hidden="true"
+          aria-hidden={true}
         />
       )}
 
@@ -171,15 +171,15 @@ export const NavItem = forwardRef<
         <Icon 
           name="external-link" 
           className="nav-item__external-icon"
-          aria-hidden="true"
+          aria-hidden={true}
         />
       )}
 
       {/* Badge */}
       {badge && (
         <Badge 
-          variant={badgeVariant}
-          size="sm"
+          variant={badgeVariant === 'danger' ? 'error' : badgeVariant as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}
+
           className="nav-item__badge"
         >
           {badge}

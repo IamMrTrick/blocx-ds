@@ -432,6 +432,10 @@
   
   /* Status aliases */
   --color-danger: var(--error-06);
+  
+  /* Accent aliases for interactive elements */
+  --accent-primary: var(--primary-05);
+  --accent-rgb: 127, 85, 218;
 }
 
 /* ===== Dark Theme Override ===== */

@@ -5,6 +5,8 @@
   display: block;
 }
 
+@import './components/components.scss';
+
 /* Token-based container */
 .landing__container {
   width: 100%;

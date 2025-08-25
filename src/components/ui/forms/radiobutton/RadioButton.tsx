@@ -227,7 +227,7 @@ const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(function Radi
   // Handle change events
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (groupContext?.onChange && value !== undefined) {
-      groupContext.onChange(value);
+      groupContext.onChange(String(value));
     } else if (checked === undefined) {
       setInternalChecked(e.target.checked);
     }

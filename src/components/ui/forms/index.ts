@@ -65,3 +65,31 @@ export {
   type OTPVariant, 
   type OTPType 
 } from './otp';
+
+// Switcher component
+export {
+  Switcher,
+  type SwitcherProps,
+  type SwitcherSize,
+  type SwitcherVariant
+} from './switcher';
+
+// DatePicker component
+export {
+  DatePicker,
+  type DatePickerProps,
+  type DatePickerSize,
+  type DatePickerVariant,
+  type DateFormat,
+  type DatePickerView
+} from './date-picker';
+
+// TimePicker component
+export {
+  TimePicker,
+  type TimePickerProps,
+  type TimePickerSize,
+  type TimePickerVariant,
+  type TimeFormat,
+  type TimeValue
+} from './time-picker';

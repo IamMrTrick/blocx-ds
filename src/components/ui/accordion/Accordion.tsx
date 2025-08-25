@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useCallback, useContext, useId, useMemo, useRef, useState, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState, useEffect } from 'react';
 import type { IconName } from '../icon';
 import { Icon } from '../icon';
 import './Accordion.scss';

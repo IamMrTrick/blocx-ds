@@ -6,7 +6,7 @@ import './Pagination.scss';
 export interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'default' | 'minimal' | 'compact';
@@ -109,7 +109,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     if (disabled || page < 1 || page > totalPages || page === currentPage) {
       return;
     }
-    onPageChange(page);
+    onPageChange?.(page);
   };
 
   const handleJumpToPage = (event: React.FormEvent<HTMLFormElement>) => {

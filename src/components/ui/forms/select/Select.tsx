@@ -661,7 +661,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
                         {groupName}
                       </div>
                     )}
-                    {groupOptions.map((option, index) => {
+                    {groupOptions.map((option) => {
                       const globalIndex = filteredOptions.indexOf(option);
                       return (
                         <div

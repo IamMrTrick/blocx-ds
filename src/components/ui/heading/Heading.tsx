@@ -45,7 +45,7 @@ export const Heading: React.FC<HeadingProps> = ({
   const headingSize = size || `h${level}` as HeadingSize;
   
   // Create the appropriate heading element
-  const Element = `h${level}` as keyof JSX.IntrinsicElements;
+  const Element = `h${level}` as keyof React.JSX.IntrinsicElements;
   
   const baseClass = 'heading';
   

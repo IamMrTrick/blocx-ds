@@ -15,8 +15,8 @@ export interface ValidationRule {
   pattern?: RegExp | { value: RegExp; message: string };
   min?: number | { value: number; message: string };
   max?: number | { value: number; message: string };
-  validate?: (value: any) => boolean | string;
-  custom?: (value: any, formData: Record<string, any>) => boolean | string;
+  validate?: (value: unknown) => boolean | string;
+  custom?: (value: unknown, formData: Record<string, unknown>) => boolean | string;
 }
 
 // Field error type
@@ -27,7 +27,7 @@ export interface FieldError {
 
 // Form state type
 export interface FormState {
-  values: Record<string, any>;
+  values: Record<string, unknown>;
   errors: Record<string, FieldError>;
   touched: Record<string, boolean>;
   isSubmitting: boolean;
@@ -40,36 +40,36 @@ export interface FormContextValue {
   state: FormState;
   register: (name: string, rules?: ValidationRule) => {
     name: string;
-    value: any;
-    onChange: (e: React.ChangeEvent<any>) => void;
-    onBlur: (e: React.FocusEvent<any>) => void;
+    value: unknown;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
     error?: string;
   };
-  setValue: (name: string, value: any) => void;
+  setValue: (name: string, value: unknown) => void;
   setError: (name: string, error: FieldError) => void;
   clearError: (name: string) => void;
   validate: (name?: string) => boolean;
-  reset: (values?: Record<string, any>) => void;
-  getValues: () => Record<string, any>;
-  watch: (name?: string) => any;
+  reset: (values?: Record<string, unknown>) => void;
+  getValues: () => Record<string, unknown>;
+  watch: (name?: string) => unknown;
 }
 
 // Form props
-export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onError'> {
+export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onError' | 'onChange'> {
   /** Form variant */
   variant?: FormVariant;
   /** Form size */
   size?: FormSize;
   /** Default form values */
-  defaultValues?: Record<string, any>;
+  defaultValues?: Record<string, unknown>;
   /** Form validation rules */
   validationRules?: Record<string, ValidationRule>;
   /** Submit handler */
-  onSubmit?: (data: Record<string, any>, formState: FormState) => void | Promise<void>;
+  onSubmit?: (data: Record<string, unknown>, formState: FormState) => void | Promise<void>;
   /** Error handler */
   onError?: (errors: Record<string, FieldError>) => void;
   /** Change handler */
-  onChange?: (values: Record<string, any>) => void;
+  onChange?: (values: Record<string, unknown>) => void;
   /** Whether to validate on change */
   validateOnChange?: boolean;
   /** Whether to validate on blur */
@@ -132,7 +132,7 @@ const createBemClass = (
 };
 
 // Validation helper functions
-const validateField = (value: any, rules: ValidationRule): FieldError | null => {
+const validateField = (value: unknown, rules: ValidationRule): FieldError | null => {
   // Required validation
   if (rules.required) {
     const isEmpty = value === undefined || value === null || value === '' || 
@@ -295,7 +295,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
   }, []);
   
   // Validate single field
-  const validateSingleField = useCallback((name: string, value: any): FieldError | null => {
+  const validateSingleField = useCallback((name: string, value: unknown): FieldError | null => {
     const rules = fieldsRef.current[name] || validationRules[name];
     if (!rules) return null;
     
@@ -368,8 +368,8 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
     return {
       name,
       value: state.values[name] || '',
-      onChange: (e: React.ChangeEvent<any>) => {
-        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
         
         setState(prev => {
           const newValues = { ...prev.values, [name]: value };
@@ -385,7 +385,8 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
             if (error) {
               newState.errors = { ...prev.errors, [name]: error };
             } else {
-              const { [name]: removed, ...restErrors } = prev.errors;
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { [name]: _, ...restErrors } = prev.errors;
               newState.errors = restErrors;
             }
           }
@@ -395,7 +396,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
         
         onChange?.(state.values);
       },
-      onBlur: (e: React.FocusEvent<any>) => {
+      onBlur: () => {
         setState(prev => ({
           ...prev,
           touched: { ...prev.touched, [name]: true }
@@ -411,7 +412,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
   }, [state.values, state.errors, state.touched, validateOnChange, validateOnBlur, showErrorsImmediately, validateSingleField, validate, onChange]);
   
   // Set field value
-  const setValue = useCallback((name: string, value: any) => {
+  const setValue = useCallback((name: string, value: unknown) => {
     setState(prev => ({
       ...prev,
       values: { ...prev.values, [name]: value },
@@ -430,13 +431,14 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
   // Clear field error
   const clearError = useCallback((name: string) => {
     setState(prev => {
-      const { [name]: removed, ...restErrors } = prev.errors;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [name]: _, ...restErrors } = prev.errors;
       return { ...prev, errors: restErrors };
     });
   }, []);
   
   // Reset form
-  const reset = useCallback((values?: Record<string, any>) => {
+  const reset = useCallback((values?: Record<string, unknown>) => {
     setState({
       values: values || defaultValues,
       errors: {},
@@ -570,5 +572,5 @@ const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
 
 Form.displayName = 'Form';
 
-export { Form, useForm };
+export { Form };
 export default Form;

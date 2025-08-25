@@ -205,7 +205,7 @@ const OTP = forwardRef<HTMLDivElement, OTPProps>(function OTP(
   const actualVariant = error ? 'error' : success ? 'success' : warning ? 'warning' : variant;
   
   // Get complete OTP value
-  const completeValue = currentValues.join('');
+  // const completeValue = currentValues.join('');
   
   // Update internal value when controlled value changes
   useEffect(() => {
@@ -418,7 +418,7 @@ const OTP = forwardRef<HTMLDivElement, OTPProps>(function OTP(
           <React.Fragment key={index}>
             {/* Input Field */}
             <input
-              ref={(el) => (inputRefs.current[index] = el)}
+              ref={(el) => { inputRefs.current[index] = el; }}
               type={masked ? 'password' : type}
               inputMode={numericOnly ? 'numeric' : 'text'}
               pattern={numericOnly ? '[0-9]*' : undefined}

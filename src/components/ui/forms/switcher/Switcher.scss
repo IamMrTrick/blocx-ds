@@ -1,0 +1,255 @@
+/* ===== Switcher Component - BEM Methodology ===== */
+
+.switcher-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--loading {
+    .switcher-control__spinner {
+      display: flex;
+    }
+  }
+}
+
+.switcher-field {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  cursor: pointer;
+
+  .switcher-wrapper--disabled & {
+    cursor: not-allowed;
+  }
+}
+
+.switcher-control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: var(--spacing-20);
+  width: calc(var(--spacing-20) * 2);
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--gl-radius-pill);
+  transition:
+    background-color var(--transition-fast) var(--transition-ease),
+    border-color var(--transition-fast) var(--transition-ease),
+    box-shadow var(--transition-fast) var(--transition-ease);
+
+  &--xs {
+    height: var(--spacing-16);
+    width: calc(var(--spacing-16) * 2);
+  }
+
+  &--s {
+    height: var(--spacing-18);
+    width: calc(var(--spacing-18) * 2);
+  }
+
+  &--m {
+    height: var(--spacing-20);
+    width: calc(var(--spacing-20) * 2);
+  }
+
+  &--l {
+    height: var(--spacing-24);
+    width: calc(var(--spacing-24) * 2);
+  }
+
+  &--xl {
+    height: var(--spacing-28);
+    width: calc(var(--spacing-28) * 2);
+  }
+
+  &:hover:not(&--disabled):not(&--focused) {
+    background-color: var(--input-bg-hover);
+    border-color: var(--input-border-hover);
+  }
+
+  &--focused {
+    background-color: var(--input-bg-focus);
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 2px var(--input-border-focus);
+  }
+
+  &--checked {
+    background-color: var(--primary-05);
+    border-color: var(--primary-05);
+
+    &:hover:not(&--disabled) {
+      background-color: var(--primary-06);
+      border-color: var(--primary-06);
+    }
+  }
+
+  &--error {
+    border-color: var(--input-border-error);
+
+    &.switcher-control--checked {
+      background-color: var(--error-05);
+      border-color: var(--error-05);
+    }
+
+    &:hover,
+    &--focused {
+      border-color: var(--input-border-error);
+      box-shadow: 0 0 0 2px var(--input-border-error);
+    }
+  }
+
+  &--success {
+    border-color: var(--border-success);
+
+    &.switcher-control--checked {
+      background-color: var(--success-05);
+      border-color: var(--success-05);
+    }
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-success);
+      box-shadow: 0 0 0 2px var(--border-success);
+    }
+  }
+
+  &--warning {
+    border-color: var(--border-warning);
+
+    &.switcher-control--checked {
+      background-color: var(--warning-05);
+      border-color: var(--warning-05);
+    }
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-warning);
+      box-shadow: 0 0 0 2px var(--border-warning);
+    }
+  }
+
+  &--disabled {
+    background-color: var(--input-bg-disabled);
+    border-color: var(--input-border);
+    cursor: not-allowed;
+  }
+
+  &__track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  &__thumb {
+    position: absolute;
+    left: 2px;
+    width: calc(100% / 2 - 4px);
+    height: calc(100% - 4px);
+    background-color: var(--base-white);
+    border-radius: var(--radius-full);
+    transition: transform var(--transition-fast) var(--transition-ease), background-color var(--transition-fast) var(--transition-ease);
+
+    .switcher-control--checked & {
+      transform: translateX(100%);
+    }
+  }
+
+  &__spinner {
+    position: absolute;
+    right: 4px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% / 2 - 8px);
+    height: calc(100% - 8px);
+  }
+
+  &__spinner-icon {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--border-primary);
+    border-top: 1px solid var(--primary-05);
+    border-radius: var(--radius-full);
+    animation: switcher-spinner 1s linear infinite;
+  }
+}
+
+.switcher {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.switcher-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--inpt-font-size-m);
+  font-weight: var(--gl-inpt-text-weight);
+  line-height: var(--inpt-line-height-m);
+  color: var(--text-primary);
+  cursor: pointer;
+
+  &--xs { font-size: var(--inpt-font-size-xs); line-height: var(--inpt-line-height-xs); }
+  &--s { font-size: var(--inpt-font-size-s); line-height: var(--inpt-line-height-s); }
+  &--m { font-size: var(--inpt-font-size-m); line-height: var(--inpt-line-height-m); }
+  &--l { font-size: var(--inpt-font-size-l); line-height: var(--inpt-line-height-l); }
+  &--xl { font-size: var(--inpt-font-size-xl); line-height: var(--inpt-line-height-xl); }
+
+  &--error { color: var(--text-error); }
+  &--success { color: var(--text-success); }
+  &--warning { color: var(--text-warning); }
+  &--disabled { color: var(--input-text-disabled); cursor: not-allowed; }
+
+  &__required { color: var(--text-error); font-weight: var(--font-weight-medium); }
+}
+
+.switcher-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  margin-left: calc(var(--spacing-40));
+
+  .switcher-wrapper--xs & { margin-left: calc(var(--spacing-32)); }
+  .switcher-wrapper--s & { margin-left: calc(var(--spacing-36)); }
+  .switcher-wrapper--l & { margin-left: calc(var(--spacing-48)); }
+  .switcher-wrapper--xl & { margin-left: calc(var(--spacing-56)); }
+}
+
+.switcher-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+
+  &--helper { color: var(--text-tertiary); }
+  &--error { color: var(--text-error); }
+  &--success { color: var(--text-success); }
+  &--warning { color: var(--text-warning); }
+}
+
+@keyframes switcher-spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switcher-control__thumb { transition: none; }
+  .switcher-control__spinner-icon { animation: none; }
+}
+
+

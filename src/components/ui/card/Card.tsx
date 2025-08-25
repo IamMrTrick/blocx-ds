@@ -74,13 +74,13 @@ const Card = forwardRef<HTMLElement, CardProps>(function Card(
 
   // Accessibility for clickable, non-interactive elements
   const accessibilityProps: Partial<React.HTMLAttributes<HTMLElement>> = {};
-  if (clickable && Component !== 'a' && Component !== 'button') {
+  if (clickable && !['a', 'button'].includes(Component as string)) {
     accessibilityProps.role = 'button';
-    accessibilityProps.tabIndex = 0 as any;
+    (accessibilityProps as { tabIndex?: number }).tabIndex = 0;
   }
 
   return (
-    <Component ref={ref as any} className={cardClasses} {...accessibilityProps} {...props}>
+    <Component ref={ref as any /* eslint-disable-line @typescript-eslint/no-explicit-any */} className={cardClasses} {...accessibilityProps} {...props}>
       <div className="card__content">{children}</div>
     </Component>
   );

@@ -72,13 +72,13 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     }
   };
 
-  const renderSeparator = (index: number) => {
+  const renderSeparator = () => {
     if (separator === 'chevron') {
       return (
         <Icon 
           name={getSeparatorIcon() as string}
           className="breadcrumbs__separator"
-          aria-hidden="true"
+          aria-hidden={true}
         />
       );
     }
@@ -124,10 +124,10 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
           {...linkProps}
         >
           {item.icon && (
-            <Icon 
-              name={item.icon} 
+                        <Icon
+              name={item.icon}
               className="breadcrumbs__icon"
-              aria-hidden="true"
+              aria-hidden={true}
             />
           )}
           <span className="breadcrumbs__label">{item.label}</span>
@@ -156,11 +156,11 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
           return (
             <React.Fragment key={item.id}>
               {shouldShowEllipsis && renderEllipsis()}
-              {shouldShowEllipsis && renderSeparator(index)}
+              {shouldShowEllipsis && renderSeparator()}
               
               {renderBreadcrumbItem(item, index, isLast)}
               
-              {!isLast && renderSeparator(index)}
+              {!isLast && renderSeparator()}
             </React.Fragment>
           );
         })}

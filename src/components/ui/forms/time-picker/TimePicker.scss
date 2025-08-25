@@ -1,0 +1,616 @@
+/* ===== TimePicker Component - BEM Methodology ===== */
+
+/* ===== TimePicker Wrapper (Only for layout structure) ===== */
+.timepicker-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  width: auto;
+  position: relative;
+
+  /* Full width modifier */
+  &--full-width {
+    width: 100%;
+  }
+}
+
+/* ===== TimePicker Label ===== */
+.timepicker-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--inpt-font-size-m);
+  font-weight: var(--gl-inpt-text-weight);
+  line-height: var(--inpt-line-height-m);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast) var(--ease-in-out);
+
+  /* Size variants */
+  &--xs {
+    font-size: var(--inpt-font-size-xs);
+    line-height: var(--inpt-line-height-xs);
+  }
+
+  &--s {
+    font-size: var(--inpt-font-size-s);
+    line-height: var(--inpt-line-height-s);
+  }
+
+  &--m {
+    font-size: var(--inpt-font-size-m);
+    line-height: var(--inpt-line-height-m);
+  }
+
+  &--l {
+    font-size: var(--inpt-font-size-l);
+    line-height: var(--inpt-line-height-l);
+  }
+
+  &--xl {
+    font-size: var(--inpt-font-size-xl);
+    line-height: var(--inpt-line-height-xl);
+  }
+
+  /* State variants */
+  &--error {
+    color: var(--text-error);
+  }
+
+  &--success {
+    color: var(--text-success);
+  }
+
+  &--warning {
+    color: var(--text-warning);
+  }
+
+  &--disabled {
+    color: var(--input-text-disabled);
+    cursor: not-allowed;
+  }
+
+  /* Required indicator */
+  &__required {
+    color: var(--text-error);
+    font-weight: var(--font-weight-medium);
+    margin-left: var(--spacing-2);
+  }
+}
+
+/* ===== TimePicker Field Container (Main Input Element) ===== */
+.timepicker-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--gl-radius-input);
+  font-family: var(--font-family-sans);
+  font-weight: var(--gl-inpt-text-weight);
+  cursor: text;
+  transition: 
+    border-color var(--transition-fast) var(--ease-in-out),
+    background-color var(--transition-fast) var(--ease-in-out),
+    box-shadow var(--transition-fast) var(--ease-in-out),
+    transform var(--transition-fast) var(--ease-in-out);
+  box-sizing: border-box;
+
+  /* Size variants - exactly like buttons */
+  &--xs {
+    height: var(--gl-btn-spacing-xs-mh);
+    max-height: var(--gl-btn-spacing-xs-mh);
+    padding: var(--gl-btn-spacing-xs-v) var(--gl-btn-spacing-xs-h);
+    font-size: var(--gl-btn-font-size-xs);
+    line-height: var(--gl-btn-line-height-xs);
+  }
+
+  &--s {
+    height: var(--gl-btn-spacing-s-mh);
+    max-height: var(--gl-btn-spacing-s-mh);
+    padding: var(--gl-btn-spacing-s-v) var(--gl-btn-spacing-s-h);
+    font-size: var(--gl-btn-font-size-s);
+    line-height: var(--gl-btn-line-height-s);
+  }
+
+  &--m {
+    height: var(--gl-btn-spacing-m-mh);
+    max-height: var(--gl-btn-spacing-m-mh);
+    padding: var(--gl-btn-spacing-m-v) var(--gl-btn-spacing-m-h);
+    font-size: var(--gl-btn-font-size-m);
+    line-height: var(--gl-btn-line-height-m);
+  }
+
+  &--l {
+    height: var(--gl-btn-spacing-l-mh);
+    max-height: var(--gl-btn-spacing-l-mh);
+    padding: var(--gl-btn-spacing-l-v) var(--gl-btn-spacing-l-h);
+    font-size: var(--gl-btn-font-size-l);
+    line-height: var(--gl-btn-line-height-l);
+  }
+
+  &--xl {
+    height: var(--gl-btn-spacing-xl-mh);
+    max-height: var(--gl-btn-spacing-xl-mh);
+    padding: var(--gl-btn-spacing-xl-v) var(--gl-btn-spacing-xl-h);
+    font-size: var(--gl-btn-font-size-xl);
+    line-height: var(--gl-btn-line-height-xl);
+  }
+
+  /* Hover state */
+  &:hover:not(&--disabled):not(&--focused) {
+    background-color: var(--input-bg-hover);
+    border-color: var(--input-border-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px var(--shadow-md);
+  }
+
+  /* Focus state */
+  &--focused {
+    background-color: var(--input-bg-focus);
+    border-color: var(--input-border-focus);
+    transform: translateY(-1px);
+    box-shadow: 
+      0 2px 8px var(--shadow-md),
+      0 0 0 2px var(--transparent-primary-20);
+    outline: none;
+  }
+
+  /* State variants */
+  &--error {
+    border-color: var(--input-border-error);
+
+    &:hover,
+    &--focused {
+      border-color: var(--input-border-error);
+      box-shadow: 
+        0 2px 8px var(--shadow-md),
+        0 0 0 2px var(--transparent-error-20);
+    }
+  }
+
+  &--success {
+    border-color: var(--border-success);
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-success);
+      box-shadow: 
+        0 2px 8px var(--shadow-md),
+        0 0 0 2px var(--transparent-success-20);
+    }
+  }
+
+  &--warning {
+    border-color: var(--border-warning);
+
+    &:hover,
+    &--focused {
+      border-color: var(--border-warning);
+      box-shadow: 
+        0 2px 8px var(--shadow-md),
+        0 0 0 2px var(--transparent-warning-20);
+    }
+  }
+
+  &--disabled {
+    background-color: var(--input-bg-disabled);
+    border-color: var(--input-border);
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      background-color: var(--input-bg-disabled);
+      border-color: var(--input-border);
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  /* Icon containers */
+  &__start-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    transition: color var(--transition-fast) var(--ease-in-out);
+    flex-shrink: 0;
+    margin-right: var(--spacing-8);
+  }
+
+  /* Clock button */
+  &__clock-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: var(--spacing-4);
+    border-radius: var(--radius-4);
+    transition: 
+      color var(--transition-fast) var(--ease-in-out),
+      background-color var(--transition-fast) var(--ease-in-out);
+    flex-shrink: 0;
+    margin-left: var(--spacing-4);
+
+    &:hover:not(:disabled) {
+      color: var(--text-primary);
+      background-color: var(--bg-tertiary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  /* Loading spinner */
+  &__spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--spacing-8);
+    flex-shrink: 0;
+  }
+
+  &__spinner-icon {
+    width: var(--spacing-16);
+    height: var(--spacing-16);
+    border: 2px solid var(--border-primary);
+    border-top: 2px solid var(--primary-05);
+    border-radius: var(--radius-full);
+    animation: timepicker-spinner 1s linear infinite;
+  }
+}
+
+/* ===== TimePicker Input Element (Inside field container) ===== */
+.timepicker-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--input-text);
+  padding: 0;
+  margin: 0;
+  
+  /* Remove all default input styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Force remove any focus styles */
+  &:focus,
+  &:focus-visible,
+  &:active {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* Placeholder styling */
+  &::placeholder {
+    color: var(--input-text-placeholder);
+    font-weight: var(--gl-inpt-placeholder-weight);
+    opacity: 1;
+  }
+
+  /* Disabled state */
+  &:disabled {
+    color: var(--input-text-disabled);
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: var(--input-text-disabled);
+    }
+  }
+}
+
+/* ===== TimePicker Dropdown ===== */
+.timepicker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: var(--z-dropdown);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--gl-radius-cards);
+  box-shadow: 
+    0 4px 16px var(--shadow-lg),
+    0 0 0 1px var(--transparent-black-10);
+  margin-top: var(--spacing-4);
+  min-width: 200px;
+  max-width: 280px;
+  animation: timepicker-dropdown-enter var(--transition-fast) var(--ease-out);
+
+  /* Dropdown List */
+  &__list {
+    max-height: 240px;
+    overflow-y: auto;
+    padding: var(--spacing-8);
+    
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-4);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-secondary);
+      border-radius: var(--radius-4);
+      
+      &:hover {
+        background: var(--border-tertiary);
+      }
+    }
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: var(--spacing-8) var(--spacing-12);
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: var(--radius-6);
+    font-size: var(--text-sm-size);
+    font-weight: var(--font-weight-medium);
+    text-align: left;
+    transition: 
+      color var(--transition-fast) var(--ease-in-out),
+      background-color var(--transition-fast) var(--ease-in-out);
+
+    &:hover:not(&--disabled) {
+      background-color: var(--bg-tertiary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    &--selected {
+      background-color: var(--primary-05);
+      color: var(--text-inverse);
+
+      &:hover {
+        background-color: var(--primary-06);
+      }
+    }
+
+    &--disabled {
+      color: var(--text-disabled);
+      cursor: not-allowed;
+      opacity: 0.5;
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+
+  /* Dropdown Footer */
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-8);
+    padding: var(--spacing-12) var(--spacing-16);
+    border-top: 1px solid var(--border-light);
+  }
+
+  &__action-button {
+    padding: var(--spacing-6) var(--spacing-12);
+    background: none;
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: var(--radius-8);
+    font-size: var(--text-sm-size);
+    font-weight: var(--font-weight-medium);
+    transition: 
+      color var(--transition-fast) var(--ease-in-out),
+      background-color var(--transition-fast) var(--ease-in-out),
+      border-color var(--transition-fast) var(--ease-in-out);
+
+    &:hover {
+      background-color: var(--bg-tertiary);
+      border-color: var(--border-secondary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    &--now {
+      border-color: var(--primary-05);
+      color: var(--primary-05);
+
+      &:hover {
+        background-color: var(--primary-01);
+        border-color: var(--primary-06);
+      }
+    }
+
+    &--clear {
+      border-color: var(--error-05);
+      color: var(--error-05);
+
+      &:hover {
+        background-color: var(--error-01);
+        border-color: var(--error-06);
+      }
+    }
+  }
+}
+
+/* ===== TimePicker Messages ===== */
+.timepicker-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.timepicker-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+  font-weight: var(--font-weight-normal);
+
+  /* Message variants */
+  &--helper {
+    color: var(--text-tertiary);
+  }
+
+  &--error {
+    color: var(--text-error);
+  }
+
+  &--success {
+    color: var(--text-success);
+  }
+
+  &--warning {
+    color: var(--text-warning);
+  }
+}
+
+/* ===== Animations ===== */
+@keyframes timepicker-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes timepicker-dropdown-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .timepicker-field {
+    /* Ensure minimum touch target size on mobile */
+    &--xs {
+      height: var(--spacing-40);
+      max-height: var(--spacing-40);
+    }
+
+    &--s {
+      height: var(--spacing-44);
+      max-height: var(--spacing-44);
+    }
+  }
+
+  .timepicker-label {
+    /* Slightly larger labels on mobile for better readability */
+    &--xs {
+      font-size: var(--inpt-font-size-s);
+    }
+  }
+
+  .timepicker-dropdown {
+    /* Full width on mobile */
+    left: 0;
+    right: 0;
+    min-width: auto;
+    max-width: none;
+    margin-left: var(--spacing-16);
+    margin-right: var(--spacing-16);
+
+    &__list {
+      max-height: 200px;
+    }
+
+    &__option {
+      padding: var(--spacing-12) var(--spacing-16);
+      font-size: var(--text-base-size);
+    }
+  }
+}
+
+/* ===== High Contrast Mode Support ===== */
+@media (prefers-contrast: high) {
+  .timepicker-field {
+    border-width: 2px;
+
+    &--focused {
+      outline: 2px solid var(--input-border-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  .timepicker-dropdown {
+    border-width: 2px;
+
+    &__option--selected {
+      outline: 2px solid var(--text-inverse);
+      outline-offset: -2px;
+    }
+  }
+}
+
+/* ===== Reduced Motion Support ===== */
+@media (prefers-reduced-motion: reduce) {
+  .timepicker-field,
+  .timepicker-input,
+  .timepicker-label,
+  .timepicker-field__start-icon,
+  .timepicker-field__clock-button,
+  .timepicker-dropdown__option,
+  .timepicker-dropdown__action-button {
+    transition: none;
+  }
+
+  .timepicker-field {
+    &:hover,
+    &--focused {
+      transform: none;
+    }
+  }
+
+  .timepicker-field__spinner-icon {
+    animation: none;
+  }
+
+  .timepicker-dropdown {
+    animation: none;
+  }
+}

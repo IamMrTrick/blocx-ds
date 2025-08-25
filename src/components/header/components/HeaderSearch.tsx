@@ -1,4 +1,4 @@
-زی// Reusable Search Component
+// Reusable Search Component
 import React, { useState } from 'react';
 
 export interface HeaderSearchProps {

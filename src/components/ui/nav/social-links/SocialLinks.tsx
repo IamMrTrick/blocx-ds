@@ -38,7 +38,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
   target = '_blank',
   rel = 'noopener noreferrer',
 }) => {
-  const handleLinkClick = (link: SocialLink, event: React.MouseEvent) => {
+  const handleLinkClick = (link: SocialLink) => {
     // Analytics or tracking can be added here
     console.log(`Social link clicked: ${link.platform}`);
   };
@@ -88,13 +88,13 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
           style={linkStyle}
           target={target}
           rel={rel}
-          onClick={(e) => handleLinkClick(link, e)}
+          onClick={() => handleLinkClick(link)}
           aria-label={link.label || `Follow us on ${link.platform}`}
         >
           <Icon 
             name={link.icon} 
             className="social-links__icon"
-            aria-hidden="true"
+            aria-hidden={true}
           />
           
           {showLabels && (

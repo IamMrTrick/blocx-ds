@@ -11,6 +11,7 @@ export interface MainProps {
   withFooter?: boolean;
   withSidebar?: boolean;
   centered?: boolean;
+  id?: string;
 }
 
 export const Main: React.FC<MainProps> = ({
@@ -23,6 +24,7 @@ export const Main: React.FC<MainProps> = ({
   withFooter = false,
   withSidebar = false,
   centered = false,
+  id,
 }) => {
   const mainClasses = [
     'main',
@@ -36,7 +38,7 @@ export const Main: React.FC<MainProps> = ({
   ].filter(Boolean).join(' ');
 
   return (
-    <Component className={mainClasses}>
+    <Component className={mainClasses} id={id}>
       {children}
     </Component>
   );

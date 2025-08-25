@@ -49,7 +49,7 @@ export const Nav: React.FC<NavProps> = ({
   layout = 'gap',
   gap = 'md',
 }) => {
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  // const [activeDropdown, // setActiveDropdown] = useState<string | null>(null);
   const [openDropdowns, setOpenDropdowns] = useState<Set<string>>(new Set());
   const [collapsed, setCollapsed] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -60,7 +60,7 @@ export const Nav: React.FC<NavProps> = ({
     if (dropdownTrigger === 'click') {
       const handleClickOutside = (event: MouseEvent) => {
         if (navRef.current && !navRef.current.contains(event.target as Node)) {
-          setActiveDropdown(null);
+          // // setActiveDropdown(null);
           setOpenDropdowns(new Set());
         }
       };
@@ -126,7 +126,7 @@ export const Nav: React.FC<NavProps> = ({
         }
         
         setOpenDropdowns(newOpenDropdowns);
-        setActiveDropdown(newOpenDropdowns.size > 0 ? Array.from(newOpenDropdowns)[newOpenDropdowns.size - 1] : null);
+        // setActiveDropdown(newOpenDropdowns.size > 0 ? Array.from(newOpenDropdowns)[newOpenDropdowns.size - 1] : null);
       } else {
         // Close only sibling dropdowns, keep parent hierarchy
         const newOpenDropdowns = new Set(openDropdowns);
@@ -154,7 +154,7 @@ export const Nav: React.FC<NavProps> = ({
         newOpenDropdowns.add(item.id);
         
         setOpenDropdowns(newOpenDropdowns);
-        setActiveDropdown(item.id);
+        // setActiveDropdown(item.id);
       }
       
     } else if (dropdownTrigger === 'hover' && hasChildren) {
@@ -167,7 +167,7 @@ export const Nav: React.FC<NavProps> = ({
     } else {
       // This is a leaf item (no children) - close all dropdowns and navigate
       if (item.href) {
-        setActiveDropdown(null);
+        // setActiveDropdown(null);
         setOpenDropdowns(new Set());
         onItemClick?.(item);
       } else {
@@ -205,9 +205,9 @@ export const Nav: React.FC<NavProps> = ({
         findAndCloseSibling(items);
       });
       
-      // Open this dropdown
+      // Open this dropdown (keep ancestors)
       newOpenDropdowns.add(item.id);
-      setActiveDropdown(item.id);
+      // setActiveDropdown(item.id);
       setOpenDropdowns(newOpenDropdowns);
     }
   };
@@ -215,7 +215,7 @@ export const Nav: React.FC<NavProps> = ({
   const handleItemLeave = () => {
     if (dropdownTrigger === 'hover') {
       const timeout = setTimeout(() => {
-        setActiveDropdown(null);
+        // setActiveDropdown(null);
         setOpenDropdowns(new Set());
       }, dropdownDelay);
       setHoverTimeout(timeout);
@@ -232,7 +232,26 @@ export const Nav: React.FC<NavProps> = ({
   const handleDropdownLeave = () => {
     if (dropdownTrigger === 'hover') {
       const timeout = setTimeout(() => {
-        setActiveDropdown(null);
+        // setActiveDropdown(null);
+        setOpenDropdowns(new Set());
+      }, dropdownDelay);
+      setHoverTimeout(timeout);
+    }
+  };
+
+  // Close only when leaving the whole nav area in hover mode
+  const handleNavEnter = () => {
+    if (dropdownTrigger === 'hover' && hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+  };
+
+  const handleNavLeave = () => {
+    if (dropdownTrigger === 'hover') {
+      const timeout = setTimeout(() => {
+        // setActiveDropdown(null);
+        setOpenDropdowns(new Set());
       }, dropdownDelay);
       setHoverTimeout(timeout);
     }
@@ -240,16 +259,14 @@ export const Nav: React.FC<NavProps> = ({
 
   const handleToggleCollapse = () => {
     setCollapsed(!collapsed);
-    setActiveDropdown(null);
+    // setActiveDropdown(null);
     setOpenDropdowns(new Set());
   };
 
   const renderPrimaryNavItem = (item: PrimaryNavItem, level: number = 0) => {
     const isActive = activeId === item.id;
     const hasChildren = item.children && item.children.length > 0;
-    const isDropdownOpen = dropdownTrigger === 'click' 
-      ? openDropdowns.has(item.id)
-      : activeDropdown === item.id;
+    const isDropdownOpen = openDropdowns.has(item.id);
 
     const itemClasses = [
       'nav__item',
@@ -278,7 +295,7 @@ export const Nav: React.FC<NavProps> = ({
         key={item.id} 
         className={itemClasses}
         onMouseEnter={() => handleItemHover(item)}
-        onMouseLeave={handleItemLeave}
+        onMouseLeave={dropdownTrigger === 'click' ? handleItemLeave : undefined}
       >
         <LinkComponent
           className={linkClasses}
@@ -326,7 +343,7 @@ export const Nav: React.FC<NavProps> = ({
             role="menu"
             aria-label={`${item.label} submenu`}
             onMouseEnter={handleDropdownEnter}
-            onMouseLeave={handleDropdownLeave}
+            onMouseLeave={dropdownTrigger === 'click' ? handleDropdownLeave : undefined}
           >
             {item.children?.map(child => renderPrimaryNavItem(child, level + 1))}
           </ul>
@@ -353,6 +370,8 @@ export const Nav: React.FC<NavProps> = ({
       className={navClasses}
       role="navigation"
       aria-label="Primary navigation"
+      onMouseEnter={handleNavEnter}
+      onMouseLeave={handleNavLeave}
     >
       {collapsible && (
         <button

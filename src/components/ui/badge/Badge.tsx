@@ -98,10 +98,10 @@ const processChildren = (children: React.ReactNode, badgeSize: BadgeSize): React
     // Check if child is a React element and looks like an Icon component
     if (isValidElement(child) && child.type && 
         (typeof child.type === 'function' || typeof child.type === 'object') &&
-        (child.type as any).displayName === 'Icon') {
+        ((child.type as unknown as { displayName?: string }).displayName === 'Icon')) {
       
       // Type assertion for Icon props
-      const iconProps = child.props as any;
+      const iconProps = child.props as { size?: string; color?: string } & Record<string, unknown>;
       
       // Clone the Icon element with automatic size if not already specified
       return cloneElement(child, {

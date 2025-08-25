@@ -72,6 +72,8 @@
       position: absolute;
       top: 100%;
       left: 0;
+      /* Slightly overlap the trigger to avoid hover gaps */
+      margin-top: -2px;
       min-width: 220px;
       max-width: 320px;
       background: var(--nav-submenu-bg);
@@ -95,6 +97,8 @@
       .nav__dropdown {
         top: 0;
         left: 100%;
+        /* Slight overlap towards parent to avoid diagonal gap */
+        margin-left: -2px;
         transform: translateX(-8px);
         
         &--open {
@@ -377,6 +381,39 @@
     
     &:hover .nav__external-icon {
       opacity: 1;
+    }
+  }
+}
+
+/* Prevent vertical shift for items with dropdowns to avoid creating a gap */
+.nav__item--has-children > .nav__link:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Create a hover bridge between trigger and submenu */
+.nav__item--has-children {
+  & > .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -8px;
+    height: 8px;
+    /* bridge area shouldn't block clicks */
+    pointer-events: none;
+  }
+
+  /* For nested submenus (right side), add a side bridge */
+  & > .nav__dropdown {
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -8px;
+      width: 8px;
+      bottom: 0;
+      pointer-events: none;
     }
   }
 }

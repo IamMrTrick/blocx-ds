@@ -235,7 +235,7 @@ export const Tab: React.FC<TabProps> = ({
     className
   ].filter(Boolean).join(' ');
 
-  const renderIcon = (pos: 'start' | 'end') => {
+  const renderIcon = () => {
     if (!icon) return null;
     return (
       <span className="tabs__icon" aria-hidden="true">
@@ -258,9 +258,9 @@ export const Tab: React.FC<TabProps> = ({
       onClick={() => !disabled && setValue(tabId)}
       {...rest}
     >
-      {icon && iconPosition === 'start' && renderIcon('start')}
+      {icon && iconPosition === 'start' && renderIcon()}
       <span className="tabs__label">{children}</span>
-      {icon && iconPosition === 'end' && renderIcon('end')}
+      {icon && iconPosition === 'end' && renderIcon()}
     </button>
   );
 };
