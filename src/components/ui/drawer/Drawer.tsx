@@ -171,10 +171,19 @@ function useAdvancedDrag(
       
       if (timeDelta > 0) {
         const pointDelta = point - dragData.current.lastPoint;
-        const velocity = pointDelta / timeDelta;
-        
-        // Keep velocity history for momentum calculation
-        dragData.current.velocityHistory.push(velocity);
+        const rawVelocity = pointDelta / timeDelta; // px/ms
+        // Project velocity into the drawer close direction
+        const directionalVelocity = (() => {
+          switch (side) {
+            case 'left': return -rawVelocity;   // left closes when moving left (negative Y), invert
+            case 'right': return rawVelocity;   // right closes when moving right
+            case 'top': return -rawVelocity;    // top closes when moving up
+            case 'bottom': return rawVelocity;  // bottom closes when moving down
+          }
+        })();
+
+        // Keep velocity history for momentum calculation (directional)
+        dragData.current.velocityHistory.push(directionalVelocity);
         if (dragData.current.velocityHistory.length > 5) {
           dragData.current.velocityHistory.shift();
         }
@@ -220,7 +229,7 @@ function useAdvancedDrag(
       setDragState({
         isDragging: true,
         offset: adjustedOffset,
-        velocity: dragData.current.velocityHistory.slice(-1)[0] || 0,
+        velocity: dragData.current.velocityHistory.slice(-1)[0] || 0, // directional last velocity
         progress,
         resistance,
         wrongDirectionScale: resistance
@@ -234,11 +243,17 @@ function useAdvancedDrag(
       if (!dragData.current.startPoint) return;
 
       const { velocityHistory } = dragData.current;
-      const avgVelocity = velocityHistory.length > 0 
-        ? velocityHistory.reduce((sum, v) => sum + Math.abs(v), 0) / velocityHistory.length 
+      // Use the maximum directional velocity over the last few samples
+      const maxDirectionalVelocity = velocityHistory.length > 0
+        ? Math.max(0, ...velocityHistory)
         : 0;
 
-      const shouldClose = dragState.progress >= CLOSE_THRESHOLD || avgVelocity >= VELOCITY_THRESHOLD;
+      // Only close if:
+      // - Drag progressed sufficiently in the close direction, OR
+      // - Velocity in the close direction is high enough and user moved at least a tiny bit in that direction
+      const MIN_PROGRESS_FOR_VELOCITY_CLOSE = 0.02;
+      const shouldClose = (dragState.progress >= CLOSE_THRESHOLD) 
+        || (maxDirectionalVelocity >= VELOCITY_THRESHOLD && dragState.progress >= MIN_PROGRESS_FOR_VELOCITY_CLOSE);
 
       if (shouldClose) {
         onClose();
