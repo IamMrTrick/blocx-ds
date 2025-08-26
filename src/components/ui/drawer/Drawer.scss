@@ -178,8 +178,25 @@
 
 .drawer__title { margin: 0; font-size: var(--text-lg-size); line-height: var(--text-lg-line); }
 .drawer__description { margin: 0; color: var(--text-secondary); font-size: var(--text-sm-size); line-height: var(--text-sm-line); }
-.drawer__body { overflow: auto; }
-.drawer__footer { display: flex; justify-content: flex-end; gap: var(--spacing-8); }
+.drawer__body {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0; /* allow flex child to shrink for scrolling */
+  -webkit-overflow-scrolling: touch;
+}
+.drawer__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-8);
+  /* keep footer visible at bottom of panel while body scrolls */
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  background: inherit;
+  z-index: 2;
+  /* safe-area padding */
+  padding-bottom: calc(var(--spacing-16) + env(safe-area-inset-bottom, 0px));
+}
 
 /* Improve touch behavior for swipes */
 .drawer__panel {
