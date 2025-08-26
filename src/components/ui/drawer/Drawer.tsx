@@ -453,7 +453,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   'aria-describedby': ariaDescribedby,
   children,
 }) => {
-  const hasFiniteNumber = (n: unknown): n is number => typeof n === 'number' && isFinite(n);
+  // removed CSS var sync helper
   const id = useId();
   const portalRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -624,7 +624,6 @@ export const Drawer: React.FC<DrawerProps> = ({
         scaleValue = 1 + extra * 0.075; // max ~1.015
       }
 
-      // Also feed CSS variables so initial mount/open transitions include scaling without JS inline transform fights
       const scalePart = typeof scaleValue === 'number' ? (() => {
         switch (side) {
           case 'left':
@@ -649,10 +648,6 @@ export const Drawer: React.FC<DrawerProps> = ({
     transition: 'none', // Disable transitions during drag
     opacity: 1, // Keep content fully visible during drag
     willChange: 'transform, opacity', // Optimize for animations
-    // keep CSS vars in sync for pure-CSS transitions
-    ...(side === 'left' || side === 'right'
-      ? { ['--drawer-scale-x' as any]: hasFiniteNumber(dragState.wrongDirectionScale) ? String(dragState.wrongDirectionScale) : '1' }
-      : { ['--drawer-scale-y' as any]: hasFiniteNumber(dragState.wrongDirectionScale) ? String(dragState.wrongDirectionScale) : '1' }),
   } : {
     willChange: 'auto' // Reset when not dragging
   };

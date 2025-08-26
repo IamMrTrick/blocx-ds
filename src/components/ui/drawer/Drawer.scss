@@ -87,7 +87,7 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   transform-origin: left center;
-  transform: translate3d(-100%, 0, 0) scaleX(var(--drawer-scale-x));
+  transform: translate3d(-100%, 0, 0);
   opacity: 0;
 }
 
@@ -98,7 +98,7 @@
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   transform-origin: right center;
-  transform: translate3d(100%, 0, 0) scaleX(var(--drawer-scale-x));
+  transform: translate3d(100%, 0, 0);
   opacity: 0;
 }
 
@@ -109,7 +109,7 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   transform-origin: center top;
-  transform: translate3d(0, -100%, 0) scaleY(var(--drawer-scale-y));
+  transform: translate3d(0, -100%, 0);
   opacity: 0;
 }
 
@@ -120,15 +120,15 @@
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   transform-origin: center bottom;
-  transform: translate3d(0, 100%, 0) scaleY(var(--drawer-scale-y));
+  transform: translate3d(0, 100%, 0);
   opacity: 0;
 }
 
 .drawer__panel {
   /* Always have transition for smooth animations */
-  transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), /* easeOutQuint like iOS */
-              opacity 0.24s var(--ease-out),
-              box-shadow 0.24s var(--ease-out);
+  transition: transform 0.46s cubic-bezier(0.22, 1, 0.36, 1), /* softened easeOutQuint */
+              opacity 0.3s var(--ease-out),
+              box-shadow 0.3s var(--ease-out);
   will-change: transform, opacity;
   backface-visibility: hidden;
 }
@@ -140,12 +140,6 @@
   transform: translate3d(0, 0, 0);
   box-shadow: var(--_shadow-hover);
 }
-
-/* Override open-state transform per side to include scaling vars */
-.drawer--open.drawer--side-left .drawer__panel { transform: translate3d(0, 0, 0) scaleX(var(--drawer-scale-x)); }
-.drawer--open.drawer--side-right .drawer__panel { transform: translate3d(0, 0, 0) scaleX(var(--drawer-scale-x)); }
-.drawer--open.drawer--side-top .drawer__panel { transform: translate3d(0, 0, 0) scaleY(var(--drawer-scale-y)); }
-.drawer--open.drawer--side-bottom .drawer__panel { transform: translate3d(0, 0, 0) scaleY(var(--drawer-scale-y)); }
 
 /* Hover effects for interactive elements */
 .drawer__panel:hover {
@@ -335,12 +329,6 @@
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding-top: var(--spacing-16);
   margin-top: var(--spacing-16);
-}
-
-@media (prefers-color-scheme: dark) {
-  .drawer__footer {
-    border-top-color: rgba(255, 255, 255, 0.08);
-  }
 }
 
 /* Smooth entrance animation with stagger */
