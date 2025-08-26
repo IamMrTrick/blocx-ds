@@ -99,8 +99,8 @@ function useFocusTrap(containerRef: FocusableRef, active: boolean, initialFocusR
   }, [containerRef, active, initialFocusRef]);
 }
 
-// Advanced drag physics with momentum, resistance, and visual feedback
-function useAdvancedDrag(
+// Rewritten drag hook: robust incremental axis drag with optional height expansion and elastic scaling
+function useDrawerDrag(
   handleRef: React.RefObject<HTMLElement> | React.MutableRefObject<HTMLElement>,
   side: DrawerSide,
   active: boolean,
@@ -112,325 +112,188 @@ function useAdvancedDrag(
     onUpdateHeight: (heightPx: number) => void;
   }
 ) {
-  const [dragState, setDragState] = useState({
+  const [state, setState] = useState({
     isDragging: false,
     offset: 0,
-    velocity: 0,
     progress: 0,
-    resistance: 1,
-    wrongDirectionScale: 1
+    wrongDirectionScale: 1,
   });
 
-  const dragData = useRef({
+  const ref = useRef({
     startPoint: 0,
     lastPoint: 0,
     lastTime: 0,
-    velocityHistory: [] as number[]
+    heightAtStart: 0,
+    velocities: [] as number[],
   });
-  const shrinkAppliedPxRef = useRef(0);
-  const translateAppliedPxRef = useRef(0);
 
   useEffect(() => {
     if (!active) return;
     const el = handleRef.current;
     if (!el) return;
 
-    const CLOSE_THRESHOLD = 0.4; // 40% drag to close
-    const VELOCITY_THRESHOLD = 0.5; // Fast swipe threshold
-    const MAX_RESISTANCE_ZONE = 0.2; // 20% over-drag with resistance
+    const CLOSE_THRESHOLD = 0.4; // 40% of travel
+    const VELOCITY_THRESHOLD = 0.5; // px/ms projected into close direction
+    const MAX_WRONG_STRETCH = 0.02; // 2%
 
-    function getPoint(e: PointerEvent | TouchEvent) {
-      const point = 'touches' in e ? e.touches[0] : e;
-      return side === 'left' || side === 'right' ? point.clientX : point.clientY;
-    }
+    const axisPoint = (e: PointerEvent | TouchEvent) => {
+      const p = 'touches' in e ? e.touches[0] : e;
+      return (side === 'left' || side === 'right') ? p.clientX : p.clientY;
+    };
 
-    function getMaxDragDistance() {
-      const rect = el.getBoundingClientRect();
-      return side === 'left' || side === 'right' ? rect.width : rect.height;
-    }
+    const axisSize = () => {
+      const r = el.getBoundingClientRect();
+      return (side === 'left' || side === 'right') ? r.width : r.height;
+    };
 
-    function calculateResistance(progress: number) {
-      if (progress <= 1) return 1;
-      // Apply exponential resistance for over-drag
-      const overDrag = progress - 1;
-      return Math.max(0.1, 1 - (overDrag / MAX_RESISTANCE_ZONE) * 0.9);
-    }
+    const sideSign = () => {
+      switch (side) {
+        case 'left': return -1; // moving left closes
+        case 'right': return 1; // moving right closes
+        case 'top': return -1; // moving up closes
+        case 'bottom': return 1; // moving down closes
+      }
+    };
 
-    let startHeightPx = 0;
-
-    function onPointerStart(e: PointerEvent | TouchEvent) {
-      // Only block text inputs to avoid fighting with caret/selection; allow dragging on buttons/links
+    function onDown(e: PointerEvent | TouchEvent) {
       const target = e.target as HTMLElement;
-      if (target.closest('input, select, textarea') || target.isContentEditable) {
-        return; // Let native text inputs handle the gesture
-      }
-      
-      const point = getPoint(e);
-      dragData.current = {
-        startPoint: point,
-        lastPoint: point,
+      if (target.closest('input, select, textarea') || target.isContentEditable) return;
+      const p = axisPoint(e);
+      const rect = el.getBoundingClientRect();
+      ref.current = {
+        startPoint: p,
+        lastPoint: p,
         lastTime: Date.now(),
-        velocityHistory: []
+        heightAtStart: rect.height,
+        velocities: [],
       };
-      
-      setDragState(prev => ({ ...prev, isDragging: true }));
-      // capture starting height for potential expansion (top/bottom)
-      try {
-        const rect = el.getBoundingClientRect();
-        startHeightPx = rect.height;
-      } catch {
-        startHeightPx = 0;
-      }
-      shrinkAppliedPxRef.current = 0;
-      translateAppliedPxRef.current = 0;
-      
+      setState(s => ({ ...s, isDragging: true }));
       if ('setPointerCapture' in el && 'pointerId' in e) {
         el.setPointerCapture((e as PointerEvent).pointerId);
       }
     }
 
-    function onPointerMove(e: PointerEvent | TouchEvent) {
-      if (!dragData.current.startPoint) return;
-      const point = getPoint(e);
+    function onMove(e: PointerEvent | TouchEvent) {
+      if (!ref.current.startPoint) return;
+      const p = axisPoint(e);
       const now = Date.now();
-      const timeDelta = now - dragData.current.lastTime;
-      
-      if (timeDelta > 0) {
-        const pointDelta = point - dragData.current.lastPoint;
-        const rawVelocity = pointDelta / timeDelta; // px/ms
-        // Project velocity into the drawer close direction
-        const directionalVelocity = (() => {
-          switch (side) {
-            case 'left': return -rawVelocity;   // left closes when moving left (negative Y), invert
-            case 'right': return rawVelocity;   // right closes when moving right
-            case 'top': return -rawVelocity;    // top closes when moving up
-            case 'bottom': return rawVelocity;  // bottom closes when moving down
-          }
-        })();
+      const dt = Math.max(1, now - ref.current.lastTime);
+      const rawDelta = p - ref.current.lastPoint;
+      const sign = sideSign();
+      const projectedVelocity = (rawDelta / dt) * sign; // px/ms
+      ref.current.velocities.push(projectedVelocity);
+      if (ref.current.velocities.length > 6) ref.current.velocities.shift();
 
-        // Keep velocity history for momentum calculation (directional)
-        dragData.current.velocityHistory.push(directionalVelocity);
-        if (dragData.current.velocityHistory.length > 5) {
-          dragData.current.velocityHistory.shift();
-        }
-      }
+      const totalClose = (p - ref.current.startPoint) * sign; // >0 means closing
+      const maxDist = Math.max(1, axisSize());
 
-      const totalDelta = point - dragData.current.startPoint;
-      const maxDistance = getMaxDragDistance();
-      
-      // Calculate natural drag direction
-      let naturalDelta: number;
-      switch (side) {
-        case 'left': naturalDelta = -totalDelta; break;
-        case 'right': naturalDelta = totalDelta; break;
-        case 'top': naturalDelta = -totalDelta; break;
-        case 'bottom': naturalDelta = totalDelta; break;
-      }
+      let offset = 0;
+      let progress = 0;
+      let scale = 1;
 
-      // Handle both correct and wrong direction drags using incremental deltas
-      let adjustedOffset: number = 0;
-      let progress: number = 0;
-      let resistance: number = 1;
-      let scaleFactorLocal: number = 1;
-      
-      // We will prevent default when we actually consume the gesture
-      let shouldPreventDefault = false;
-
-      // Incremental delta in the close direction for this frame
-      const incrementalCloseDelta = (() => {
-        const pointDelta = point - dragData.current.lastPoint;
-        switch (side) {
-          case 'left': return -pointDelta;   // moving left closes
-          case 'right': return pointDelta;   // moving right closes
-          case 'top': return -pointDelta;    // moving up closes
-          case 'bottom': return pointDelta;  // moving down closes
-        }
-      })();
-
-      if (incrementalCloseDelta > 0) {
-        // Closing direction
-        if ((side === 'top' || side === 'bottom')) {
-          const expandEnabledNow = !!(expandOptions?.enabled);
-          const viewportH = typeof window !== 'undefined' ? window.innerHeight : 0;
-          const halfH = Math.max(0, Math.round(viewportH * 0.5));
+      if (totalClose > 0) {
+        // Closing
+        if ((side === 'top' || side === 'bottom') && expandOptions?.enabled) {
+          // First shrink height down to min, then translate
           const currentH = el.getBoundingClientRect().height;
-          const shrinkCapacity = Math.max(0, currentH - halfH);
-          const appliedShrink = expandEnabledNow ? Math.min(incrementalCloseDelta, shrinkCapacity) : 0;
-          if (expandEnabledNow && appliedShrink > 0) {
-            expandOptions!.onUpdateHeight(currentH - appliedShrink);
-            shrinkAppliedPxRef.current += appliedShrink;
-            shouldPreventDefault = true;
+          const minH = expandOptions.getMinHeightPx();
+          const shrink = Math.min(totalClose, Math.max(0, currentH - minH));
+          if (shrink > 0) {
+            expandOptions.onUpdateHeight(currentH - shrink);
           }
-          const remaining = incrementalCloseDelta - appliedShrink;
+          const remaining = totalClose - shrink;
           if (remaining > 0) {
-            translateAppliedPxRef.current += remaining;
-            const rawProgress = translateAppliedPxRef.current / Math.max(1, maxDistance);
-            resistance = calculateResistance(rawProgress);
-            adjustedOffset = translateAppliedPxRef.current * resistance;
-            progress = Math.min(rawProgress, 1 + MAX_RESISTANCE_ZONE);
-            shouldPreventDefault = true;
-          } else {
-            resistance = 1;
-            adjustedOffset = translateAppliedPxRef.current;
-            progress = translateAppliedPxRef.current / Math.max(1, maxDistance);
+            offset = remaining;
+            progress = Math.min(remaining / maxDist, 1.2);
           }
-          // subtle stretch proportional to per-frame effort
-          const magnitudePx = Math.abs(point - dragData.current.lastPoint);
-          scaleFactorLocal = 1 + Math.min(magnitudePx / 400, 0.02);
         } else {
-          translateAppliedPxRef.current += incrementalCloseDelta;
-          const rawProgress = translateAppliedPxRef.current / Math.max(1, maxDistance);
-          resistance = calculateResistance(rawProgress);
-          adjustedOffset = translateAppliedPxRef.current * resistance;
-          progress = Math.min(rawProgress, 1 + MAX_RESISTANCE_ZONE);
-          shouldPreventDefault = true;
-          const magnitudePx = Math.abs(point - dragData.current.lastPoint);
-          scaleFactorLocal = 1 + Math.min(magnitudePx / 400, 0.02);
+          offset = totalClose;
+          progress = Math.min(totalClose / maxDist, 1.2);
         }
-      } else if (incrementalCloseDelta < 0) {
-        // Wrong direction (expanding/opening more)
-        const wrongStep = Math.abs(incrementalCloseDelta);
-        const canExpand = expandOptions?.enabled && (side === 'top' || side === 'bottom');
-        if (canExpand) {
-          const minH = expandOptions!.getMinHeightPx();
-          const maxH = expandOptions!.getMaxHeightPx();
-          const currentH = el.getBoundingClientRect().height;
-          const unclamped = currentH + wrongStep;
-          const nextH = Math.max(minH, Math.min(unclamped, maxH));
-          expandOptions!.onUpdateHeight(nextH);
-          adjustedOffset = translateAppliedPxRef.current;
-          progress = translateAppliedPxRef.current / Math.max(1, maxDistance);
-          if (nextH >= maxH - 0.5) {
-            const overDrag = Math.max(0, unclamped - maxH);
-            const maxWrongDrag = maxDistance * 0.1;
-            const wrongProgress = Math.min(overDrag / Math.max(1, maxWrongDrag), 1);
-            scaleFactorLocal = 1 + (wrongProgress * 0.015);
-          } else {
-            // Apply subtle stretch while expanding even before max height
-            const maxWrongDrag = maxDistance * 0.1;
-            const wrongProgress = Math.min(wrongStep / Math.max(1, maxWrongDrag), 1);
-            scaleFactorLocal = 1 + (wrongProgress * 0.012);
-          }
-          shouldPreventDefault = true;
-        } else {
-          // Subtle scale feedback
-          const maxWrongDrag = maxDistance * 0.1;
-          const wrongProgress = Math.min(wrongStep / Math.max(1, maxWrongDrag), 1);
-          const scaleAmount = 1 + (wrongProgress * 0.015);
-          adjustedOffset = translateAppliedPxRef.current;
-          progress = translateAppliedPxRef.current / Math.max(1, maxDistance);
-          scaleFactorLocal = scaleAmount;
-          shouldPreventDefault = true;
-        }
+        // subtle elastic scale based on per-frame effort
+        const effort = Math.abs(rawDelta);
+        scale = 1 + Math.min(effort / 400, MAX_WRONG_STRETCH);
       } else {
-        // No movement on this frame; keep previous state-derived values
-        adjustedOffset = translateAppliedPxRef.current;
-        progress = translateAppliedPxRef.current / Math.max(1, maxDistance);
-        resistance = 1;
-        scaleFactorLocal = 1;
+        // Wrong/open direction
+        const openDist = -totalClose;
+        if ((side === 'top' || side === 'bottom') && expandOptions?.enabled) {
+          const currentH = el.getBoundingClientRect().height;
+          const maxH = expandOptions.getMaxHeightPx();
+          const add = Math.min(openDist, Math.max(0, maxH - currentH));
+          const nextH = currentH + add;
+          expandOptions.onUpdateHeight(nextH);
+          const over = Math.max(0, openDist - add);
+          if (over > 0) {
+            scale = 1 + Math.min(over / (maxDist * 0.1), 1) * 0.015;
+          } else {
+            scale = 1 + Math.min(openDist / (maxDist * 0.1), 1) * 0.012;
+          }
+        } else {
+          // Only elastic scale
+          scale = 1 + Math.min(openDist / (maxDist * 0.1), 1) * 0.015;
+        }
       }
 
-      if (shouldPreventDefault) {
-        e.preventDefault();
-      }
-
-      setDragState({
-        isDragging: true,
-        offset: adjustedOffset,
-        velocity: dragData.current.velocityHistory.slice(-1)[0] || 0, // directional last velocity
-        progress,
-        resistance,
-        wrongDirectionScale: scaleFactorLocal
-      });
-
-      dragData.current.lastPoint = point;
-      dragData.current.lastTime = now;
+      e.preventDefault();
+      setState({ isDragging: true, offset, progress, wrongDirectionScale: scale });
+      ref.current.lastPoint = p;
+      ref.current.lastTime = now;
     }
 
-    function onPointerEnd() {
-      if (!dragData.current.startPoint) return;
-
-      const { velocityHistory } = dragData.current;
-      // Use the maximum directional velocity over the last few samples
-      const maxDirectionalVelocity = velocityHistory.length > 0
-        ? Math.max(0, ...velocityHistory)
+    function onUp() {
+      if (!ref.current.startPoint) return;
+      const sign = sideSign();
+      const totalClose = (ref.current.lastPoint - ref.current.startPoint) * sign;
+      const maxDist = Math.max(1, axisSize());
+      const prog = Math.max(0, totalClose) / maxDist;
+      const maxVel = ref.current.velocities.length
+        ? Math.max(0, ...ref.current.velocities)
         : 0;
 
-      // Compute overall closing-direction drag distance in pixels
-      const totalDelta = dragData.current.lastPoint - dragData.current.startPoint;
-      let naturalDeltaAtEnd = 0;
-      switch (side) {
-        case 'left': naturalDeltaAtEnd = -totalDelta; break;
-        case 'right': naturalDeltaAtEnd = totalDelta; break;
-        case 'top': naturalDeltaAtEnd = -totalDelta; break;
-        case 'bottom': naturalDeltaAtEnd = totalDelta; break;
-      }
-
-      // Only close if:
-      // - Drag progressed sufficiently in the close direction, OR
-      // - Velocity in the close direction is high enough and user moved at least a tiny bit in that direction
-      const MIN_PROGRESS_FOR_VELOCITY_CLOSE = 0.02;
-      let shouldClose = (dragState.progress >= CLOSE_THRESHOLD) 
-        || (maxDirectionalVelocity >= VELOCITY_THRESHOLD && dragState.progress >= MIN_PROGRESS_FOR_VELOCITY_CLOSE);
-
-      // Additional rule for top/bottom: if user dragged more than half the viewport in close direction, close
+      let shouldClose = prog >= CLOSE_THRESHOLD || (maxVel >= VELOCITY_THRESHOLD && prog >= 0.02);
       if (side === 'top' || side === 'bottom') {
-        const viewportH = typeof window !== 'undefined' ? window.innerHeight : 0;
-        const halfViewport = viewportH * 0.5;
-        if (naturalDeltaAtEnd >= halfViewport) {
-          shouldClose = true;
+        const half = (typeof window !== 'undefined') ? window.innerHeight * 0.5 : 0;
+        if (totalClose >= half) shouldClose = true;
+        // If not closing, snap to nearest of compact or full when expand is enabled
+        if (!shouldClose && expandOptions?.enabled) {
+          const currentH = el.getBoundingClientRect().height;
+          const minH = expandOptions.getMinHeightPx();
+          const maxH = expandOptions.getMaxHeightPx();
+          const midpoint = minH + (maxH - minH) * 0.5;
+          const target = currentH >= midpoint ? maxH : minH;
+          if (Math.abs(currentH - target) > 1) {
+            expandOptions.onUpdateHeight(target);
+          }
         }
       }
 
-      if (shouldClose) {
-        onClose();
-      }
+      if (shouldClose) onClose();
 
-      // Reset drag state accumulators
-      setDragState({
-        isDragging: false,
-        offset: 0,
-        velocity: 0,
-        progress: 0,
-        resistance: 1,
-        wrongDirectionScale: 1
-      });
-
-      dragData.current = {
-        startPoint: 0,
-        lastPoint: 0,
-        lastTime: 0,
-        velocityHistory: []
-      };
-      shrinkAppliedPxRef.current = 0;
-      translateAppliedPxRef.current = 0;
+      setState({ isDragging: false, offset: 0, progress: 0, wrongDirectionScale: 1 });
+      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, heightAtStart: 0, velocities: [] };
     }
 
-    // Support both pointer and touch events directly on panel
-    el.addEventListener('pointerdown', onPointerStart);
-    el.addEventListener('pointermove', onPointerMove);
-    el.addEventListener('pointerup', onPointerEnd);
-    el.addEventListener('pointercancel', onPointerEnd);
-    
-    el.addEventListener('touchstart', onPointerStart, { passive: false });
-    el.addEventListener('touchmove', onPointerMove, { passive: false });
-    el.addEventListener('touchend', onPointerEnd);
-    el.addEventListener('touchcancel', onPointerEnd);
-
+    el.addEventListener('pointerdown', onDown);
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+    el.addEventListener('pointercancel', onUp);
+    el.addEventListener('touchstart', onDown, { passive: false });
+    el.addEventListener('touchmove', onMove, { passive: false });
+    el.addEventListener('touchend', onUp);
+    el.addEventListener('touchcancel', onUp);
     return () => {
-      el.removeEventListener('pointerdown', onPointerStart);
-      el.removeEventListener('pointermove', onPointerMove);
-      el.removeEventListener('pointerup', onPointerEnd);
-      el.removeEventListener('pointercancel', onPointerEnd);
-      
-      el.removeEventListener('touchstart', onPointerStart);
-      el.removeEventListener('touchmove', onPointerMove);
-      el.removeEventListener('touchend', onPointerEnd);
-      el.removeEventListener('touchcancel', onPointerEnd);
+      el.removeEventListener('pointerdown', onDown);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      el.removeEventListener('pointercancel', onUp);
+      el.removeEventListener('touchstart', onDown);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onUp);
+      el.removeEventListener('touchcancel', onUp);
     };
-  }, [handleRef, side, active, onClose, dragState.progress, expandOptions]);
+  }, [handleRef, side, active, onClose, expandOptions?.enabled]);
 
-  return dragState;
+  return state;
 }
 
 export const Drawer: React.FC<DrawerProps> = ({
@@ -495,6 +358,8 @@ export const Drawer: React.FC<DrawerProps> = ({
       const timer = setTimeout(() => {
         setShouldRender(false);
       }, 400);
+      // Ensure height resets for next open
+      setExpandedHeightPx(null);
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -554,6 +419,23 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   // Compute expansion availability and bounds (only for top/bottom)
   const expansionEnabled = expandToFull && (side === 'top' || side === 'bottom');
+  // Target "compact" height when expanded: use min(size preset, base height)
+  const getTargetCompactHeight = useCallback(() => {
+    // derive from current size classes: s=55vh, m=65vh, l=75vh, xl=88vh per SCSS
+    const vh = ((): number => {
+      switch (size) {
+        case 's': return 55;
+        case 'm': return 65;
+        case 'l': return 75;
+        case 'xl': return 88;
+        default: return 65;
+      }
+    })();
+    const winH = typeof window !== 'undefined' ? window.innerHeight : 0;
+    const presetPx = Math.round(winH * (vh / 100));
+    const base = baseHeightPxRef.current || presetPx;
+    return Math.min(presetPx, base);
+  }, [size]);
   const getMaxHeightPx = useCallback(() => {
     if (typeof maxExpandedHeight === 'number') return maxExpandedHeight;
     if (typeof window === 'undefined') return baseHeightPxRef.current || 0;
@@ -570,10 +452,11 @@ export const Drawer: React.FC<DrawerProps> = ({
   }, [maxExpandedHeight]);
 
   const getMinHeightPx = useCallback(() => {
-    return baseHeightPxRef.current || (panelRef.current?.getBoundingClientRect().height ?? 0);
-  }, []);
+    // compact height is our min when expansion is used
+    return getTargetCompactHeight();
+  }, [getTargetCompactHeight]);
 
-  const dragState = useAdvancedDrag(
+  const dragState = useDrawerDrag(
     panelRef as React.RefObject<HTMLElement>,
     side,
     shouldRender && swipeToClose,
@@ -595,7 +478,7 @@ export const Drawer: React.FC<DrawerProps> = ({
     size === 'fullscreen' ? 'fullscreen' : `size-${size}`,
   ]);
 
-  // Apply advanced drag transforms with resistance and progress feedback
+  // Apply advanced drag transforms with elastic scale and progress feedback
   const dragStyle: React.CSSProperties = dragState.isDragging ? {
     transform: (() => {
       const translatePart = (() => {
@@ -722,7 +605,7 @@ export const Drawer: React.FC<DrawerProps> = ({
               className="drawer__drag-progress" 
               style={{ 
                 '--progress': `${Math.min(dragState.progress * 100, 100)}%`,
-                '--resistance': dragState.resistance 
+                '--resistance': 1 - Math.min(Math.max(dragState.progress - 1, 0), 0.2) 
               } as React.CSSProperties}
             />
           </div>
