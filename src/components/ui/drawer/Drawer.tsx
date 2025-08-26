@@ -249,14 +249,15 @@ function useAdvancedDrag(
 
       if (incrementalCloseDelta > 0) {
         // Closing direction
-        if (expandOptions?.enabled && (side === 'top' || side === 'bottom')) {
+        if ((side === 'top' || side === 'bottom')) {
+          const expandEnabledNow = !!(expandOptions?.enabled);
           const viewportH = typeof window !== 'undefined' ? window.innerHeight : 0;
           const halfH = Math.max(0, Math.round(viewportH * 0.5));
           const currentH = el.getBoundingClientRect().height;
           const shrinkCapacity = Math.max(0, currentH - halfH);
-          const appliedShrink = Math.min(incrementalCloseDelta, shrinkCapacity);
-          if (appliedShrink > 0) {
-            expandOptions.onUpdateHeight(currentH - appliedShrink);
+          const appliedShrink = expandEnabledNow ? Math.min(incrementalCloseDelta, shrinkCapacity) : 0;
+          if (expandEnabledNow && appliedShrink > 0) {
+            expandOptions!.onUpdateHeight(currentH - appliedShrink);
             shrinkAppliedPxRef.current += appliedShrink;
             shouldPreventDefault = true;
           }
@@ -373,7 +374,7 @@ function useAdvancedDrag(
         || (maxDirectionalVelocity >= VELOCITY_THRESHOLD && dragState.progress >= MIN_PROGRESS_FOR_VELOCITY_CLOSE);
 
       // Additional rule for top/bottom: if user dragged more than half the viewport in close direction, close
-      if (expandOptions?.enabled && (side === 'top' || side === 'bottom')) {
+      if (side === 'top' || side === 'bottom') {
         const viewportH = typeof window !== 'undefined' ? window.innerHeight : 0;
         const halfViewport = viewportH * 0.5;
         if (naturalDeltaAtEnd >= halfViewport) {
