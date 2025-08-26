@@ -558,12 +558,19 @@ export const Drawer: React.FC<DrawerProps> = ({
     if (typeof maxExpandedHeight === 'number') return maxExpandedHeight;
     if (typeof window === 'undefined') return baseHeightPxRef.current || 0;
     if (typeof maxExpandedHeight === 'string') {
-      if (maxExpandedHeight.endsWith('vh')) {
-        const n = parseFloat(maxExpandedHeight);
+      const str = maxExpandedHeight.replace(/\s+/g, '');
+      if (str.endsWith('vh')) {
+        const n = parseFloat(str);
         return Math.round((window.innerHeight * n) / 100);
       }
-      if (maxExpandedHeight.endsWith('px')) {
-        return Math.round(parseFloat(maxExpandedHeight));
+      if (str.endsWith('px')) {
+        return Math.round(parseFloat(str));
+      }
+      // Support calc(100% - 32px)
+      const m = str.match(/^calc\(100%-(\d+(?:\.\d+)?)px\)$/i);
+      if (m) {
+        const px = parseFloat(m[1]);
+        return Math.max(0, Math.round(window.innerHeight - px));
       }
     }
     return window.innerHeight;

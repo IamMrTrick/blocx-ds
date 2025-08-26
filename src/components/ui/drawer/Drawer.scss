@@ -157,13 +157,13 @@
 .drawer--size-xl.drawer--side-right .drawer__panel { width: min(96vw, 680px); }
 
 .drawer--size-s.drawer--side-top .drawer__panel,
-.drawer--size-s.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
+.drawer--size-s.drawer--side-bottom .drawer__panel { height: 55vh; }
 .drawer--size-m.drawer--side-top .drawer__panel,
-.drawer--size-m.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
+.drawer--size-m.drawer--side-bottom .drawer__panel { height: 65vh; }
 .drawer--size-l.drawer--side-top .drawer__panel,
-.drawer--size-l.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
+.drawer--size-l.drawer--side-bottom .drawer__panel { height: 75vh; }
 .drawer--size-xl.drawer--side-top .drawer__panel,
-.drawer--size-xl.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
+.drawer--size-xl.drawer--side-bottom .drawer__panel { height: 88vh; }
 
 .drawer--fullscreen .drawer__panel {
   inset: 0;
