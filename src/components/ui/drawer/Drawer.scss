@@ -180,9 +180,16 @@
 .drawer__description { margin: 0; color: var(--text-secondary); font-size: var(--text-sm-size); line-height: var(--text-sm-line); }
 .drawer__body {
   flex: 1 1 auto;
-  overflow: auto;
-  min-height: 0; /* allow flex child to shrink for scrolling */
-  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+  
+  &[data-scrollable="true"] {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  &[data-scrollable="false"] {
+    overflow: hidden;
+  }
 }
 .drawer__footer {
   display: flex;

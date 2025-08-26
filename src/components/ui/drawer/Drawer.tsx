@@ -128,6 +128,8 @@ function useDrawerDrag(
     startPoint: 0,
     lastPoint: 0,
     lastTime: 0,
+    startTime: 0,
+    target: null as HTMLElement | null,
     heightAtStart: 0,
     velocities: [] as number[],
     committed: false,
@@ -167,14 +169,17 @@ function useDrawerDrag(
 
     function onDown(e: PointerEvent | TouchEvent) {
       const target = e.target as HTMLElement;
-      // Ignore interactive elements so clicks work normally
-      if (target.closest('button, a, [role="button"], input, select, textarea') || target.isContentEditable) return;
+      // THE FIX: The following check is removed, as it prevents dragging on lists of links/buttons.
+      // The component's deadzone logic in onMove is sufficient to distinguish a click from a drag.
+      // if (target.closest('button, a, [role="button"], input, select, textarea') || target.isContentEditable) return;
       const p = axisPoint(e);
       const rect = el.getBoundingClientRect();
       ref.current = {
         startPoint: p,
         lastPoint: p,
         lastTime: Date.now(),
+        startTime: Date.now(),
+        target: target,
         heightAtStart: rect.height,
         velocities: [],
         committed: false,
@@ -217,41 +222,36 @@ function useDrawerDrag(
           // Allow native scroll until commit
           return;
         }
-        // Decide whether to commit based on direction and expansion state
+
+        // Simpler logic: directly check the drawer body if the drag started within it.
         let canCommit = false;
-        const bodyEl = el.querySelector('.drawer__body') as HTMLElement | null;
+        const bodyEl = el.querySelector('.drawer__body[data-scrollable="true"]') as HTMLElement | null;
+        
         const currentH = el.getBoundingClientRect().height;
         const isExpandSide = (side === 'top' || side === 'bottom');
         const expandEnabled = !!expandOptions?.enabled && isExpandSide;
         const maxH = expandEnabled ? expandOptions!.getMaxHeightPx() : 0;
         const atMax = expandEnabled ? currentH >= maxH - 1 : false;
-        const atTop = bodyEl ? bodyEl.scrollTop <= 0 : true;
-        const atBottom = bodyEl ? (bodyEl.scrollTop + bodyEl.clientHeight >= bodyEl.scrollHeight - 1) : true;
 
-        if (incClose > 0) {
-          if (expandEnabled) {
-            if (atMax) {
-              // Fully expanded: only commit if body cannot scroll further down
-              canCommit = bodyEl ? atBottom : true;
+        if (ref.current.startedInsideBody && bodyEl) {
+          // Drag started inside a scrollable body, so we check scroll position.
+          const atTop = bodyEl.scrollTop <= 0;
+          const atBottom = (bodyEl.scrollTop + bodyEl.clientHeight >= bodyEl.scrollHeight - 1);
+
+          if (incClose > 0) { // e.g., Swipe down on bottom drawer
+            canCommit = atTop;
+          } else if (incOpen > 0) { // e.g., Swipe up on bottom drawer
+            if (expandEnabled && !atMax) {
+              canCommit = true; // Prioritize expansion
             } else {
-              canCommit = true; // shrink/translate
+              canCommit = atBottom; // Commit for over-drag only at bottom
             }
-          } else {
-            canCommit = true; // non-expand sides: translate to close
           }
-        } else if (incOpen > 0) {
-          if (expandEnabled) {
-            if (!atMax) {
-              canCommit = true; // expand height instead of scroll
-            } else {
-              // At max: only commit if body cannot scroll up
-              canCommit = bodyEl ? atTop : true;
-            }
-          } else {
-            // side drawers do not expand; only elastic. Keep scroll native.
-            canCommit = false;
-          }
+        } else {
+          // Drag started outside a scrollable body (e.g., header), so always commit.
+          canCommit = true;
         }
+        
         if (!canCommit) {
           return; // keep native scroll/pass-through
         }
@@ -328,55 +328,71 @@ function useDrawerDrag(
 
     function onUp() {
       if (!ref.current.startPoint) return;
-      const sign = sideSign();
-      const totalClose = (ref.current.lastPoint - ref.current.startPoint) * sign;
-      const maxDist = Math.max(1, axisSize());
-      const prog = Math.max(0, totalClose) / maxDist;
-      const maxVel = ref.current.velocities.length
-        ? Math.max(0, ...ref.current.velocities)
-        : 0;
 
-      let shouldClose = prog >= CLOSE_THRESHOLD || (maxVel >= VELOCITY_THRESHOLD && prog >= 0.02);
-      if (side === 'top' || side === 'bottom') {
-        const isExpand = !!expandOptions?.enabled;
-        const minH = isExpand ? expandOptions!.getMinHeightPx() : 0;
-        const maxH = isExpand ? expandOptions!.getMaxHeightPx() : 0;
-        const startedAtFull = isExpand ? Math.abs(ref.current.heightAtStart - maxH) <= 1 : false;
+      const totalDist = Math.abs(ref.current.lastPoint - ref.current.startPoint);
+      const totalTime = Date.now() - (ref.current.startTime || ref.current.lastTime);
 
-        if (isExpand && startedAtFull) {
-          // Two-step from FULL: first pull must snap to compact unless pull is almost full travel
-          const baseDist = Math.max(1, ref.current.heightAtStart);
-          const fromFullProg = Math.max(0, totalClose) / baseDist;
-          const CLOSE_FROM_FULL_THRESHOLD = 0.9; // must pull ~90% to close directly from full
-          if (fromFullProg >= CLOSE_FROM_FULL_THRESHOLD) {
-            shouldClose = true;
-          } else {
-            shouldClose = false;
-            const currentH = el.getBoundingClientRect().height;
-            if (Math.abs(currentH - minH) > 1) {
-              expandOptions!.onUpdateHeight(minH);
+      const CLICK_DIST_THRESHOLD = 8;
+      const CLICK_TIME_THRESHOLD = 300;
+
+      const isLikelyClick = ref.current.committed && totalDist < CLICK_DIST_THRESHOLD && totalTime < CLICK_TIME_THRESHOLD;
+
+      if (isLikelyClick && ref.current.target) {
+        // Gesture was short and fast, treat as a click.
+        // Since preventDefault was called in onMove, we dispatch a click event manually.
+        ref.current.target.click();
+      } else if (ref.current.committed) {
+        // It was a genuine drag, apply close/snap logic.
+        const sign = sideSign();
+        const totalClose = (ref.current.lastPoint - ref.current.startPoint) * sign;
+        const maxDist = Math.max(1, axisSize());
+        const prog = Math.max(0, totalClose) / maxDist;
+        const maxVel = ref.current.velocities.length
+          ? Math.max(0, ...ref.current.velocities)
+          : 0;
+
+        let shouldClose = prog >= CLOSE_THRESHOLD || (maxVel >= VELOCITY_THRESHOLD && prog >= 0.02);
+        if (side === 'top' || side === 'bottom') {
+          const isExpand = !!expandOptions?.enabled;
+          const minH = isExpand ? expandOptions!.getMinHeightPx() : 0;
+          const maxH = isExpand ? expandOptions!.getMaxHeightPx() : 0;
+          const startedAtFull = isExpand ? Math.abs(ref.current.heightAtStart - maxH) <= 1 : false;
+
+          if (isExpand && startedAtFull) {
+            // Two-step from FULL: first pull must snap to compact unless pull is almost full travel
+            const baseDist = Math.max(1, ref.current.heightAtStart);
+            const fromFullProg = Math.max(0, totalClose) / baseDist;
+            const CLOSE_FROM_FULL_THRESHOLD = 0.9; // must pull ~90% to close directly from full
+            if (fromFullProg >= CLOSE_FROM_FULL_THRESHOLD) {
+              shouldClose = true;
+            } else {
+              shouldClose = false;
+              const currentH = el.getBoundingClientRect().height;
+              if (Math.abs(currentH - minH) > 1) {
+                expandOptions!.onUpdateHeight(minH);
+              }
             }
-          }
-        } else {
-          // Normal rule: half viewport strong close
-          const half = (typeof window !== 'undefined') ? window.innerHeight * 0.5 : 0;
-          if (totalClose >= half) shouldClose = true;
-          // If not closing, snap to nearest compact/full when expand is enabled
-          if (!shouldClose && isExpand) {
-            const currentH = el.getBoundingClientRect().height;
-            const midpoint = minH + (maxH - minH) * 0.5;
-            const target = currentH >= midpoint ? maxH : minH;
-            if (Math.abs(currentH - target) > 1) {
-              expandOptions!.onUpdateHeight(target);
+          } else {
+            // Normal rule: half viewport strong close
+            const half = (typeof window !== 'undefined') ? window.innerHeight * 0.5 : 0;
+            if (totalClose >= half) shouldClose = true;
+            // If not closing, snap to nearest compact/full when expand is enabled
+            if (!shouldClose && isExpand) {
+              const currentH = el.getBoundingClientRect().height;
+              const midpoint = minH + (maxH - minH) * 0.5;
+              const target = currentH >= midpoint ? maxH : minH;
+              if (Math.abs(currentH - target) > 1) {
+                expandOptions!.onUpdateHeight(target);
+              }
             }
           }
         }
+        if (shouldClose) onClose();
       }
 
-      if (shouldClose) onClose();
-
+      // Always reset state regardless of click/drag outcome
       setState({ isDragging: false, offset: 0, progress: 0, wrongDirectionScale: 1 });
-      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false };
+      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, startTime: 0, target: null, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false };
     }
 
     el.addEventListener('pointerdown', onDown);
@@ -759,9 +775,19 @@ export const DrawerHeader: React.FC<DrawerHeaderProps> = ({ className, ...props 
 
 export interface DrawerBodyProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
+  /**
+   * If true, the body will have overflow-y: auto and handle scrolling internally.
+   * If false, the body will not scroll, and drags will always move the drawer.
+   * @default true
+   */
+  scrollable?: boolean;
 }
-export const DrawerBody: React.FC<DrawerBodyProps> = ({ className, ...props }) => (
-  <div className={["drawer__body", className].filter(Boolean).join(' ')} {...props} />
+export const DrawerBody: React.FC<DrawerBodyProps> = ({ className, scrollable = true, ...props }) => (
+  <div 
+    className={["drawer__body", className].filter(Boolean).join(' ')} 
+    data-scrollable={scrollable}
+    {...props} 
+  />
 );
 
 export interface DrawerFooterProps extends React.HTMLAttributes<HTMLDivElement> {

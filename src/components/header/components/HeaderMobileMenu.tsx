@@ -151,7 +151,7 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
           </Button>
         </DrawerHeader>
 
-        <DrawerBody>
+        <DrawerBody scrollable={true}>
           <nav className="mobile-nav" aria-label="Mobile navigation">
             <ul className="mobile-nav__list">
               {items.map(item => renderNavItem(item))}
