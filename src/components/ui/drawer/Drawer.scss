@@ -20,6 +20,9 @@
   --_pad: var(--spacing-20);
   --_panel-w: min(86vw, 420px);
   --_panel-h: 75vh;
+  /* Elastic scaling (axis-based) */
+  --drawer-scale-x: 1;
+  --drawer-scale-y: 1;
 
   position: fixed;
   inset: 0;
@@ -84,7 +87,7 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   transform-origin: left center;
-  transform: translate3d(-100%, 0, 0);
+  transform: translate3d(-100%, 0, 0) scaleX(var(--drawer-scale-x));
   opacity: 0;
 }
 
@@ -95,7 +98,7 @@
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   transform-origin: right center;
-  transform: translate3d(100%, 0, 0);
+  transform: translate3d(100%, 0, 0) scaleX(var(--drawer-scale-x));
   opacity: 0;
 }
 
@@ -106,7 +109,7 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   transform-origin: center top;
-  transform: translate3d(0, -100%, 0);
+  transform: translate3d(0, -100%, 0) scaleY(var(--drawer-scale-y));
   opacity: 0;
 }
 
@@ -117,7 +120,7 @@
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   transform-origin: center bottom;
-  transform: translate3d(0, 100%, 0);
+  transform: translate3d(0, 100%, 0) scaleY(var(--drawer-scale-y));
   opacity: 0;
 }
 
@@ -137,6 +140,12 @@
   transform: translate3d(0, 0, 0);
   box-shadow: var(--_shadow-hover);
 }
+
+/* Override open-state transform per side to include scaling vars */
+.drawer--open.drawer--side-left .drawer__panel { transform: translate3d(0, 0, 0) scaleX(var(--drawer-scale-x)); }
+.drawer--open.drawer--side-right .drawer__panel { transform: translate3d(0, 0, 0) scaleX(var(--drawer-scale-x)); }
+.drawer--open.drawer--side-top .drawer__panel { transform: translate3d(0, 0, 0) scaleY(var(--drawer-scale-y)); }
+.drawer--open.drawer--side-bottom .drawer__panel { transform: translate3d(0, 0, 0) scaleY(var(--drawer-scale-y)); }
 
 /* Hover effects for interactive elements */
 .drawer__panel:hover {
@@ -191,6 +200,14 @@
 /* Advanced drag visual feedback */
 .drawer__panel[data-dragging="true"] {
   transition: transform 0s linear, opacity 0s linear; /* Ensure no cross-fade */
+}
+
+/* Ensure initial translate-from-side animation is preserved */
+.drawer--side-left .drawer__panel,
+.drawer--side-right .drawer__panel,
+.drawer--side-top .drawer__panel,
+.drawer--side-bottom .drawer__panel {
+  will-change: transform, opacity;
 }
 
 /* Ensure content remains clickable */

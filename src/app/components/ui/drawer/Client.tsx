@@ -21,6 +21,7 @@ export default function DrawerClient() {
   const [swipe, setSwipe] = React.useState(true);
   const [backdrop, setBackdrop] = React.useState(true);
   const [dismissible, setDismissible] = React.useState(true);
+  const [expandToFull, setExpandToFull] = React.useState(true);
 
   function openFrom(nextSide: Side) {
     setSide(nextSide);
@@ -98,6 +99,10 @@ export default function DrawerClient() {
               <Icon name={dismissible ? 'check' : 'x'} />
               Dismissible: {dismissible ? 'On' : 'Off'}
             </Button>
+            <Button variant={expandToFull ? 'success' : 'outline-secondary'} onClick={() => setExpandToFull(v => !v)}>
+              <Icon name={expandToFull ? 'check' : 'x'} />
+              Expand-to-full (top/bottom): {expandToFull ? 'On' : 'Off'}
+            </Button>
           </div>
         </div>
       </div>
@@ -110,6 +115,9 @@ export default function DrawerClient() {
         swipeToClose={swipe}
         backdrop={backdrop}
         dismissible={dismissible}
+        expandToFull={expandToFull}
+        maxExpandedHeight="100vh"
+        expandWithWheel
       >
         <DrawerHeader>
           <DrawerTitle id="drawer-title">Sample Drawer</DrawerTitle>
