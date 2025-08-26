@@ -121,7 +121,8 @@ function useDrawerDrag(
     isDragging: false,
     offset: 0,
     progress: 0,
-    scale: 1, // Simplified from wrongDirectionScale
+    scale: 1, // content elastic scale
+    elasticOffset: 0, // content elastic translate in open direction (px)
   });
 
   const ref = useRef({
@@ -212,6 +213,7 @@ function useDrawerDrag(
       let offset = 0;
       let progress = 0;
       let scale = 1;
+      let elasticOffset = 0;
 
       const incClose = Math.max(0, rawDelta * sign);
       const incOpen = Math.max(0, -rawDelta * sign);
@@ -253,6 +255,24 @@ function useDrawerDrag(
         }
         
         if (!canCommit) {
+          // Pre-commit rubber-band preview (content wrapper) and keep it while holding
+          const totalCloseFromStart = (p - ref.current.startPoint) * sign; // >0 closing, <0 opening
+          const totalOpenFromStart = Math.max(0, -totalCloseFromStart);
+          if (incOpen > 0 && totalOpenFromStart > 0) {
+            const maxPx = Math.max(18, Math.min(56, maxDist * 0.06));
+            const rubber = (d: number) => (maxPx * d) / (d + maxDist * 0.25);
+            const absSpeed = Math.abs(projectedVelocity);
+            const speedBoost = 1 + Math.min(absSpeed / 0.9, 1) * 0.32; // reduce boost
+            // We no longer apply elasticOffset to panel; keep 0 to avoid detach
+            elasticOffset = 0;
+            const distFactor = Math.min(totalOpenFromStart / (maxDist * 0.24), 1);
+            scale = 1 + Math.min(0.055, distFactor * 0.055) + Math.min(0.025, (absSpeed / 1.0) * 0.025);
+            setState({ isDragging: true, offset: 0, progress: 0, scale, elasticOffset });
+            // keep native scroll; don't commit or preventDefault
+            ref.current.lastPoint = p;
+            ref.current.lastTime = now;
+            return;
+          }
           return; // keep native scroll/pass-through
         }
         ref.current.committed = true;
@@ -281,9 +301,9 @@ function useDrawerDrag(
         }
         offset = ref.current.appliedTranslate;
         progress = Math.min(offset / maxDist, 1.2);
-        // subtle elastic scale based on per-frame effort
-        const effort = Math.abs(rawDelta);
-        scale = 1 - Math.min(effort / 400, MAX_WRONG_STRETCH);
+        // keep content neutral while closing
+        scale = 1;
+        elasticOffset = 0;
       } else {
         // Wrong/open direction (reverse movement)
         let remainingOpen = incOpen;
@@ -294,12 +314,18 @@ function useDrawerDrag(
           remainingOpen -= reduce;
         }
 
+        // 2) Then grow height toward max with leftover open distance (top/bottom),
+        // but only after a small threshold so the elastic stays while holding
         if ((side === 'top' || side === 'bottom') && expandOptions?.enabled) {
-          // 2) Then grow height toward max with any leftover open distance
           const currentH = el.getBoundingClientRect().height;
           const maxH = expandOptions.getMaxHeightPx();
           const growCapacity = Math.max(0, maxH - currentH);
-          const growBy = Math.min(remainingOpen, growCapacity);
+          const EXPAND_GATE = Math.max(12, Math.min(28, maxDist * 0.04));
+          let growBy = 0;
+          if (remainingOpen > EXPAND_GATE) {
+            const overGate = remainingOpen - EXPAND_GATE;
+            growBy = Math.min(overGate, growCapacity);
+          }
           if (growBy > 0) {
             expandOptions.onUpdateHeight(currentH + growBy);
             ref.current.appliedShrink = Math.max(0, ref.current.appliedShrink - growBy);
@@ -307,15 +333,18 @@ function useDrawerDrag(
           }
         }
 
-        // 3) Any extra open distance becomes elastic over-drag scale only
-        if (remainingOpen > 0) {
-          // A more pronounced, responsive elastic scale.
-          // The effect is strongest for the first ~20% of the drawer's size.
-          scale = 1 + Math.min(remainingOpen / (maxDist * 0.2), 1) * 0.05;
-        } else {
-          // A very subtle scale when just reversing a closing drag, for tactile feedback.
-          scale = 1 + Math.min(incOpen / (maxDist * 0.2), 1) * 0.02;
-        }
+        // 3) Compute total open displacement from start, minus what translate/height already consumed
+        const totalOpenFromStart = Math.max(0, -((p - ref.current.startPoint) * sign));
+        const currentH2 = el.getBoundingClientRect().height;
+        const grownSinceStart = Math.max(0, currentH2 - ref.current.heightAtStart);
+        const translateSinceStart = Math.max(0, ref.current.appliedTranslate);
+        const residualOpen = Math.max(0, totalOpenFromStart - translateSinceStart - grownSinceStart);
+
+        // Elastic over-drag for content wrapper only, persists while holding
+        const absSpeed = Math.abs(projectedVelocity);
+        const distFactor = Math.min(residualOpen / (maxDist * 0.24), 1);
+        elasticOffset = 0; // keep attached edge pinned
+        scale = 1 + Math.min(0.055, distFactor * 0.055) + Math.min(0.025, (absSpeed / 1.0) * 0.025);
 
         offset = ref.current.appliedTranslate;
         progress = Math.min(offset / maxDist, 1.2);
@@ -323,7 +352,7 @@ function useDrawerDrag(
 
       // Prevent default only after drag is committed, so internal scroll works before commit
       e.preventDefault();
-      setState({ isDragging: true, offset, progress, scale }); // Use single scale property
+      setState({ isDragging: true, offset, progress, scale, elasticOffset });
       ref.current.lastPoint = p;
       ref.current.lastTime = now;
     }
@@ -407,7 +436,7 @@ function useDrawerDrag(
       }
 
       // Always reset state regardless of click/drag outcome
-      setState({ isDragging: false, offset: 0, progress: 0, scale: 1 });
+      setState({ isDragging: false, offset: 0, progress: 0, scale: 1, elasticOffset: 0 });
       ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, startTime: 0, target: null, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false };
     }
 
@@ -639,7 +668,7 @@ export const Drawer: React.FC<DrawerProps> = ({
     size === 'fullscreen' ? 'fullscreen' : `size-${size}`,
   ]);
 
-  // Apply advanced drag transforms with elastic scale and progress feedback
+  // Apply drag transforms to panel: slide translate + elastic scale (whole panel)
   const dragStyle: React.CSSProperties = dragState.isDragging ? {
     transform: (() => {
       const translatePart = (() => {
@@ -651,28 +680,26 @@ export const Drawer: React.FC<DrawerProps> = ({
           case 'bottom': return `translate3d(0, ${dragState.offset}px, 0)`;
         }
       })();
-
-      // The new simplified scale logic. The hook provides the definitive scale value.
-      const scaleValue = dragState.scale;
-      const scalePart = (scaleValue !== 1) ? (() => {
+      const scalePart = (() => {
+        const s = dragState.scale;
+        if (s === 1) return '';
         switch (side) {
           case 'left':
           case 'right':
-            return ` scaleX(${scaleValue})`;
+            return ` scaleX(${s})`;
           case 'top':
           case 'bottom':
-            return ` scaleY(${scaleValue})`;
+            return ` scaleY(${s})`;
         }
-      })() : '';
-
+      })();
       return `${translatePart}${scalePart}`.trim();
     })(),
     transformOrigin: (() => {
       switch (side) {
         case 'left': return 'left center';
         case 'right': return 'right center';
-        case 'top': return 'center top';
-        case 'bottom': return 'center bottom';
+        case 'top': return 'top center';
+        case 'bottom': return 'bottom center';
       }
     })(),
     transition: 'none', // Disable transitions during drag
@@ -745,6 +772,16 @@ export const Drawer: React.FC<DrawerProps> = ({
         data-drag-progress={dragState.progress}
         data-dragging={dragState.isDragging}
       >
+        <div
+          className="drawer__panel-content"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--_gap)',
+            width: '100%',
+            height: '100%'
+          }}
+        >
         {(
           // Always show handle for top/bottom; for left/right show only while dragging
           (side === 'top' || side === 'bottom') || (dragState.isDragging && dragState.progress > 0)
@@ -760,6 +797,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           </div>
         )}
         {children}
+        </div>
       </div>
     </div>
   );
