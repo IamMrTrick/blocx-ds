@@ -257,33 +257,33 @@
 /* Drag indicator positioning by side */
 .drawer__drag-indicator[data-side="left"] {
   top: 50%;
-  right: var(--spacing-16);
+  right: -0.5rem;
   width: 4px;
-  height: 60px;
+  height: 86px;
   transform: translateY(-50%);
 }
 
 .drawer__drag-indicator[data-side="right"] {
   top: 50%;
-  left: var(--spacing-16);
+  left: -0.5rem;
   width: 4px;
-  height: 60px;
+  height: 86px;
   transform: translateY(-50%);
 }
 
 .drawer__drag-indicator[data-side="top"] {
-  bottom: var(--spacing-16);
+  bottom: -0.5rem;
   left: 50%;
-  width: 64px;
-  height: 6px;
+  width: 86px;
+  height: 4px;
   transform: translateX(-50%);
 }
 
 .drawer__drag-indicator[data-side="bottom"] {
-  top: var(--spacing-16);
+  top: -0.5rem;
   left: 50%;
-  width: 64px;
-  height: 6px;
+  width: 86px;
+  height: 4px;
   transform: translateX(-50%);
 }
 

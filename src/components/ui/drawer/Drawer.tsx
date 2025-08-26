@@ -138,6 +138,7 @@ function useDrawerDrag(
     appliedShrink: 0,
     appliedTranslate: 0,
     startedInsideBody: false,
+    startedInHandle: false,
   });
 
   useEffect(() => {
@@ -175,6 +176,7 @@ function useDrawerDrag(
       // if (target.closest('button, a, [role="button"], input, select, textarea') || target.isContentEditable) return;
       const p = axisPoint(e);
       const rect = el.getBoundingClientRect();
+      const inHandle = !!(el.querySelector('.drawer__drag-indicator') as HTMLElement | null)?.contains(e.target as Node);
       ref.current = {
         startPoint: p,
         lastPoint: p,
@@ -188,6 +190,7 @@ function useDrawerDrag(
         appliedShrink: 0,
         appliedTranslate: 0,
         startedInsideBody: !!target.closest('.drawer__body'),
+        startedInHandle: inHandle,
       };
       // Do not mark dragging until commit; preserve click/scroll behavior
       setState(s => ({ ...s, isDragging: false }));
@@ -437,7 +440,7 @@ function useDrawerDrag(
 
       // Always reset state regardless of click/drag outcome
       setState({ isDragging: false, offset: 0, progress: 0, scale: 1, elasticOffset: 0 });
-      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, startTime: 0, target: null, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false };
+      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, startTime: 0, target: null, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false, startedInHandle: false };
     }
 
     el.addEventListener('pointerdown', onDown);
