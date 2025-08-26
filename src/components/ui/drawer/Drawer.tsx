@@ -127,6 +127,8 @@ function useDrawerDrag(
 
   const ref = useRef({
     startPoint: 0,
+    startX: 0,
+    startY: 0,
     lastPoint: 0,
     lastTime: 0,
     startTime: 0,
@@ -139,20 +141,28 @@ function useDrawerDrag(
     appliedTranslate: 0,
     startedInsideBody: false,
     startedInHandle: false,
+    isInteractiveTarget: false,
+    startedNearEdge: false,
+    gestureIgnored: false,
   });
 
   useEffect(() => {
     if (!active) return;
     const el = handleRef.current;
     if (!el) return;
+    const supportsPointer = typeof window !== 'undefined' && 'PointerEvent' in window;
 
     const CLOSE_THRESHOLD = 0.4; // 40% of travel
     const VELOCITY_THRESHOLD = 0.5; // px/ms projected into close direction
     const MAX_WRONG_STRETCH = 0.02; // 2% for closing direction
 
     const axisPoint = (e: PointerEvent | TouchEvent) => {
-      const p = 'touches' in e ? e.touches[0] : e;
+      const p = 'touches' in e ? e.touches[0] : e as PointerEvent;
       return (side === 'left' || side === 'right') ? p.clientX : p.clientY;
+    };
+    const pointerXY = (e: PointerEvent | TouchEvent) => {
+      const p = 'touches' in e ? e.touches[0] : e as PointerEvent;
+      return { x: p.clientX, y: p.clientY };
     };
 
     const axisSize = () => {
@@ -177,8 +187,22 @@ function useDrawerDrag(
       const p = axisPoint(e);
       const rect = el.getBoundingClientRect();
       const inHandle = !!(el.querySelector('.drawer__drag-indicator') as HTMLElement | null)?.contains(e.target as Node);
+      const gestureIgnored = !!(target.closest('[data-drawer-gesture="ignore"], [data-gesture-ignore]'));
+      const { x: startX, y: startY } = pointerXY(e);
+      const isInteractiveTarget = !!(target.closest('button, a, [role="button"], input, select, textarea') || (target as HTMLElement).isContentEditable);
+      const EDGE_GUTTER = 24; // px
+      const startedNearEdge = (() => {
+        switch (side) {
+          case 'left': return (startX - rect.left) <= EDGE_GUTTER;
+          case 'right': return (rect.right - startX) <= EDGE_GUTTER;
+          case 'top': return (startY - rect.top) <= EDGE_GUTTER;
+          case 'bottom': return (rect.bottom - startY) <= EDGE_GUTTER;
+        }
+      })();
       ref.current = {
         startPoint: p,
+        startX,
+        startY,
         lastPoint: p,
         lastTime: Date.now(),
         startTime: Date.now(),
@@ -191,6 +215,9 @@ function useDrawerDrag(
         appliedTranslate: 0,
         startedInsideBody: !!target.closest('.drawer__body'),
         startedInHandle: inHandle,
+        isInteractiveTarget,
+        startedNearEdge,
+        gestureIgnored,
       };
       // Do not mark dragging until commit; preserve click/scroll behavior
       setState(s => ({ ...s, isDragging: false }));
@@ -201,6 +228,7 @@ function useDrawerDrag(
       if (!ref.current.startPoint) return;
       const p = axisPoint(e);
       const now = Date.now();
+      const { x: curX, y: curY } = pointerXY(e);
       const dt = Math.max(1, now - ref.current.lastTime);
       const rawDelta = p - ref.current.lastPoint;
       // Deadzone and axis gating with direction policy
@@ -238,38 +266,69 @@ function useDrawerDrag(
         const maxH = expandEnabled ? expandOptions!.getMaxHeightPx() : 0;
         const atMax = expandEnabled ? currentH >= maxH - 1 : false;
 
-        if (ref.current.startedInsideBody && bodyEl) {
-          // Drag started inside a scrollable body, so we check scroll position.
-          const atTop = bodyEl.scrollTop <= 0;
-          const atBottom = (bodyEl.scrollTop + bodyEl.clientHeight >= bodyEl.scrollHeight - 1);
+        // Axis-dominant gesture detection
+        const dxTotal = curX - ref.current.startX;
+        const dyTotal = curY - ref.current.startY;
+        const DOMINANCE = 1.2;
+        const horizontalDominant = Math.abs(dxTotal) >= Math.abs(dyTotal) * DOMINANCE;
+        const verticalDominant = Math.abs(dyTotal) >= Math.abs(dxTotal) * DOMINANCE;
 
-          if (incClose > 0) { // e.g., Swipe down on bottom drawer
-            canCommit = atTop;
-          } else if (incOpen > 0) { // e.g., Swipe up on bottom drawer
-            if (expandEnabled && !atMax) {
-              canCommit = true; // Prioritize expansion
-            } else {
-              canCommit = atBottom; // Commit for over-drag only at bottom
-            }
+        const interactive = ref.current.isInteractiveTarget;
+        const INTERACTIVE_DEADZONE = 16; // require more intent if started on interactive
+
+        if (side === 'left' || side === 'right') {
+          // Horizontal drawers: allow commit if started on handle/edge, or clear horizontal intent
+          if (ref.current.startedInHandle || ref.current.startedNearEdge) {
+            canCommit = true;
+          } else {
+            canCommit = horizontalDominant && (!interactive || moved >= INTERACTIVE_DEADZONE);
           }
         } else {
-          // Drag started outside a scrollable body (e.g., header), so always commit.
-          canCommit = true;
+          // Vertical drawers
+          if (ref.current.startedInsideBody && bodyEl) {
+            const atTop = bodyEl.scrollTop <= 0;
+            const atBottom = (bodyEl.scrollTop + bodyEl.clientHeight >= bodyEl.scrollHeight - 1);
+            if (!verticalDominant) {
+              canCommit = false;
+            } else if (incClose > 0) {
+              canCommit = atTop;
+            } else if (incOpen > 0) {
+              canCommit = (expandEnabled && !atMax) || atBottom;
+            }
+          } else {
+            canCommit = verticalDominant && (!interactive || moved >= INTERACTIVE_DEADZONE);
+          }
         }
         
         if (!canCommit) {
           // Pre-commit rubber-band preview (content wrapper) and keep it while holding
           const totalCloseFromStart = (p - ref.current.startPoint) * sign; // >0 closing, <0 opening
           const totalOpenFromStart = Math.max(0, -totalCloseFromStart);
-          if (incOpen > 0 && totalOpenFromStart > 0) {
-            const maxPx = Math.max(18, Math.min(56, maxDist * 0.06));
-            const rubber = (d: number) => (maxPx * d) / (d + maxDist * 0.25);
-            const absSpeed = Math.abs(projectedVelocity);
-            const speedBoost = 1 + Math.min(absSpeed / 0.9, 1) * 0.32; // reduce boost
-            // We no longer apply elasticOffset to panel; keep 0 to avoid detach
+          const axisDominant = (side === 'left' || side === 'right') ? horizontalDominant : verticalDominant;
+          const allowPreview = !ref.current.gestureIgnored
+            && incOpen > 0 && totalOpenFromStart > 0
+            && (!interactive || moved >= INTERACTIVE_DEADZONE)
+            && (axisDominant || ref.current.startedInHandle || ref.current.startedNearEdge || moved >= MOVEMENT_DEADZONE * 2);
+          if (allowPreview) {
+            // Side-tuned elastic scale (no elastic translate to keep edge pinned)
+            let baseMax = 0.055; // bottom default
+            let speedMax = 0.025;
+            let denom = 0.24;
+            switch (side) {
+              case 'top': baseMax = 0.045; speedMax = 0.02; denom = 0.24; break;
+              case 'left':
+              case 'right': baseMax = 0.035; speedMax = 0.015; denom = 0.28; break;
+              case 'bottom': default: baseMax = 0.055; speedMax = 0.025; denom = 0.24; break;
+            }
+            const dominanceFactor = axisDominant ? 1 : 0.6; // softer when not dominant
+            baseMax *= dominanceFactor;
+            speedMax *= dominanceFactor;
             elasticOffset = 0;
-            const distFactor = Math.min(totalOpenFromStart / (maxDist * 0.24), 1);
-            scale = 1 + Math.min(0.055, distFactor * 0.055) + Math.min(0.025, (absSpeed / 1.0) * 0.025);
+            const absSpeed = Math.abs(projectedVelocity);
+            const distFactor = Math.min(totalOpenFromStart / (maxDist * denom), 1);
+            const speedFactor = Math.min(absSpeed / 1.0, 1);
+            const scaleDelta = Math.min(baseMax + speedMax, distFactor * baseMax + speedFactor * speedMax);
+            scale = 1 + scaleDelta;
             setState({ isDragging: true, offset: 0, progress: 0, scale, elasticOffset });
             // keep native scroll; don't commit or preventDefault
             ref.current.lastPoint = p;
@@ -372,11 +431,7 @@ function useDrawerDrag(
       // A click is a gesture that has NOT committed to a drag, and is short/fast.
       const isLikelyClick = !ref.current.committed && totalDist < CLICK_DIST_THRESHOLD && totalTime < CLICK_TIME_THRESHOLD;
 
-      if (isLikelyClick && ref.current.target) {
-        // Gesture was short and fast, treat as a click.
-        // Since preventDefault was called in onMove, we dispatch a click event manually.
-        ref.current.target.click();
-      } else if (ref.current.committed) {
+      if (!isLikelyClick && ref.current.committed) {
         // It was a genuine drag, apply close/snap logic.
         const sign = sideSign();
         const totalClose = (ref.current.lastPoint - ref.current.startPoint) * sign;
@@ -440,7 +495,7 @@ function useDrawerDrag(
 
       // Always reset state regardless of click/drag outcome
       setState({ isDragging: false, offset: 0, progress: 0, scale: 1, elasticOffset: 0 });
-      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, startTime: 0, target: null, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false, startedInHandle: false };
+      ref.current = { startPoint: 0, startX: 0, startY: 0, lastPoint: 0, lastTime: 0, startTime: 0, target: null, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false, startedInHandle: false, isInteractiveTarget: false, startedNearEdge: false, gestureIgnored: false };
     }
 
     el.addEventListener('pointerdown', onDown);
@@ -807,7 +862,6 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   return ReactDOM.createPortal(content, portalRef.current);
 };
-
 export interface DrawerHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
@@ -850,5 +904,6 @@ export const DrawerDescription: React.FC<DrawerDescriptionProps> = ({ className,
 );
 
 export default Drawer;
+
 
 
