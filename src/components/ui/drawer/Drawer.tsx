@@ -309,10 +309,11 @@ function useDrawerDrag(
 
         // 3) Any extra open distance becomes elastic over-drag scale only
         if (remainingOpen > 0) {
-          scale = 1 + Math.min(remainingOpen / (maxDist * 0.1), 1) * 0.015;
+          // Make the scale effect more noticeable and responsive
+          scale = 1 + Math.min(remainingOpen / maxDist, 1) * 0.04;
         } else {
           // subtle scale even when just reversing translate for tactile feel
-          scale = 1 + Math.min(incOpen / (maxDist * 0.1), 1) * 0.012;
+          scale = 1 + Math.min(incOpen / (maxDist * 0.2), 1) * 0.02;
         }
 
         offset = ref.current.appliedTranslate;
@@ -335,7 +336,8 @@ function useDrawerDrag(
       const CLICK_DIST_THRESHOLD = 8;
       const CLICK_TIME_THRESHOLD = 300;
 
-      const isLikelyClick = ref.current.committed && totalDist < CLICK_DIST_THRESHOLD && totalTime < CLICK_TIME_THRESHOLD;
+      // A click is a gesture that has NOT committed to a drag, and is short/fast.
+      const isLikelyClick = !ref.current.committed && totalDist < CLICK_DIST_THRESHOLD && totalTime < CLICK_TIME_THRESHOLD;
 
       if (isLikelyClick && ref.current.target) {
         // Gesture was short and fast, treat as a click.
@@ -359,30 +361,43 @@ function useDrawerDrag(
           const startedAtFull = isExpand ? Math.abs(ref.current.heightAtStart - maxH) <= 1 : false;
 
           if (isExpand && startedAtFull) {
-            // Two-step from FULL: first pull must snap to compact unless pull is almost full travel
-            const baseDist = Math.max(1, ref.current.heightAtStart);
-            const fromFullProg = Math.max(0, totalClose) / baseDist;
-            const CLOSE_FROM_FULL_THRESHOLD = 0.9; // must pull ~90% to close directly from full
-            if (fromFullProg >= CLOSE_FROM_FULL_THRESHOLD) {
-              shouldClose = true;
-            } else {
+            // When starting from full height, we have special two-step logic.
+            if (totalClose <= 0) {
+              // An "opening" gesture (or no movement) from full height should do nothing, just spring back.
               shouldClose = false;
-              const currentH = el.getBoundingClientRect().height;
-              if (Math.abs(currentH - minH) > 1) {
-                expandOptions!.onUpdateHeight(minH);
+            } else {
+              // A "closing" gesture from full height...
+              const baseDist = Math.max(1, ref.current.heightAtStart);
+              const fromFullProg = totalClose / baseDist;
+              const CLOSE_FROM_FULL_THRESHOLD = 0.9; // must pull ~90% to close directly
+              if (fromFullProg >= CLOSE_FROM_FULL_THRESHOLD) {
+                // ...if pulled far enough, closes completely.
+                shouldClose = true;
+              } else {
+                // ...if not pulled far enough, snaps down to compact view.
+                shouldClose = false;
+                const currentH = el.getBoundingClientRect().height;
+                if (Math.abs(currentH - minH) > 1) {
+                  expandOptions!.onUpdateHeight(minH);
+                }
               }
             }
           } else {
-            // Normal rule: half viewport strong close
-            const half = (typeof window !== 'undefined') ? window.innerHeight * 0.5 : 0;
-            if (totalClose >= half) shouldClose = true;
-            // If not closing, snap to nearest compact/full when expand is enabled
+            // If not starting from full, or not expandable, use standard logic.
             if (!shouldClose && isExpand) {
               const currentH = el.getBoundingClientRect().height;
-              const midpoint = minH + (maxH - minH) * 0.5;
-              const target = currentH >= midpoint ? maxH : minH;
-              if (Math.abs(currentH - target) > 1) {
-                expandOptions!.onUpdateHeight(target);
+              // An "opening" gesture (negative totalClose) should always try to snap open.
+              if (totalClose < 0) {
+                if (Math.abs(currentH - maxH) > 1) {
+                  expandOptions!.onUpdateHeight(maxH);
+                }
+              } else {
+                // A "closing" gesture uses midpoint logic.
+                const midpoint = minH + (maxH - minH) * 0.5;
+                const target = currentH > midpoint ? maxH : minH;
+                if (Math.abs(currentH - target) > 1) {
+                  expandOptions!.onUpdateHeight(target);
+                }
               }
             }
           }
@@ -490,7 +505,7 @@ export const Drawer: React.FC<DrawerProps> = ({
       setIsAnimating(false);
       const timer = setTimeout(() => {
         setShouldRender(false);
-      }, 400);
+      }, 500); // Match this to the longest transition duration (0.45s) + a small buffer
       // Ensure height resets for next open
       setExpandedHeightPx(null);
       setIsHeaderDocked(false);

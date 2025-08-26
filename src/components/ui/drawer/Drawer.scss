@@ -23,6 +23,9 @@
   /* Elastic scaling (axis-based) */
   --drawer-scale-x: 1;
   --drawer-scale-y: 1;
+  --_duration-fast: 0.3s;
+  --_duration-medium: 0.45s;
+  --_curve-ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* A very smooth ease-out quint */
 
   position: fixed;
   inset: 0;
@@ -126,10 +129,11 @@
 
 .drawer__panel {
   /* Always have transition for smooth animations */
-  transition: transform 0.46s cubic-bezier(0.22, 1, 0.36, 1), /* softened easeOutQuint */
-              opacity 0.3s var(--ease-out),
-              box-shadow 0.3s var(--ease-out);
-  will-change: transform, opacity;
+  transition: transform var(--_duration-medium) var(--_curve-ease-out),
+              opacity var(--_duration-fast) ease-out,
+              height var(--_duration-medium) var(--_curve-ease-out), /* Add height transition */
+              box-shadow var(--_duration-fast) ease-out;
+  will-change: transform, opacity, height;
   backface-visibility: hidden;
 }
 
