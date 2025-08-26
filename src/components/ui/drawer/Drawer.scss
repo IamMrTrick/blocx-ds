@@ -157,13 +157,13 @@
 .drawer--size-xl.drawer--side-right .drawer__panel { width: min(96vw, 680px); }
 
 .drawer--size-s.drawer--side-top .drawer__panel,
-.drawer--size-s.drawer--side-bottom .drawer__panel { height: 55vh; }
+.drawer--size-s.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
 .drawer--size-m.drawer--side-top .drawer__panel,
-.drawer--size-m.drawer--side-bottom .drawer__panel { height: 65vh; }
+.drawer--size-m.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
 .drawer--size-l.drawer--side-top .drawer__panel,
-.drawer--size-l.drawer--side-bottom .drawer__panel { height: 75vh; }
+.drawer--size-l.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
 .drawer--size-xl.drawer--side-top .drawer__panel,
-.drawer--size-xl.drawer--side-bottom .drawer__panel { height: 88vh; }
+.drawer--size-xl.drawer--side-bottom .drawer__panel { height: calc(100% - 32px); }
 
 .drawer--fullscreen .drawer__panel {
   inset: 0;
@@ -200,7 +200,8 @@
 
 /* Improve touch behavior for swipes */
 .drawer__panel {
-  touch-action: none; /* Enable custom drag gestures */
+  /* Allow vertical scroll for top/bottom until drag commits; we preventDefault in JS on commit */
+  touch-action: pan-y pan-x; 
   cursor: grab;
 }
 
@@ -238,12 +239,7 @@
   pointer-events: none;
   
   /* Base styles for all sides */
-  background: linear-gradient(
-    90deg, 
-    rgba(var(--accent-rgb, 59, 130, 246), 0.1) 0%,
-    rgba(var(--accent-rgb, 59, 130, 246), 0.3) 50%,
-    rgba(var(--accent-rgb, 59, 130, 246), 0.1) 100%
-  );
+  background: var(--gray-300, rgba(128,128,128,0.35));
   border-radius: var(--radius-full);
 }
 
@@ -267,16 +263,16 @@
 .drawer__drag-indicator[data-side="top"] {
   bottom: var(--spacing-16);
   left: 50%;
-  width: 60px;
-  height: 4px;
+  width: 64px;
+  height: 6px;
   transform: translateX(-50%);
 }
 
 .drawer__drag-indicator[data-side="bottom"] {
   top: var(--spacing-16);
   left: 50%;
-  width: 60px;
-  height: 4px;
+  width: 64px;
+  height: 6px;
   transform: translateX(-50%);
 }
 

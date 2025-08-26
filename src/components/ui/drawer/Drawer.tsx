@@ -28,6 +28,8 @@ export interface DrawerProps {
   maxExpandedHeight?: number | string;
   /** If true, wheel/trackpad scroll will expand first (only for top/bottom). Default: true */
   expandWithWheel?: boolean;
+  /** Optional: enable header-dock step before full close (top/bottom only) */
+  dockHeaderOnClose?: boolean;
   'aria-label'?: string;
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
@@ -110,6 +112,9 @@ function useDrawerDrag(
     getMinHeightPx: () => number;
     getMaxHeightPx: () => number;
     onUpdateHeight: (heightPx: number) => void;
+    getHeaderDockHeightPx?: () => number;
+    onDockHeader?: () => void;
+    onUndockHeader?: () => void;
   }
 ) {
   const [state, setState] = useState({
@@ -125,6 +130,11 @@ function useDrawerDrag(
     lastTime: 0,
     heightAtStart: 0,
     velocities: [] as number[],
+    committed: false,
+    axis: 'y' as 'x' | 'y',
+    appliedShrink: 0,
+    appliedTranslate: 0,
+    startedInsideBody: false,
   });
 
   useEffect(() => {
@@ -157,7 +167,8 @@ function useDrawerDrag(
 
     function onDown(e: PointerEvent | TouchEvent) {
       const target = e.target as HTMLElement;
-      if (target.closest('input, select, textarea') || target.isContentEditable) return;
+      // Ignore interactive elements so clicks work normally
+      if (target.closest('button, a, [role="button"], input, select, textarea') || target.isContentEditable) return;
       const p = axisPoint(e);
       const rect = el.getBoundingClientRect();
       ref.current = {
@@ -166,11 +177,15 @@ function useDrawerDrag(
         lastTime: Date.now(),
         heightAtStart: rect.height,
         velocities: [],
+        committed: false,
+        axis: (side === 'left' || side === 'right') ? 'x' : 'y',
+        appliedShrink: 0,
+        appliedTranslate: 0,
+        startedInsideBody: !!target.closest('.drawer__body'),
       };
-      setState(s => ({ ...s, isDragging: true }));
-      if ('setPointerCapture' in el && 'pointerId' in e) {
-        el.setPointerCapture((e as PointerEvent).pointerId);
-      }
+      // Do not mark dragging until commit; preserve click/scroll behavior
+      setState(s => ({ ...s, isDragging: false }));
+      // Do not capture yet; capture only when drag commits to allow native scrolls
     }
 
     function onMove(e: PointerEvent | TouchEvent) {
@@ -179,6 +194,8 @@ function useDrawerDrag(
       const now = Date.now();
       const dt = Math.max(1, now - ref.current.lastTime);
       const rawDelta = p - ref.current.lastPoint;
+      // Deadzone and axis gating with direction policy
+      const MOVEMENT_DEADZONE = 6; // px
       const sign = sideSign();
       const projectedVelocity = (rawDelta / dt) * sign; // px/ms
       ref.current.velocities.push(projectedVelocity);
@@ -191,49 +208,118 @@ function useDrawerDrag(
       let progress = 0;
       let scale = 1;
 
-      if (totalClose > 0) {
+      const incClose = Math.max(0, rawDelta * sign);
+      const incOpen = Math.max(0, -rawDelta * sign);
+
+      if (!ref.current.committed) {
+        const moved = Math.abs(p - ref.current.startPoint);
+        if (moved < MOVEMENT_DEADZONE) {
+          // Allow native scroll until commit
+          return;
+        }
+        // Decide whether to commit based on direction and expansion state
+        let canCommit = false;
+        const bodyEl = el.querySelector('.drawer__body') as HTMLElement | null;
+        const currentH = el.getBoundingClientRect().height;
+        const isExpandSide = (side === 'top' || side === 'bottom');
+        const expandEnabled = !!expandOptions?.enabled && isExpandSide;
+        const maxH = expandEnabled ? expandOptions!.getMaxHeightPx() : 0;
+        const atMax = expandEnabled ? currentH >= maxH - 1 : false;
+        const atTop = bodyEl ? bodyEl.scrollTop <= 0 : true;
+        const atBottom = bodyEl ? (bodyEl.scrollTop + bodyEl.clientHeight >= bodyEl.scrollHeight - 1) : true;
+
+        if (incClose > 0) {
+          if (expandEnabled) {
+            if (atMax) {
+              // Fully expanded: only commit if body cannot scroll further down
+              canCommit = bodyEl ? atBottom : true;
+            } else {
+              canCommit = true; // shrink/translate
+            }
+          } else {
+            canCommit = true; // non-expand sides: translate to close
+          }
+        } else if (incOpen > 0) {
+          if (expandEnabled) {
+            if (!atMax) {
+              canCommit = true; // expand height instead of scroll
+            } else {
+              // At max: only commit if body cannot scroll up
+              canCommit = bodyEl ? atTop : true;
+            }
+          } else {
+            // side drawers do not expand; only elastic. Keep scroll native.
+            canCommit = false;
+          }
+        }
+        if (!canCommit) {
+          return; // keep native scroll/pass-through
+        }
+        ref.current.committed = true;
+        if ('setPointerCapture' in el && 'pointerId' in e) {
+          try { el.setPointerCapture((e as PointerEvent).pointerId); } catch {}
+        }
+      }
+
+      if (incClose > 0) {
         // Closing
         if ((side === 'top' || side === 'bottom') && expandOptions?.enabled) {
-          // First shrink height down to min, then translate
           const currentH = el.getBoundingClientRect().height;
           const minH = expandOptions.getMinHeightPx();
-          const shrink = Math.min(totalClose, Math.max(0, currentH - minH));
-          if (shrink > 0) {
-            expandOptions.onUpdateHeight(currentH - shrink);
+          const shrinkCapacity = Math.max(0, currentH - minH);
+          const shrinkBy = Math.min(incClose, shrinkCapacity);
+          if (shrinkBy > 0) {
+            expandOptions.onUpdateHeight(currentH - shrinkBy);
+            ref.current.appliedShrink += shrinkBy;
           }
-          const remaining = totalClose - shrink;
+          const remaining = incClose - shrinkBy;
           if (remaining > 0) {
-            offset = remaining;
-            progress = Math.min(remaining / maxDist, 1.2);
+            ref.current.appliedTranslate += remaining;
           }
         } else {
-          offset = totalClose;
-          progress = Math.min(totalClose / maxDist, 1.2);
+          ref.current.appliedTranslate += incClose;
         }
+        offset = ref.current.appliedTranslate;
+        progress = Math.min(offset / maxDist, 1.2);
         // subtle elastic scale based on per-frame effort
         const effort = Math.abs(rawDelta);
         scale = 1 + Math.min(effort / 400, MAX_WRONG_STRETCH);
       } else {
-        // Wrong/open direction
-        const openDist = -totalClose;
+        // Wrong/open direction (reverse movement)
+        let remainingOpen = incOpen;
+        // 1) First unwind any applied translate so movement tracks finger exactly
+        if (ref.current.appliedTranslate > 0) {
+          const reduce = Math.min(remainingOpen, ref.current.appliedTranslate);
+          ref.current.appliedTranslate -= reduce;
+          remainingOpen -= reduce;
+        }
+
         if ((side === 'top' || side === 'bottom') && expandOptions?.enabled) {
+          // 2) Then grow height toward max with any leftover open distance
           const currentH = el.getBoundingClientRect().height;
           const maxH = expandOptions.getMaxHeightPx();
-          const add = Math.min(openDist, Math.max(0, maxH - currentH));
-          const nextH = currentH + add;
-          expandOptions.onUpdateHeight(nextH);
-          const over = Math.max(0, openDist - add);
-          if (over > 0) {
-            scale = 1 + Math.min(over / (maxDist * 0.1), 1) * 0.015;
-          } else {
-            scale = 1 + Math.min(openDist / (maxDist * 0.1), 1) * 0.012;
+          const growCapacity = Math.max(0, maxH - currentH);
+          const growBy = Math.min(remainingOpen, growCapacity);
+          if (growBy > 0) {
+            expandOptions.onUpdateHeight(currentH + growBy);
+            ref.current.appliedShrink = Math.max(0, ref.current.appliedShrink - growBy);
+            remainingOpen -= growBy;
           }
-        } else {
-          // Only elastic scale
-          scale = 1 + Math.min(openDist / (maxDist * 0.1), 1) * 0.015;
         }
+
+        // 3) Any extra open distance becomes elastic over-drag scale only
+        if (remainingOpen > 0) {
+          scale = 1 + Math.min(remainingOpen / (maxDist * 0.1), 1) * 0.015;
+        } else {
+          // subtle scale even when just reversing translate for tactile feel
+          scale = 1 + Math.min(incOpen / (maxDist * 0.1), 1) * 0.012;
+        }
+
+        offset = ref.current.appliedTranslate;
+        progress = Math.min(offset / maxDist, 1.2);
       }
 
+      // Prevent default only after drag is committed, so internal scroll works before commit
       e.preventDefault();
       setState({ isDragging: true, offset, progress, wrongDirectionScale: scale });
       ref.current.lastPoint = p;
@@ -252,17 +338,37 @@ function useDrawerDrag(
 
       let shouldClose = prog >= CLOSE_THRESHOLD || (maxVel >= VELOCITY_THRESHOLD && prog >= 0.02);
       if (side === 'top' || side === 'bottom') {
-        const half = (typeof window !== 'undefined') ? window.innerHeight * 0.5 : 0;
-        if (totalClose >= half) shouldClose = true;
-        // If not closing, snap to nearest of compact or full when expand is enabled
-        if (!shouldClose && expandOptions?.enabled) {
-          const currentH = el.getBoundingClientRect().height;
-          const minH = expandOptions.getMinHeightPx();
-          const maxH = expandOptions.getMaxHeightPx();
-          const midpoint = minH + (maxH - minH) * 0.5;
-          const target = currentH >= midpoint ? maxH : minH;
-          if (Math.abs(currentH - target) > 1) {
-            expandOptions.onUpdateHeight(target);
+        const isExpand = !!expandOptions?.enabled;
+        const minH = isExpand ? expandOptions!.getMinHeightPx() : 0;
+        const maxH = isExpand ? expandOptions!.getMaxHeightPx() : 0;
+        const startedAtFull = isExpand ? Math.abs(ref.current.heightAtStart - maxH) <= 1 : false;
+
+        if (isExpand && startedAtFull) {
+          // Two-step from FULL: first pull must snap to compact unless pull is almost full travel
+          const baseDist = Math.max(1, ref.current.heightAtStart);
+          const fromFullProg = Math.max(0, totalClose) / baseDist;
+          const CLOSE_FROM_FULL_THRESHOLD = 0.9; // must pull ~90% to close directly from full
+          if (fromFullProg >= CLOSE_FROM_FULL_THRESHOLD) {
+            shouldClose = true;
+          } else {
+            shouldClose = false;
+            const currentH = el.getBoundingClientRect().height;
+            if (Math.abs(currentH - minH) > 1) {
+              expandOptions!.onUpdateHeight(minH);
+            }
+          }
+        } else {
+          // Normal rule: half viewport strong close
+          const half = (typeof window !== 'undefined') ? window.innerHeight * 0.5 : 0;
+          if (totalClose >= half) shouldClose = true;
+          // If not closing, snap to nearest compact/full when expand is enabled
+          if (!shouldClose && isExpand) {
+            const currentH = el.getBoundingClientRect().height;
+            const midpoint = minH + (maxH - minH) * 0.5;
+            const target = currentH >= midpoint ? maxH : minH;
+            if (Math.abs(currentH - target) > 1) {
+              expandOptions!.onUpdateHeight(target);
+            }
           }
         }
       }
@@ -270,7 +376,7 @@ function useDrawerDrag(
       if (shouldClose) onClose();
 
       setState({ isDragging: false, offset: 0, progress: 0, wrongDirectionScale: 1 });
-      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, heightAtStart: 0, velocities: [] };
+      ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false };
     }
 
     el.addEventListener('pointerdown', onDown);
@@ -310,8 +416,9 @@ export const Drawer: React.FC<DrawerProps> = ({
   backdropClassName,
   panelClassName,
   expandToFull = true,
-  maxExpandedHeight = '100vh',
+  maxExpandedHeight = 'calc(100% - 32px)',
   expandWithWheel = true,
+  dockHeaderOnClose = false,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledby,
   'aria-describedby': ariaDescribedby,
@@ -321,10 +428,12 @@ export const Drawer: React.FC<DrawerProps> = ({
   const id = useId();
   const portalRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const headerDockHeightRef = useRef<number>(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [expandedHeightPx, setExpandedHeightPx] = useState<number | null>(null);
   const baseHeightPxRef = useRef<number>(0);
+  const [isHeaderDocked, setIsHeaderDocked] = useState(false);
 
   // Handle opening/closing animations with safe initial mount
   const isFirstMountRef = useRef(true);
@@ -340,6 +449,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           panel.style.transform = '';
           // Reset any expanded height inline style
           setExpandedHeightPx(null);
+          setIsHeaderDocked(false);
           void panel.getBoundingClientRect();
         }
         raf2 = requestAnimationFrame(() => {
@@ -349,7 +459,14 @@ export const Drawer: React.FC<DrawerProps> = ({
           try {
             const rect = panelRef.current?.getBoundingClientRect();
             baseHeightPxRef.current = rect?.height || 0;
-          } catch { baseHeightPxRef.current = 0; }
+            const headerEl = panelRef.current?.querySelector('.drawer__header') as HTMLElement | null;
+            if (headerEl && rect) {
+              const hRect = headerEl.getBoundingClientRect();
+              headerDockHeightRef.current = Math.max(0, Math.round(hRect.bottom - rect.top));
+            } else {
+              headerDockHeightRef.current = 0;
+            }
+          } catch { baseHeightPxRef.current = 0; headerDockHeightRef.current = 0; }
         });
       });
       return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
@@ -360,6 +477,7 @@ export const Drawer: React.FC<DrawerProps> = ({
       }, 400);
       // Ensure height resets for next open
       setExpandedHeightPx(null);
+      setIsHeaderDocked(false);
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -465,7 +583,10 @@ export const Drawer: React.FC<DrawerProps> = ({
       enabled: true,
       getMinHeightPx,
       getMaxHeightPx,
-      onUpdateHeight: (h) => setExpandedHeightPx(h)
+      onUpdateHeight: (h) => setExpandedHeightPx(h),
+      getHeaderDockHeightPx: dockHeaderOnClose ? () => headerDockHeightRef.current : undefined,
+      onDockHeader: dockHeaderOnClose ? () => setIsHeaderDocked(true) : undefined,
+      onUndockHeader: dockHeaderOnClose ? () => setIsHeaderDocked(false) : undefined,
     } : undefined
   );
 
@@ -474,6 +595,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   const block = bem('drawer', [
     'mounted',
     isAnimating && 'open',
+    isHeaderDocked && 'docked',
     `side-${side}`,
     size === 'fullscreen' ? 'fullscreen' : `size-${size}`,
   ]);
@@ -544,7 +666,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   const content = (
     <div className={[block, className].filter(Boolean).join(' ')} role="presentation">
-      {backdrop && (
+      {(backdrop && !(side === 'top' || side === 'bottom') ? true : backdrop && !isHeaderDocked) && (
         <div 
           className={["drawer__backdrop", backdropClassName].filter(Boolean).join(' ')} 
           onClick={handleBackdropClick}
@@ -560,7 +682,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         aria-labelledby={ariaLabel ? undefined : ariaLabelledby || `${id}-title`}
         aria-describedby={ariaDescribedby || `${id}-description`}
         tabIndex={-1}
-        style={{ ...dragStyle, height: expansionEnabled && expandedHeightPx ? `${expandedHeightPx}px` : undefined }}
+        style={{ ...dragStyle, height: expansionEnabled && ((isHeaderDocked && headerDockHeightRef.current) || expandedHeightPx) ? `${(isHeaderDocked ? headerDockHeightRef.current : expandedHeightPx) ?? ''}px` : undefined }}
         onWheelCapture={(e) => {
           if (!expansionEnabled || !expandWithWheel) return;
           const panel = panelRef.current;
@@ -599,7 +721,10 @@ export const Drawer: React.FC<DrawerProps> = ({
         data-drag-progress={dragState.progress}
         data-dragging={dragState.isDragging}
       >
-        {dragState.isDragging && dragState.progress > 0 && (
+        {(
+          // Always show handle for top/bottom; for left/right show only while dragging
+          (side === 'top' || side === 'bottom') || (dragState.isDragging && dragState.progress > 0)
+        ) && (
           <div className="drawer__drag-indicator" data-side={side}>
             <div 
               className="drawer__drag-progress" 
