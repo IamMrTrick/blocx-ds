@@ -121,7 +121,7 @@ function useDrawerDrag(
     isDragging: false,
     offset: 0,
     progress: 0,
-    wrongDirectionScale: 1,
+    scale: 1, // Simplified from wrongDirectionScale
   });
 
   const ref = useRef({
@@ -146,7 +146,7 @@ function useDrawerDrag(
 
     const CLOSE_THRESHOLD = 0.4; // 40% of travel
     const VELOCITY_THRESHOLD = 0.5; // px/ms projected into close direction
-    const MAX_WRONG_STRETCH = 0.02; // 2%
+    const MAX_WRONG_STRETCH = 0.02; // 2% for closing direction
 
     const axisPoint = (e: PointerEvent | TouchEvent) => {
       const p = 'touches' in e ? e.touches[0] : e;
@@ -283,7 +283,7 @@ function useDrawerDrag(
         progress = Math.min(offset / maxDist, 1.2);
         // subtle elastic scale based on per-frame effort
         const effort = Math.abs(rawDelta);
-        scale = 1 + Math.min(effort / 400, MAX_WRONG_STRETCH);
+        scale = 1 - Math.min(effort / 400, MAX_WRONG_STRETCH);
       } else {
         // Wrong/open direction (reverse movement)
         let remainingOpen = incOpen;
@@ -309,10 +309,11 @@ function useDrawerDrag(
 
         // 3) Any extra open distance becomes elastic over-drag scale only
         if (remainingOpen > 0) {
-          // Make the scale effect more noticeable and responsive
-          scale = 1 + Math.min(remainingOpen / maxDist, 1) * 0.04;
+          // A more pronounced, responsive elastic scale.
+          // The effect is strongest for the first ~20% of the drawer's size.
+          scale = 1 + Math.min(remainingOpen / (maxDist * 0.2), 1) * 0.05;
         } else {
-          // subtle scale even when just reversing translate for tactile feel
+          // A very subtle scale when just reversing a closing drag, for tactile feedback.
           scale = 1 + Math.min(incOpen / (maxDist * 0.2), 1) * 0.02;
         }
 
@@ -322,7 +323,7 @@ function useDrawerDrag(
 
       // Prevent default only after drag is committed, so internal scroll works before commit
       e.preventDefault();
-      setState({ isDragging: true, offset, progress, wrongDirectionScale: scale });
+      setState({ isDragging: true, offset, progress, scale }); // Use single scale property
       ref.current.lastPoint = p;
       ref.current.lastTime = now;
     }
@@ -406,7 +407,7 @@ function useDrawerDrag(
       }
 
       // Always reset state regardless of click/drag outcome
-      setState({ isDragging: false, offset: 0, progress: 0, wrongDirectionScale: 1 });
+      setState({ isDragging: false, offset: 0, progress: 0, scale: 1 });
       ref.current = { startPoint: 0, lastPoint: 0, lastTime: 0, startTime: 0, target: null, heightAtStart: 0, velocities: [], committed: false, axis: (side === 'left' || side === 'right') ? 'x' : 'y', appliedShrink: 0, appliedTranslate: 0, startedInsideBody: false };
     }
 
@@ -651,24 +652,9 @@ export const Drawer: React.FC<DrawerProps> = ({
         }
       })();
 
-      // iOS-like stretch effect (always available when wrongDirectionScale > 1 or over-drag)
-      const hasWrongScale = dragState.wrongDirectionScale > 1.001;
-      const hasOverDrag = dragState.progress > 1; // over-drag beyond full travel
-
-      let scaleValue: number | undefined;
-      if (hasWrongScale && hasOverDrag) {
-        // Combine by taking the larger for noticeable feedback
-        const extra = Math.min(Math.max(dragState.progress - 1, 0), 0.2);
-        const overScale = 1 + extra * 0.075;
-        scaleValue = Math.max(dragState.wrongDirectionScale, overScale);
-      } else if (hasWrongScale) {
-        scaleValue = dragState.wrongDirectionScale; // up to ~1.02
-      } else if (hasOverDrag) {
-        const extra = Math.min(Math.max(dragState.progress - 1, 0), 0.2); // 0..0.2
-        scaleValue = 1 + extra * 0.075; // max ~1.015
-      }
-
-      const scalePart = typeof scaleValue === 'number' ? (() => {
+      // The new simplified scale logic. The hook provides the definitive scale value.
+      const scaleValue = dragState.scale;
+      const scalePart = (scaleValue !== 1) ? (() => {
         switch (side) {
           case 'left':
           case 'right':
