@@ -273,6 +273,11 @@
   resize: vertical;
   min-height: calc(var(--gl-btn-line-height-m) * 3); /* Default 3 lines minimum */
   
+  /* Remove all default textarea styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
   /* Size variants - padding applied to textarea element */
   padding: var(--gl-btn-spacing-m-v) var(--gl-btn-spacing-m-h); /* Default medium size */
   
@@ -295,11 +300,6 @@
   &--xl {
     padding: var(--gl-btn-spacing-xl-v) var(--gl-btn-spacing-xl-h);
   }
-  
-  /* Remove all default textarea styling */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   
   /* Force remove any focus styles */
   &:focus,

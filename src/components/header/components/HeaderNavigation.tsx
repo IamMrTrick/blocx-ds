@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
@@ -71,9 +71,9 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
     return false;
   };
 
-  const handleMobileMenuClose = () => {
+  const handleMobileMenuClose = useCallback(() => {
     onMobileMenuClose?.();
-  };
+  }, [onMobileMenuClose]);
 
   // Handle Escape key to close mobile menu
   useEffect(() => {
