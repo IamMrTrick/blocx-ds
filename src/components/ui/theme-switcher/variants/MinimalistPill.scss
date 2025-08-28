@@ -1,0 +1,393 @@
+/* ===== Minimalist Pill Theme Switcher ===== */
+
+.minimalist-pill {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--gl-radius-btn);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-6);
+  
+  &:focus-visible {
+    outline: 2px solid var(--border-active);
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  /* Size variants */
+  &--sm {
+    .minimalist-pill__track {
+      width: 44px;
+      height: 22px;
+    }
+    
+    .minimalist-pill__thumb {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .minimalist-pill__icon {
+      width: 12px;
+      height: 12px;
+    }
+    
+    .minimalist-pill__label {
+      font-size: 10px;
+    }
+  }
+  
+  &--md {
+    .minimalist-pill__track {
+      width: 52px;
+      height: 26px;
+    }
+    
+    .minimalist-pill__thumb {
+      width: 22px;
+      height: 22px;
+    }
+    
+    .minimalist-pill__icon {
+      width: 14px;
+      height: 14px;
+    }
+    
+    .minimalist-pill__label {
+      font-size: 11px;
+    }
+  }
+  
+  &--lg {
+    .minimalist-pill__track {
+      width: 60px;
+      height: 30px;
+    }
+    
+    .minimalist-pill__thumb {
+      width: 26px;
+      height: 26px;
+    }
+    
+    .minimalist-pill__icon {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .minimalist-pill__label {
+      font-size: 12px;
+    }
+  }
+  
+  /* Track */
+  &__track {
+    position: relative;
+    width: 52px;
+    height: 26px;
+    background: var(--bg-quinary-alt);
+    border: 1px solid var(--border-primary);
+    border-radius: 50px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    
+    /* Subtle shadow */
+    box-shadow: 
+      inset 0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.05);
+    
+    /* Hover effect */
+    .minimalist-pill:hover & {
+      border-color: var(--border-active);
+      box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Dark theme track */
+    [data-theme="dark"] & {
+      background: var(--bg-quinary);
+      border-color: var(--border-secondary);
+      box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.3),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+      
+      .minimalist-pill:hover & {
+        border-color: var(--border-active);
+        box-shadow: 
+          inset 0 1px 3px rgba(0, 0, 0, 0.4),
+          0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+  
+  /* Gradient overlay */
+  &__gradient {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    .minimalist-pill:hover & {
+      opacity: 1;
+    }
+    
+    [data-theme="dark"] & {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        rgba(0, 0, 0, 0.1) 100%
+      );
+    }
+  }
+  
+  /* Thumb */
+  &__thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: var(--bg-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 2;
+    
+    /* Subtle shadow */
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+    
+    /* Dark position */
+    &--dark {
+      transform: translateX(26px);
+      background: var(--bg-secondary);
+      box-shadow: 
+        0 2px 6px rgba(0, 0, 0, 0.2),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Hover effect */
+    .minimalist-pill:hover & {
+      box-shadow: 
+        0 3px 8px rgba(0, 0, 0, 0.15),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+      
+      &.minimalist-pill__thumb--dark {
+        box-shadow: 
+          0 3px 10px rgba(0, 0, 0, 0.25),
+          0 1px 4px rgba(0, 0, 0, 0.15);
+      }
+    }
+    
+    /* Active effect */
+    .minimalist-pill:active & {
+      transform: scale(0.95);
+      
+      &.minimalist-pill__thumb--dark {
+        transform: translateX(26px) scale(0.95);
+      }
+    }
+  }
+  
+  /* Icon container */
+  &__icon-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Icons */
+  &__icon {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &--light {
+      color: var(--warning-06);
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      
+      [data-theme="dark"] & {
+        opacity: 0;
+        transform: scale(0.3) rotate(180deg);
+      }
+    }
+    
+    &--dark {
+      color: var(--text-primary);
+      opacity: 0;
+      transform: scale(0.3) rotate(-180deg);
+      
+      [data-theme="dark"] & {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        color: var(--primary-04);
+      }
+    }
+    
+    &--active {
+      animation: icon-pop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+  }
+  
+  /* Labels */
+  &__labels {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-16);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    .minimalist-pill--with-labels & {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  &__label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    
+    &--active {
+      color: var(--text-primary);
+      font-weight: 600;
+      transform: scale(1.05);
+    }
+  }
+  
+  /* Animation states */
+  &--animating {
+    .minimalist-pill__thumb {
+      animation: thumb-bounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    .minimalist-pill__track {
+      animation: track-glow 0.4s ease-out;
+    }
+    
+    .minimalist-pill__gradient {
+      opacity: 1;
+      animation: gradient-flash 0.4s ease-out;
+    }
+  }
+}
+
+/* Keyframe animations */
+@keyframes icon-pop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.3) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@keyframes thumb-bounce {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.1);
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes track-glow {
+  0%, 100% {
+    box-shadow: 
+      inset 0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  50% {
+    box-shadow: 
+      inset 0 1px 3px rgba(0, 0, 0, 0.15),
+      0 2px 8px rgba(59, 130, 246, 0.2);
+  }
+}
+
+@keyframes gradient-flash {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .minimalist-pill {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .minimalist-pill {
+    &__track {
+      border-width: 2px;
+    }
+    
+    &__thumb {
+      border: 1px solid var(--border-primary);
+    }
+    
+    &__icon {
+      stroke-width: 3;
+    }
+  }
+}

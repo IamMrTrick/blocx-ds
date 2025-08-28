@@ -28,6 +28,7 @@
 @use 'utilities/spacing-utils';
 @use 'utilities/radius-utils';
 @use 'utilities/color-utils';
+@use 'utilities/effects-utils';
 @use 'utilities/layout-utils';
 @use 'utilities/section-utils';
 @use 'utilities/main-layout-utils';
@@ -45,6 +46,13 @@
 @use '../components/ui/modal/Modal';
 @use '../components/ui/drawer/Drawer';
 @use '../components/ui/toast/Toast';
+
+// Theme Switcher Components
+@use '../components/ui/theme-switcher/ThemeSwitcher';
+@use '../components/ui/theme-switcher/variants/MorphingToggle';
+@use '../components/ui/theme-switcher/variants/SlidingCard';
+@use '../components/ui/theme-switcher/variants/RotatingSphere';
+@use '../components/ui/theme-switcher/variants/MinimalistPill';
 
 // Showcase Components
 @use '../components/showcase/ComponentShowcase';
@@ -66,6 +74,7 @@
 @use '../components/layout/row/Row';
 @use '../components/layout/col/Col';
 @use '../components/footer/Footer';
+@use '../components/header/Header';
 @use '../components/ui/nav/social-links/SocialLinks';
 @use '../components/header/components/HeaderMobileMenu';
 

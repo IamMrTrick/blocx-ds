@@ -76,22 +76,22 @@
   
   /* Modifier: btn--primary */
   &--primary {
-    background-color: var(--btn-primary-bg);
-    border: 1px solid var(--btn-primary-border);
-    color: var(--btn-primary-text);
+    background-color: var(--btn-primary-bg-default);
+    border: 1px solid var(--btn-primary-border-default);
+    color: var(--btn-primary-text-default);
     
     &:hover:not(:disabled):not(.btn--loading) {
       background-color: var(--btn-primary-bg-hover);
       border-color: var(--btn-primary-border-hover);
       color: var(--btn-primary-text-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-primary);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
-      background-color: var(--btn-primary-bg-active);
-      border-color: var(--btn-primary-border-active);
-      color: var(--btn-primary-text-active);
+      background-color: var(--btn-primary-bg-pressed);
+      border-color: var(--btn-primary-border-pressed);
+      color: var(--btn-primary-text-pressed);
       transform: translateY(0);
     }
     
@@ -105,22 +105,22 @@
   
   /* Modifier: btn--secondary */
   &--secondary {
-    background-color: var(--btn-secondary-bg);
-    border: 1px solid var(--btn-secondary-border);
-    color: var(--btn-secondary-text);
+    background-color: var(--btn-secondary-bg-default);
+    border: 1px solid var(--btn-secondary-border-default);
+    color: var(--btn-secondary-text-default);
     
     &:hover:not(:disabled):not(.btn--loading) {
       background-color: var(--btn-secondary-bg-hover);
       border-color: var(--btn-secondary-border-hover);
       color: var(--btn-secondary-text-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-secondary);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
-      background-color: var(--btn-secondary-bg-active);
-      border-color: var(--btn-secondary-border-active);
-      color: var(--btn-secondary-text-active);
+      background-color: var(--btn-secondary-bg-pressed);
+      border-color: var(--btn-secondary-border-pressed);
+      color: var(--btn-secondary-text-pressed);
       transform: translateY(0);
     }
     
@@ -143,7 +143,7 @@
       border-color: var(--btn-success-border-hover);
       color: var(--btn-success-text-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-success);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
@@ -172,7 +172,7 @@
       border-color: var(--btn-warning-border-hover);
       color: var(--btn-warning-text-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-warning);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
@@ -201,7 +201,7 @@
       border-color: var(--btn-danger-border-hover);
       color: var(--btn-danger-text-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-error);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
@@ -253,21 +253,21 @@
   /* Modifier: btn--outline-primary */
   &.btn--outline-primary {
     background-color: transparent;
-    color: var(--btn-primary-bg);
-    border: 1px solid var(--btn-primary-bg);
+    color: var(--btn-primary-bg-default);
+    border: 1px solid var(--btn-primary-bg-default);
     
     &:hover:not(:disabled):not(.btn--loading) {
-      background-color: var(--btn-primary-bg);
-      border-color: var(--btn-primary-bg);
-      color: var(--btn-primary-text);
+      background-color: var(--btn-primary-bg-default);
+      border-color: var(--btn-primary-bg-default);
+      color: var(--btn-primary-text-default);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-primary);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
-      background-color: var(--btn-primary-bg-active);
-      border-color: var(--btn-primary-bg-active);
-      color: var(--btn-primary-text-active);
+      background-color: var(--btn-primary-bg-pressed);
+      border-color: var(--btn-primary-bg-pressed);
+      color: var(--btn-primary-text-pressed);
       transform: translateY(0);
     }
     
@@ -282,21 +282,21 @@
   /* Modifier: btn--outline-secondary */
   &.btn--outline-secondary {
     background-color: transparent;
-    color: var(--btn-secondary-bg);
-    border: 1px solid var(--btn-secondary-bg);
+    color: var(--btn-secondary-bg-default);
+    border: 1px solid var(--btn-secondary-bg-default);
     
     &:hover:not(:disabled):not(.btn--loading) {
-      background-color: var(--btn-secondary-bg);
-      border-color: var(--btn-secondary-bg);
-      color: var(--btn-secondary-text);
+      background-color: var(--btn-secondary-bg-default);
+      border-color: var(--btn-secondary-bg-default);
+      color: var(--btn-secondary-text-default);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-secondary);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
-      background-color: var(--btn-secondary-bg-active);
-      border-color: var(--btn-secondary-bg-active);
-      color: var(--btn-secondary-text-active);
+      background-color: var(--btn-secondary-bg-pressed);
+      border-color: var(--btn-secondary-bg-pressed);
+      color: var(--btn-secondary-text-pressed);
       transform: translateY(0);
     }
     
@@ -319,7 +319,7 @@
       border-color: var(--btn-success-bg);
       color: var(--btn-success-text);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-success);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
@@ -348,7 +348,7 @@
       border-color: var(--btn-warning-bg);
       color: var(--btn-warning-text);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-warning);
     }
     
     &:active:not(:disabled):not(.btn--loading) {
@@ -377,7 +377,7 @@
       border-color: var(--btn-danger-bg);
       color: var(--btn-danger-text);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-btn-error);
     }
     
     &:active:not(:disabled):not(.btn--loading) {

@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { ThemeSwitcher } from '@/components/ui/theme-switcher';
+import { MinimalistPill } from '@/components/ui/theme-switcher/variants/MinimalistPill';
 import './Header.scss';
 
 // ===== Header Base Component =====
@@ -355,6 +357,47 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
     >
       {children}
     </nav>
+  );
+};
+
+// ===== Header Theme Switcher =====
+export interface HeaderThemeSwitcherProps {
+  className?: string;
+  onThemeChange?: (theme: 'light' | 'dark') => void;
+}
+
+export const HeaderThemeSwitcher: React.FC<HeaderThemeSwitcherProps> = ({
+  className = '',
+  onThemeChange,
+}) => {
+  return (
+    <div className={`header__theme-switcher ${className}`.trim()}>
+      <MinimalistPill
+        size="sm"
+        showLabels={false}
+        onThemeChange={onThemeChange}
+        className="header__theme-switcher-component"
+      />
+    </div>
+  );
+};
+
+// ===== Header Theme Switcher Simple (No Callback) =====
+export interface HeaderThemeSwitcherSimpleProps {
+  className?: string;
+}
+
+export const HeaderThemeSwitcherSimple: React.FC<HeaderThemeSwitcherSimpleProps> = ({
+  className = '',
+}) => {
+  return (
+    <div className={`header__theme-switcher ${className}`.trim()}>
+      <MinimalistPill
+        size="sm"
+        showLabels={false}
+        className="header__theme-switcher-component"
+      />
+    </div>
   );
 };
 

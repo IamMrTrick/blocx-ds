@@ -13,6 +13,8 @@ export {
   HeaderActions,
   HeaderMobileToggle,
   HeaderNav,
+  HeaderThemeSwitcher,
+  HeaderThemeSwitcherSimple,
   type HeaderProps,
   type HeaderTopProps,
   type HeaderMiddleProps,
@@ -25,7 +27,9 @@ export {
   type HeaderSearchProps,
   type HeaderActionsProps,
   type HeaderMobileToggleProps,
-  type HeaderNavProps
+  type HeaderNavProps,
+  type HeaderThemeSwitcherProps,
+  type HeaderThemeSwitcherSimpleProps
 } from './Header';
 
 export { HeaderNavMenu, type HeaderNavMenuProps } from './components/HeaderNavMenu';

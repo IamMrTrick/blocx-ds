@@ -20,3 +20,6 @@ export * from './tabs';
 export * from './modal';
 export { ToastProvider, useToast, toast } from './toast';
 export * from './drawer';
+
+// Theme Components
+export * from './theme-switcher';

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderRight, HeaderMobileToggle } from './Header';
+import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderRight, HeaderActions, HeaderMobileToggle, HeaderThemeSwitcherSimple } from './Header';
 import { HeaderNavMenu, HeaderMobileMenu } from './components';
 import type { PrimaryNavItem } from '@/components/ui/nav/primary-nav/PrimaryNav';
 
@@ -100,6 +100,7 @@ const navigationItems: PrimaryNavItem[] = [
         children: [
           { id: 'toast', label: 'Toast', href: '/components/ui/toast' },
           { id: 'badge', label: 'Badge', href: '/components/ui/badge' },
+          { id: 'theme-switcher', label: 'Theme Switcher', href: '/components/ui/theme-switcher' },
         ],
       },
       {
@@ -164,7 +165,7 @@ export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
           if (['button', 'icon-button'].includes(component)) return 'actions';
           if (['nav', 'breadcrumbs', 'pagination', 'tabs'].includes(component)) return 'navigation';
           if (['accordion', 'modal', 'drawer'].includes(component)) return 'disclosure';
-          if (['toast', 'badge'].includes(component)) return 'feedback';
+          if (['toast', 'badge', 'theme-switcher'].includes(component)) return 'feedback';
           if (['card', 'icon'].includes(component)) return 'data-display';
         }
         return category;
@@ -201,11 +202,14 @@ export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
               <HeaderNavMenu activeId={activeId} />
             </HeaderCenter>
             <HeaderRight>
-              <HeaderMobileToggle
-                isOpen={isMobileMenuOpen}
-                onToggle={handleMobileMenuToggle}
-                aria-controls="mobile-navigation-menu"
-              />
+              <HeaderActions>
+                <HeaderThemeSwitcherSimple />
+                <HeaderMobileToggle
+                  isOpen={isMobileMenuOpen}
+                  onToggle={handleMobileMenuToggle}
+                  aria-controls="mobile-navigation-menu"
+                />
+              </HeaderActions>
             </HeaderRight>
           </HeaderContainer>
         </HeaderMiddle>

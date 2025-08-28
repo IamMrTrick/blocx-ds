@@ -1,0 +1,161 @@
+// Effects utilities
+// Helper classes for backdrop-blur, shadows, and other visual effects
+
+@use '../tokens/colors';
+@use '../tokens/transitions';
+
+/* ===== Backdrop Blur ===== */
+
+.backdrop-blur-none { backdrop-filter: blur(0); }
+.backdrop-blur-sm { backdrop-filter: blur(4px); }
+.backdrop-blur { backdrop-filter: blur(8px); }
+.backdrop-blur-md { backdrop-filter: blur(12px); }
+.backdrop-blur-lg { backdrop-filter: blur(16px); }
+.backdrop-blur-xl { backdrop-filter: blur(24px); }
+.backdrop-blur-2xl { backdrop-filter: blur(40px); }
+.backdrop-blur-3xl { backdrop-filter: blur(64px); }
+
+/* ===== Box Shadows ===== */
+
+// Basic shadows
+.shadow-none { box-shadow: none; }
+.shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+.shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+
+// Colored shadows using design tokens
+.shadow-primary { box-shadow: 0 4px 12px var(--transparent-primary-20); }
+.shadow-secondary { box-shadow: 0 4px 12px var(--transparent-secondary-20); }
+.shadow-success { box-shadow: 0 4px 12px var(--transparent-success-20); }
+.shadow-warning { box-shadow: 0 4px 12px var(--transparent-warning-20); }
+.shadow-error { box-shadow: 0 4px 12px var(--transparent-error-20); }
+.shadow-info { box-shadow: 0 4px 12px var(--transparent-info-20); }
+
+// Button shadows
+.shadow-btn-primary { box-shadow: 0 4px 12px var(--shadow-btn-primary); }
+.shadow-btn-secondary { box-shadow: 0 4px 12px var(--shadow-btn-secondary); }
+.shadow-btn-success { box-shadow: 0 4px 12px var(--shadow-btn-success); }
+.shadow-btn-warning { box-shadow: 0 4px 12px var(--shadow-btn-warning); }
+.shadow-btn-error { box-shadow: 0 4px 12px var(--shadow-btn-error); }
+.shadow-btn-info { box-shadow: 0 4px 12px var(--shadow-btn-info); }
+
+// Card shadows
+.shadow-card { box-shadow: 0 4px 8px var(--card-shadow); }
+.shadow-card-lg { box-shadow: 0 8px 24px var(--card-shadow); }
+.shadow-card-xl { box-shadow: 0 12px 32px var(--card-shadow); }
+
+// Header shadows
+.shadow-header { box-shadow: var(--header-shadow-sticky); }
+.shadow-header-search { box-shadow: var(--header-shadow-search-focus); }
+.shadow-header-mobile { box-shadow: var(--header-shadow-mobile); }
+
+// Navigation shadows
+.shadow-nav-submenu { box-shadow: var(--nav-submenu-shadow); }
+.shadow-nav-nested { box-shadow: var(--nav-submenu-nested-shadow); }
+.shadow-nav-mega { box-shadow: var(--nav-mega-shadow); }
+.shadow-nav-mobile { box-shadow: var(--nav-mobile-shadow); }
+
+/* ===== Inner Shadows ===== */
+
+.shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+.shadow-inner-sm { box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+.shadow-inner-md { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+.shadow-inner-lg { box-shadow: inset 0 4px 6px 0 rgba(0, 0, 0, 0.1); }
+
+/* ===== Focus Shadows ===== */
+
+.shadow-focus { box-shadow: 0 0 0 3px var(--transparent-primary-10); }
+.shadow-focus-primary { box-shadow: 0 0 0 3px var(--transparent-primary-20); }
+.shadow-focus-secondary { box-shadow: 0 0 0 3px var(--transparent-secondary-20); }
+.shadow-focus-success { box-shadow: 0 0 0 3px var(--transparent-success-20); }
+.shadow-focus-warning { box-shadow: 0 0 0 3px var(--transparent-warning-20); }
+.shadow-focus-error { box-shadow: 0 0 0 3px var(--transparent-error-20); }
+.shadow-focus-info { box-shadow: 0 0 0 3px var(--transparent-info-20); }
+
+/* ===== Hover Shadows ===== */
+
+.hover\:shadow-sm:hover { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+.hover\:shadow:hover { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+.hover\:shadow-md:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.hover\:shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+.hover\:shadow-2xl:hover { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+
+.hover\:shadow-primary:hover { box-shadow: 0 4px 12px var(--transparent-primary-20); }
+.hover\:shadow-secondary:hover { box-shadow: 0 4px 12px var(--transparent-secondary-20); }
+.hover\:shadow-success:hover { box-shadow: 0 4px 12px var(--transparent-success-20); }
+.hover\:shadow-warning:hover { box-shadow: 0 4px 12px var(--transparent-warning-20); }
+.hover\:shadow-error:hover { box-shadow: 0 4px 12px var(--transparent-error-20); }
+.hover\:shadow-info:hover { box-shadow: 0 4px 12px var(--transparent-info-20); }
+
+/* ===== Focus States ===== */
+
+.focus\:shadow-focus:focus { box-shadow: 0 0 0 3px var(--transparent-primary-10); }
+.focus\:shadow-focus-primary:focus { box-shadow: 0 0 0 3px var(--transparent-primary-20); }
+.focus\:shadow-focus-secondary:focus { box-shadow: 0 0 0 3px var(--transparent-secondary-20); }
+.focus\:shadow-focus-success:focus { box-shadow: 0 0 0 3px var(--transparent-success-20); }
+.focus\:shadow-focus-warning:focus { box-shadow: 0 0 0 3px var(--transparent-warning-20); }
+.focus\:shadow-focus-error:focus { box-shadow: 0 0 0 3px var(--transparent-error-20); }
+.focus\:shadow-focus-info:focus { box-shadow: 0 0 0 3px var(--transparent-info-20); }
+
+/* ===== Active States ===== */
+
+.active\:shadow-sm:active { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+.active\:shadow:active { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+.active\:shadow-md:active { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+
+/* ===== Responsive Effects ===== */
+
+@media (max-width: 768px) {
+  .sm\:backdrop-blur-sm { backdrop-filter: blur(4px); }
+  .sm\:backdrop-blur { backdrop-filter: blur(8px); }
+  .sm\:shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+  .sm\:shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+  .sm\:shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+}
+
+@media (min-width: 768px) {
+  .md\:backdrop-blur-sm { backdrop-filter: blur(4px); }
+  .md\:backdrop-blur { backdrop-filter: blur(8px); }
+  .md\:backdrop-blur-md { backdrop-filter: blur(12px); }
+  .md\:shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+  .md\:shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+  .md\:shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+  .md\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+}
+
+@media (min-width: 1024px) {
+  .lg\:backdrop-blur-sm { backdrop-filter: blur(4px); }
+  .lg\:backdrop-blur { backdrop-filter: blur(8px); }
+  .lg\:backdrop-blur-md { backdrop-filter: blur(12px); }
+  .lg\:backdrop-blur-lg { backdrop-filter: blur(16px); }
+  .lg\:shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+  .lg\:shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+  .lg\:shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+  .lg\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+  .lg\:shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+}
+
+@media (min-width: 1280px) {
+  .xl\:backdrop-blur-sm { backdrop-filter: blur(4px); }
+  .xl\:backdrop-blur { backdrop-filter: blur(8px); }
+  .xl\:backdrop-blur-md { backdrop-filter: blur(12px); }
+  .xl\:backdrop-blur-lg { backdrop-filter: blur(16px); }
+  .xl\:backdrop-blur-xl { backdrop-filter: blur(24px); }
+  .xl\:shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+  .xl\:shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+  .xl\:shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+  .xl\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+  .xl\:shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+  .xl\:shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+}
+
+/* ===== Print Styles ===== */
+
+@media print {
+  .print\:shadow-none { box-shadow: none !important; }
+  .print\:backdrop-blur-none { backdrop-filter: none !important; }
+}
