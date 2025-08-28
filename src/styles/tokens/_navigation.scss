@@ -9,10 +9,22 @@
   --nav-link-current-color: var(--primary-05);
   --nav-link-active-color: var(--primary-05);
   
-  /* Link backgrounds */
-  --nav-link-hover-bg: var(--transparent-primary-10);
-  --nav-link-current-bg: var(--transparent-primary-10);
-  --nav-link-active-bg: var(--transparent-primary-20);
+  /* Level-based colors for dropdown hierarchy */
+  --nav-level-0-color: var(--text-primary);        /* Main level */
+  --nav-level-1-color: var(--text-secondary);      /* First dropdown level */
+  --nav-level-2-color: var(--text-tertiary);       /* Second dropdown level */
+  --nav-level-3-color: var(--gray-07);             /* Third dropdown level */
+  
+  /* Level backgrounds for better distinction */
+  --nav-level-0-bg: transparent;
+  --nav-level-1-bg: var(--bg-secondary);
+  --nav-level-2-bg: var(--bg-tertiary);
+  --nav-level-3-bg: var(--bg-quaternary);
+  
+  /* Link backgrounds - Minimal Design (No backgrounds) */
+  --nav-link-hover-bg: transparent;
+  --nav-link-current-bg: transparent;
+  --nav-link-active-bg: transparent;
   
   /* Focus ring */
   --nav-link-focus-ring: var(--primary-05);
@@ -59,7 +71,7 @@
   --nav-submenu-border: var(--border-primary);
   --nav-submenu-radius: var(--gl-radius-wrapper);
   --nav-submenu-shadow: 0 8px 32px var(--transparent-black-10);
-  --nav-submenu-link-hover-bg: var(--nav-link-hover-bg);
+  --nav-submenu-link-hover-bg: transparent;
   --nav-submenu-backdrop: blur(20px);
   
   /* Multi-level submenu */
@@ -117,4 +129,19 @@
   /* ===== Navigation Breakpoints ===== */
   --nav-breakpoint-tablet: 1024px;
   --nav-breakpoint-mobile: 768px;
+}
+
+/* ===== Dark Theme Navigation Colors ===== */
+[data-theme="dark"] {
+  /* Level-based colors for dropdown hierarchy - Dark Mode */
+  --nav-level-0-color: var(--text-primary);        /* Main level - white */
+  --nav-level-1-color: var(--gray-09);             /* First dropdown level - lighter gray */
+  --nav-level-2-color: var(--gray-08);             /* Second dropdown level - medium gray */
+  --nav-level-3-color: var(--gray-07);             /* Third dropdown level - darker gray */
+  
+  /* Level backgrounds for better distinction - Dark Mode */
+  --nav-level-0-bg: transparent;
+  --nav-level-1-bg: var(--bg-quinary);             /* Subtle dark background */
+  --nav-level-2-bg: var(--bg-quinary-alt);         /* Slightly darker */
+  --nav-level-3-bg: var(--bg-senary);              /* Even darker for deeper levels */
 }

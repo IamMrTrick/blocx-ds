@@ -15,6 +15,12 @@
   --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --transition-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   
+  /* Spring-based easing curves */
+  --transition-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-spring-gentle: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-spring-bouncy: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-spring-wobbly: cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  
   /* Legacy aliases */
   --ease-linear: linear;
   --ease-in: var(--transition-ease-in);

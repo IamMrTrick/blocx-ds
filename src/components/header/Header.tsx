@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-import { MinimalistPill } from '@/components/ui/theme-switcher/variants/MinimalistPill';
-import { SimpleThemeSwitcher } from '@/components/ui/theme-switcher/SimpleThemeSwitcher';
+import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import './Header.scss';
 
 // ===== Header Base Component =====
@@ -418,9 +417,9 @@ export const HeaderThemeSwitcher: React.FC<HeaderThemeSwitcherProps> = ({
 }) => {
   return (
     <div className={`header__theme-switcher ${className}`.trim()}>
-      <MinimalistPill
+      <ThemeSwitcher
         size="sm"
-        showLabels={false}
+        variant="button"
         onThemeChange={onThemeChange}
         className="header__theme-switcher-component"
       />
@@ -438,9 +437,9 @@ export const HeaderThemeSwitcherSimple: React.FC<HeaderThemeSwitcherSimpleProps>
 }) => {
   return (
     <div className={`header__theme-switcher ${className}`.trim()}>
-      <SimpleThemeSwitcher
+      <ThemeSwitcher
         size="sm"
-        showLabels={false}
+        variant="button"
         className="header__theme-switcher-component"
       />
     </div>

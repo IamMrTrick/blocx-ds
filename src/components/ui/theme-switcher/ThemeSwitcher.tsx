@@ -1,125 +1,83 @@
 'use client';
-
-import React, { useState, useCallback, useRef } from 'react';
-import { Icon } from '@/components/ui/icon';
+import React from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import './ThemeSwitcher.scss';
 
 export interface ThemeSwitcherProps {
-  /** Callback when theme changes */
-  onThemeChange?: (theme: 'light' | 'dark') => void;
-  /** Size of the switcher */
-  size?: 'sm' | 'md' | 'lg';
-  /** Whether to show theme labels */
-  showLabels?: boolean;
-  /** Custom class name */
   className?: string;
-  /** Compact mode for header usage */
-  compact?: boolean;
-  /** Animation style */
-  animationStyle?: 'smooth' | 'bounce' | 'slide' | 'flip';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'button' | 'toggle' | 'pill';
+  onThemeChange?: (theme: 'light' | 'dark') => void;
 }
 
 export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
-  onThemeChange,
-  size = 'md',
-  showLabels = true,
   className = '',
-  compact = false,
-  animationStyle = 'smooth',
+  size = 'md',
+  variant = 'button',
+  onThemeChange,
 }) => {
   const { theme, toggleTheme } = useTheme();
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
-  const switcherRef = useRef<HTMLButtonElement>(null);
-  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle theme toggle with enhanced animations
-  const handleThemeToggle = useCallback(() => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
-    setIsPressed(true);
-    
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    
-    // Clear any existing timeout
-    if (animationTimeoutRef.current) {
-      clearTimeout(animationTimeoutRef.current);
-    }
-    
-    // Add haptic feedback if available
-    if ('vibrate' in navigator) {
-      navigator.vibrate(50);
-    }
-    
-    // Trigger theme change with animation
+  const handleClick = () => {
     toggleTheme();
-    onThemeChange?.(newTheme);
-    
-    // Reset animation states
-    animationTimeoutRef.current = setTimeout(() => {
-      setIsAnimating(false);
-      setIsPressed(false);
-    }, 300);
-  }, [theme, isAnimating, toggleTheme, onThemeChange]);
+    onThemeChange?.(theme === 'light' ? 'dark' : 'light');
+  };
 
   return (
     <button
-      ref={switcherRef}
       type="button"
-      className={`theme-switcher theme-switcher--${size} ${compact ? 'theme-switcher--compact' : ''} theme-switcher--${animationStyle} ${isAnimating ? 'theme-switcher--animating' : ''} ${isHovered ? 'theme-switcher--hovered' : ''} ${isPressed ? 'theme-switcher--pressed' : ''} ${className}`}
-      onClick={handleThemeToggle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onMouseDown={() => setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleThemeToggle();
-        }
-      }}
-      disabled={isAnimating}
+      className={`theme-switcher theme-switcher--${variant} theme-switcher--${size} ${className}`}
+      onClick={handleClick}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-      aria-checked={theme === 'dark'}
-      aria-describedby="theme-switcher-description"
-      title={`Current theme: ${theme}. Click to switch to ${theme === 'light' ? 'dark' : 'light'}`}
       data-theme={theme}
-      role="switch"
     >
-      <div className="theme-switcher__container">
-        {/* Light Theme Icon */}
-        <div className={`theme-switcher__icon theme-switcher__icon--light ${theme === 'light' ? 'theme-switcher__icon--active' : ''}`}>
-          <Icon name="sun" size={size === 'sm' ? 16 : size === 'md' ? 20 : 24} />
+      {variant === 'pill' ? (
+        <div className="theme-switcher__track">
+          <div className={`theme-switcher__thumb ${theme === 'dark' ? 'theme-switcher__thumb--dark' : ''}`}>
+            <svg 
+              className={`theme-switcher__icon ${theme === 'light' ? 'theme-switcher__icon--active' : ''}`}
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor"
+            >
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41"/>
+            </svg>
+            <svg 
+              className={`theme-switcher__icon ${theme === 'dark' ? 'theme-switcher__icon--active' : ''}`}
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </div>
         </div>
-        
-        {/* Dark Theme Icon */}
-        <div className={`theme-switcher__icon theme-switcher__icon--dark ${theme === 'dark' ? 'theme-switcher__icon--active' : ''}`}>
-          <Icon name="moon" size={size === 'sm' ? 16 : size === 'md' ? 20 : 24} />
+      ) : variant === 'toggle' ? (
+        <div className="theme-switcher__track">
+          <div className={`theme-switcher__thumb ${theme === 'dark' ? 'theme-switcher__thumb--dark' : ''}`}></div>
         </div>
-        
-        {/* Sliding Toggle */}
-        <div className={`theme-switcher__toggle ${theme === 'dark' ? 'theme-switcher__toggle--dark' : ''}`} />
-      </div>
-      
-      {/* Labels */}
-      {showLabels && (
-        <div className="theme-switcher__labels">
-          <span className={`theme-switcher__label theme-switcher__label--light ${theme === 'light' ? 'theme-switcher__label--active' : ''}`}>
-            Light
-          </span>
-          <span className={`theme-switcher__label theme-switcher__label--dark ${theme === 'dark' ? 'theme-switcher__label--active' : ''}`}>
-            Dark
-          </span>
-        </div>
+      ) : (
+        <>
+          <svg 
+            className={`theme-switcher__icon ${theme === 'light' ? 'theme-switcher__icon--active' : ''}`}
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor"
+          >
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41"/>
+          </svg>
+          <svg 
+            className={`theme-switcher__icon ${theme === 'dark' ? 'theme-switcher__icon--active' : ''}`}
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </>
       )}
-      
-      {/* Hidden description for screen readers */}
-      <span id="theme-switcher-description" className="visually-hidden">
-        Toggle between light and dark theme. Current theme is {theme}.
-      </span>
     </button>
   );
 };

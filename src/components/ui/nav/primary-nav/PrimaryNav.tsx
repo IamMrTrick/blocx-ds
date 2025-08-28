@@ -322,7 +322,7 @@ export const Nav: React.FC<NavProps> = ({
           
           {hasChildren && (
             <Icon 
-              name={isDropdownOpen ? 'chevron-up' : 'chevron-down'} 
+              name="chevron-down" 
               className="nav__chevron"
               aria-hidden={true}
             />

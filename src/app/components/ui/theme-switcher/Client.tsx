@@ -2,10 +2,7 @@
 
 import React from 'react';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
-import { MorphingToggle } from '@/components/ui/theme-switcher/variants/MorphingToggle';
-import { SlidingCard } from '@/components/ui/theme-switcher/variants/SlidingCard';
-import { RotatingSphere } from '@/components/ui/theme-switcher/variants/RotatingSphere';
-import { MinimalistPill } from '@/components/ui/theme-switcher/variants/MinimalistPill';
+// All variants are now part of ThemeSwitcher component
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/forms/input';
@@ -24,118 +21,58 @@ export default function ThemeSwitcherClient() {
       </div>
 
       <div className="demo-section">
-        <h2>🎨 Beautiful Theme Switcher Variants</h2>
-        <p>Choose from 4 stunning designs, each with unique animations and interactions:</p>
+        <h2>🎨 Theme Switcher Variants</h2>
+        <p>Choose from 3 different designs:</p>
         
         <div className="demo-variants">
           <div className="variant-showcase">
-            <h3>1. Morphing Toggle</h3>
-            <p>Dynamic background with floating elements and smooth morphing animations</p>
+            <h3>1. Button</h3>
+            <p>Simple button with icon switching</p>
             <div className="variant-examples">
-              <MorphingToggle size="sm" onThemeChange={handleThemeChange} />
-              <MorphingToggle size="md" onThemeChange={handleThemeChange} />
-              <MorphingToggle size="lg" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="button" size="sm" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="button" size="md" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="button" size="lg" onThemeChange={handleThemeChange} />
             </div>
           </div>
           
           <div className="variant-showcase">
-            <h3>2. Sliding Card</h3>
-            <p>Elegant card-based design with sliding transitions and atmospheric effects</p>
+            <h3>2. Toggle</h3>
+            <p>Classic toggle switch design</p>
             <div className="variant-examples">
-              <SlidingCard size="sm" onThemeChange={handleThemeChange} />
-              <SlidingCard size="md" onThemeChange={handleThemeChange} />
-              <SlidingCard size="lg" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="toggle" size="sm" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="toggle" size="md" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="toggle" size="lg" onThemeChange={handleThemeChange} />
             </div>
           </div>
           
           <div className="variant-showcase">
-            <h3>3. Rotating Sphere</h3>
-            <p>3D sphere with celestial bodies, stars, and atmospheric rotation effects</p>
+            <h3>3. Pill</h3>
+            <p>Pill-shaped with icons inside</p>
             <div className="variant-examples">
-              <RotatingSphere size="sm" onThemeChange={handleThemeChange} />
-              <RotatingSphere size="md" onThemeChange={handleThemeChange} />
-              <RotatingSphere size="lg" onThemeChange={handleThemeChange} />
-            </div>
-          </div>
-          
-          <div className="variant-showcase">
-            <h3>4. Minimalist Pill</h3>
-            <p>Clean, minimal design perfect for headers and compact spaces</p>
-            <div className="variant-examples">
-              <MinimalistPill size="sm" onThemeChange={handleThemeChange} />
-              <MinimalistPill size="md" onThemeChange={handleThemeChange} />
-              <MinimalistPill size="lg" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="pill" size="sm" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="pill" size="md" onThemeChange={handleThemeChange} />
+              <ThemeSwitcher variant="pill" size="lg" onThemeChange={handleThemeChange} />
             </div>
           </div>
         </div>
       </div>
 
       <div className="demo-section">
-        <h2>Original Design (Legacy)</h2>
+        <h2>Default Usage</h2>
         <div className="demo-examples">
           <div className="example">
-            <h3>Default (Medium)</h3>
+            <h3>Default Button</h3>
             <ThemeSwitcher />
           </div>
           
           <div className="example">
-            <h3>Small Size</h3>
+            <h3>Small Button</h3>
             <ThemeSwitcher size="sm" />
           </div>
           
           <div className="example">
-            <h3>Large Size</h3>
+            <h3>Large Button</h3>
             <ThemeSwitcher size="lg" />
-          </div>
-        </div>
-      </div>
-
-      <div className="demo-section">
-        <h2>Without Labels</h2>
-        <div className="demo-examples">
-          <div className="example">
-            <h3>No Labels</h3>
-            <ThemeSwitcher showLabels={false} />
-          </div>
-          
-          <div className="example">
-            <h3>Small No Labels</h3>
-            <ThemeSwitcher size="sm" showLabels={false} />
-          </div>
-        </div>
-      </div>
-
-      <div className="demo-section">
-        <h2>Compact Mode (Header Style)</h2>
-        <div className="demo-examples">
-          <div className="example">
-            <h3>Compact</h3>
-            <ThemeSwitcher compact={true} showLabels={false} />
-          </div>
-          
-          <div className="example">
-            <h3>Compact Small</h3>
-            <ThemeSwitcher size="sm" compact={true} showLabels={false} />
-          </div>
-        </div>
-      </div>
-
-      <div className="demo-section">
-        <h2>Animation Styles</h2>
-        <div className="demo-examples">
-          <div className="example">
-            <h3>Smooth Animation</h3>
-            <ThemeSwitcher animationStyle="smooth" />
-          </div>
-          
-          <div className="example">
-            <h3>Bounce Animation</h3>
-            <ThemeSwitcher animationStyle="bounce" />
-          </div>
-          
-          <div className="example">
-            <h3>Slide Animation</h3>
-            <ThemeSwitcher animationStyle="slide" />
           </div>
         </div>
       </div>
