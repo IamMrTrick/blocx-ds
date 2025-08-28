@@ -33,20 +33,24 @@ export const Header: React.FC<HeaderProps> = ({
       const scrollY = window.scrollY;
       const newIsSticky = scrollY > 100;
       
-      if (newIsSticky !== isSticky) {
-        setIsSticky(newIsSticky);
-        onStickyChange?.(newIsSticky);
-      }
+      setIsSticky(prev => {
+        if (newIsSticky !== prev) {
+          onStickyChange?.(newIsSticky);
+          return newIsSticky;
+        }
+        return prev;
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [sticky, isSticky, onStickyChange]);
+  }, [sticky, onStickyChange]);
 
   const headerClasses = [
     'header',
     `header--${variant}`,
-    sticky && isSticky && 'header--sticky',
+    sticky && 'header--pos-fixed', // Always add pos-fixed when sticky is enabled
+    sticky && isSticky && 'header--sticky', // Add styling class only after scroll
     centerMode && 'header--center-mode',
     className
   ].filter(Boolean).join(' ');

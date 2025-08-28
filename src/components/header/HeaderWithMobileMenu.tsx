@@ -134,12 +134,15 @@ export interface HeaderWithMobileMenuProps {
   variant?: 'default' | 'transparent' | 'minimal';
   /** Whether header should be sticky */
   sticky?: boolean;
+  /** Whether to use center mode layout */
+  centerMode?: boolean;
 }
 
 export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
   className = '',
   variant = 'default',
   sticky = false,
+  centerMode = false,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -192,7 +195,7 @@ export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
 
   return (
     <>
-      <Header className={className} variant={variant} sticky={sticky}>
+      <Header className={className} variant={variant} sticky={sticky} centerMode={centerMode}>
         <HeaderMiddle>
           <HeaderContainer>
             <HeaderLeft>

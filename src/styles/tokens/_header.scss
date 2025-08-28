@@ -49,15 +49,51 @@
   --header-focus-ring: var(--primary-05);
 
   /* ===== Header Dimensions ===== */
-  /* Heights */
-  --header-height: 80px;
+  /* Header Heights - Desktop */
+  --header-height-normal: 80px;
   --header-height-sticky: 64px;
+  --header-height-minimal: 56px;
+  
+  /* Header Heights - Tablet */
+  --header-height-normal-tablet: 72px;
+  --header-height-sticky-tablet: 60px;
+  --header-height-minimal-tablet: 52px;
+  
+  /* Header Heights - Mobile */
+  --header-height-normal-mobile: 64px;
+  --header-height-sticky-mobile: 56px;
+  --header-height-minimal-mobile: 48px;
+  
+  /* Section Heights */
   --header-top-height: 40px;
+  --header-top-height-tablet: 36px;
+  --header-top-height-mobile: 32px;
+  
+  --header-middle-height: var(--header-height-normal);
+  --header-middle-height-sticky: var(--header-height-sticky);
+  --header-middle-height-tablet: var(--header-height-normal-tablet);
+  --header-middle-height-sticky-tablet: var(--header-height-sticky-tablet);
+  --header-middle-height-mobile: var(--header-height-normal-mobile);
+  --header-middle-height-sticky-mobile: var(--header-height-sticky-mobile);
+  
   --header-bottom-height: 56px;
   --header-bottom-height-sticky: 40px;
+  --header-bottom-height-tablet: 52px;
+  --header-bottom-height-sticky-tablet: 36px;
+  --header-bottom-height-mobile: 48px;
+  --header-bottom-height-sticky-mobile: 32px;
   
-  /* Logo dimensions */
-  --header-logo-height: 32px;
+  /* Logo Heights */
+  --header-logo-height-normal: 40px;
+  --header-logo-height-sticky: 32px;
+  --header-logo-height-tablet: 36px;
+  --header-logo-height-sticky-tablet: 28px;
+  --header-logo-height-mobile: 32px;
+  --header-logo-height-sticky-mobile: 24px;
+  
+  /* Legacy tokens for backward compatibility */
+  --header-height: var(--header-height-normal);
+  --header-logo-height: var(--header-logo-height-normal);
   
   /* Search dimensions */
   --header-search-min-width: 200px;

@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr">
       <body>
-        <HeaderWithMobileMenu sticky={true} />
+        <HeaderWithMobileMenu sticky={true} centerMode={true} />
         <ToastProvider>
           <Main width="full" id="main">
             {children}
