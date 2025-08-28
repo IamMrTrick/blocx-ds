@@ -13,6 +13,10 @@ export interface HeaderProps {
   variant?: 'default' | 'transparent' | 'minimal';
   sticky?: boolean;
   centerMode?: boolean;
+  /** When true, transparent variant only applies to desktop (>=769px) */
+  desktopOnlyTransparent?: boolean;
+  /** When true, transparent variant only applies to mobile (<=768px) */
+  mobileOnlyTransparent?: boolean;
   onStickyChange?: (isSticky: boolean) => void;
 }
 
@@ -22,9 +26,44 @@ export const Header: React.FC<HeaderProps> = ({
   variant = 'default',
   sticky = false,
   centerMode = false,
+  desktopOnlyTransparent = false,
+  mobileOnlyTransparent = false,
   onStickyChange,
 }) => {
   const [isSticky, setIsSticky] = useState(false);
+
+  // Validation: Both desktopOnlyTransparent and mobileOnlyTransparent cannot be true
+  if (desktopOnlyTransparent && mobileOnlyTransparent) {
+    console.warn('Header: Both desktopOnlyTransparent and mobileOnlyTransparent cannot be true. Ignoring both.');
+  }
+
+  // Update CSS variables based on header state
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    // Determine if header is transparent
+    const isTransparent = variant === 'transparent' && !isSticky;
+    
+    // Set header height based on state
+    let currentHeight = '80px'; // default
+    if (isSticky) {
+      currentHeight = '64px'; // sticky
+    } else if (variant === 'minimal') {
+      currentHeight = '56px'; // minimal
+    }
+    
+    // Update CSS variables
+    root.style.setProperty('--header-current-height', currentHeight);
+    root.style.setProperty('--header-spacing-top', currentHeight);
+    root.style.setProperty('--header-is-transparent', isTransparent ? '1' : '0');
+    
+    // Cleanup function to reset variables when component unmounts
+    return () => {
+      root.style.removeProperty('--header-current-height');
+      root.style.removeProperty('--header-spacing-top');
+      root.style.removeProperty('--header-is-transparent');
+    };
+  }, [variant, isSticky]);
 
   // Handle sticky header on scroll
   useEffect(() => {
@@ -53,6 +92,8 @@ export const Header: React.FC<HeaderProps> = ({
     sticky && 'header--pos-fixed', // Always add pos-fixed when sticky is enabled
     sticky && isSticky && 'header--sticky', // Add styling class only after scroll
     centerMode && 'header--center-mode',
+    variant === 'transparent' && desktopOnlyTransparent && !mobileOnlyTransparent && 'header--transparent-desktop-only',
+    variant === 'transparent' && mobileOnlyTransparent && !desktopOnlyTransparent && 'header--transparent-mobile-only',
     className
   ].filter(Boolean).join(' ');
 

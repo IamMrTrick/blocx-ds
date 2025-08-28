@@ -54,6 +54,14 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
     });
   };
 
+  // Handle keyboard navigation for toggle buttons
+  const handleToggleKeyDown = (event: React.KeyboardEvent, itemId: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleExpanded(itemId);
+    }
+  };
+
   // Check if item is active in mobile menu
   const isItemActive = (item: PrimaryNavItem): boolean => {
     if (activeId === item.id) return true;
@@ -66,6 +74,20 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   const handleMobileMenuClose = () => {
     onMobileMenuClose?.();
   };
+
+  // Handle Escape key to close mobile menu
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
+        handleMobileMenuClose();
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => document.removeEventListener('keydown', handleEscapeKey);
+    }
+  }, [isMobileMenuOpen]);
 
 
 
@@ -110,28 +132,36 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
       <li key={item.id} className={`mobile-nav__item mobile-nav__item--level-${level}`}>
         {hasChildren ? (
           <>
-            <button
-              className={`mobile-nav__toggle ${isActive ? 'mobile-nav__toggle--active' : ''}`}
-              onClick={() => toggleExpanded(item.id)}
-              aria-expanded={isExpanded}
-              aria-controls={`mobile-submenu-${item.id}`}
-            >
-              <span className="mobile-nav__label">{item.label}</span>
-              <Icon 
-                name={isExpanded ? 'chevron-up' : 'chevron-down'} 
-                className="mobile-nav__chevron"
-                aria-hidden
-              />
-            </button>
-            
-            {isExpanded && (
-              <ul 
-                id={`mobile-submenu-${item.id}`}
-                className={`mobile-nav__submenu mobile-nav__submenu--level-${level + 1}`}
+            {/* Parent item with both link and toggle */}
+            <div className="mobile-nav__parent">
+              {/* Link to parent page */}
+              {renderMobileLeafLink(item, isActive)}
+              
+              {/* Toggle button for submenu */}
+              <button
+                className="mobile-nav__toggle"
+                onClick={() => toggleExpanded(item.id)}
+                onKeyDown={(e) => handleToggleKeyDown(e, item.id)}
+                aria-expanded={isExpanded}
+                aria-controls={`mobile-submenu-${item.id}`}
+                aria-label={`Toggle ${item.label} submenu`}
               >
-                {item.children!.map(child => renderMobileNavItem(child, level + 1))}
-              </ul>
-            )}
+                <Icon 
+                  name={isExpanded ? 'chevron-up' : 'chevron-down'} 
+                  className="mobile-nav__chevron"
+                  aria-hidden
+                />
+              </button>
+            </div>
+            
+            {/* Submenu */}
+            <ul 
+              id={`mobile-submenu-${item.id}`}
+              className={`mobile-nav__submenu mobile-nav__submenu--level-${level + 1}`}
+              hidden={!isExpanded}
+            >
+              {item.children!.map(child => renderMobileNavItem(child, level + 1))}
+            </ul>
           </>
         ) : (
           renderMobileLeafLink(item, isActive)

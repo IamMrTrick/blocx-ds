@@ -21,10 +21,9 @@
   --header-bottom-border: var(--gray-05);
   
   /* Text colors */
-  --header-text: var(--gray-11);
-  --header-text-hover: var(--gray-12);
+  --header-text: var(--gray-10);
+  --header-text-hover: var(--text-primary);
   --header-text-muted: var(--gray-08);
-  --header-logo-text: var(--gray-12);
   --header-top-text: var(--gray-08);
   
   /* Transparent header text colors */
@@ -135,4 +134,10 @@
   /* ===== Header Breakpoints ===== */
   --header-breakpoint-tablet: 768px;
   --header-breakpoint-mobile: 640px;
+
+  /* ===== Dynamic Header Spacing ===== */
+  /* These variables will be updated by JavaScript based on header state */
+  --header-current-height: var(--header-height-normal);
+  --header-spacing-top: var(--header-current-height);
+  --header-is-transparent: 0; /* 0 = false, 1 = true */
 }

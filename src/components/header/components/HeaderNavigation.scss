@@ -40,25 +40,57 @@
 
 // Mobile navigation styles (inside drawer)
 .mobile-nav {
+  padding: var(--spacing-8);
+  border-radius: var(--gl-radius-cards);
+
   &__list {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
   }
 
   &__item {
-    border-bottom: 1px solid var(--color-border-subtle);
-    
-    &:last-child {
-      border-bottom: none;
-    }
+    position: relative;
 
     &--level-1 {
-      padding-left: 1rem;
+      .mobile-nav__link,
+      .mobile-nav__toggle,
+      .mobile-nav__parent {
+        background: var(--gray-02);
+        border-color: var(--gray-04);
+      }
     }
 
     &--level-2 {
-      padding-left: 2rem;
+      .mobile-nav__link,
+      .mobile-nav__toggle,
+      .mobile-nav__parent {
+        background: var(--gray-03);
+        border-color: var(--gray-05);
+      }
+    }
+  }
+
+  // Parent container for items with both link and toggle
+  &__parent {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    background: var(--bg-primary);
+    border-radius: var(--gl-radius-btn);
+    border: 1px solid var(--gray-03);
+    overflow: hidden;
+    box-shadow: 0 2px 4px var(--transparent-black-10);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: var(--gray-02);
+      border-color: var(--gray-04);
+      box-shadow: 0 4px 12px var(--transparent-black-20);
+      transform: translateY(-1px);
     }
   }
 
@@ -68,56 +100,199 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 1rem;
+    padding: var(--spacing-12) var(--spacing-14);
     text-decoration: none;
-    color: var(--color-text-primary);
-    background: none;
-    border: none;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    border: 1px solid var(--gray-03);
+    border-radius: var(--gl-radius-btn);
     text-align: left;
     font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    box-shadow: 0 1px 2px var(--transparent-black-10);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 
     &:hover {
-      background-color: var(--color-bg-hover);
+      color: var(--text-primary);
+      background: var(--gray-02);
+      border-color: var(--gray-04);
+      box-shadow: 0 4px 8px var(--transparent-black-20);
+      transform: translateY(-1px) scale(1.02);
     }
 
     &--active {
-      color: var(--color-primary);
-      background-color: var(--color-primary-bg-subtle);
+      color: var(--text-primary);
+      background: var(--primary-05);
+      border-color: var(--primary-05);
+      box-shadow: 0 2px 8px var(--transparent-primary-20);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-05);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px var(--transparent-primary-20);
+    }
+  }
+
+  // Special styles for link and toggle when inside parent container
+  &__parent &__link {
+    flex: 1;
+    justify-content: flex-start;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    
+    .mobile-nav__label {
+      flex: 1;
+    }
+    
+    .mobile-nav__external {
+      margin-left: var(--spacing-8);
+    }
+
+    &:hover {
+      background: var(--gray-03);
+      transform: none;
+      box-shadow: none;
+    }
+
+    &--active {
+      background: var(--primary-02);
+      color: var(--primary-07);
+    }
+  }
+
+  &__parent &__toggle {
+    width: var(--spacing-40);
+    flex-shrink: 0;
+    padding: var(--spacing-12) var(--spacing-8);
+    justify-content: center;
+    border: none;
+    border-left: 1px solid var(--gray-04);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      background: var(--gray-03);
+      border-left-color: var(--gray-05);
+      transform: none;
+      box-shadow: none;
+    }
+    
+    &:focus-visible {
+      outline: 2px solid var(--primary-05);
+      outline-offset: -2px;
+      box-shadow: 0 0 0 2px var(--transparent-primary-20);
     }
   }
 
   &__label {
     flex: 1;
+    font-weight: 500;
   }
 
   &__chevron,
   &__external {
-    width: 1rem;
-    height: 1rem;
-    margin-left: 0.5rem;
+    width: var(--spacing-16);
+    height: var(--spacing-16);
+    margin-left: var(--spacing-8);
     flex-shrink: 0;
+    opacity: 0.7;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &__chevron {
+    transform-origin: center;
+    
+    // When parent is expanded (aria-expanded="true"), rotate chevron
+    button[aria-expanded="true"] & {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
   }
 
   &__submenu {
     list-style: none;
     margin: 0;
     padding: 0;
-    background-color: var(--color-bg-subtle);
+    background-color: var(--gray-02);
+    border-radius: var(--gl-radius-btn);
+    border: 1px solid var(--gray-04);
+    
+    // Smooth slide-down animation
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(-5px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    &--level-1 {
-      .mobile-nav__link,
-      .mobile-nav__toggle {
-        padding-left: 2rem;
+    &[hidden] {
+      display: block !important;
+      margin: 0;
+      padding: 0;
+    }
+
+    &:not([hidden]) {
+      opacity: 1;
+      max-height: 300px;
+      transform: translateY(0);
+      margin: var(--spacing-4) 0 0 0;
+      padding: var(--spacing-6);
+    }
+
+    .mobile-nav__item {
+      margin-bottom: var(--spacing-2);
+      opacity: 0;
+      transform: translateX(-10px);
+      animation: slideInItem 0.3s ease-out forwards;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      @for $i from 1 through 10 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{($i - 1) * 0.05}s;
+        }
       }
     }
 
-    &--level-2 {
-      .mobile-nav__link,
-      .mobile-nav__toggle {
-        padding-left: 3rem;
+    .mobile-nav__link,
+    .mobile-nav__toggle {
+      padding: var(--spacing-10) var(--spacing-12);
+      font-size: 0.875rem;
+      font-weight: 400;
+      background-color: var(--gray-01);
+      border-color: var(--gray-03);
+      
+      &:hover {
+        background-color: var(--gray-03);
+        border-color: var(--gray-05);
+        transform: translateY(-1px) scale(1.01);
+      }
+      
+      &--active {
+        background-color: var(--primary-01);
+        color: var(--base-white);
+        border-color: var(--primary-04);
       }
     }
+  }
+}
+
+// Keyframe animations
+@keyframes slideInItem {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

@@ -4,6 +4,9 @@
   width: 100%;
   min-height: 0;
   
+  /* Dynamic header spacing using CSS variables */
+  padding-top: calc(var(--header-spacing-top) * (1 - var(--header-is-transparent)));
+  
   /* Width modifiers */
   &--sm {
     max-width: var(--content-width-sm);
@@ -53,7 +56,8 @@
   
   /* Layout context modifiers */
   &--with-header {
-    padding-top: var(--header-height, var(--spacing-64));
+    /* Force header spacing regardless of transparency */
+    padding-top: var(--header-spacing-top) !important;
   }
   
   &--with-footer {

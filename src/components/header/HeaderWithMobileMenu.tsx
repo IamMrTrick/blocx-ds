@@ -15,6 +15,10 @@ export interface HeaderWithMobileMenuProps {
   sticky?: boolean;
   /** Whether to use center mode layout */
   centerMode?: boolean;
+  /** When true, transparent variant only applies to desktop (>=769px) */
+  desktopOnlyTransparent?: boolean;
+  /** When true, transparent variant only applies to mobile (<=768px) */
+  mobileOnlyTransparent?: boolean;
 }
 
 export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
@@ -22,6 +26,8 @@ export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
   variant = 'default',
   sticky = false,
   centerMode = false,
+  desktopOnlyTransparent = false,
+  mobileOnlyTransparent = false,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const activeId = useActiveNavigation();
@@ -36,7 +42,7 @@ export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
   };
 
   return (
-    <Header className={className} variant={variant} sticky={sticky} centerMode={centerMode}>
+    <Header className={className} variant={variant} sticky={sticky} centerMode={centerMode} desktopOnlyTransparent={desktopOnlyTransparent} mobileOnlyTransparent={mobileOnlyTransparent}>
       <HeaderMiddle>
         <HeaderContainer>
           <HeaderLeft>

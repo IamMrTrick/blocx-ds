@@ -62,6 +62,24 @@
     &.header--pos-fixed {
       position: fixed;
     }
+    
+    /* Optional: Disable transparent on mobile with modifier class */
+    &.header--transparent-desktop-only {
+      @media (max-width: 768px) {
+        position: relative;
+        background: var(--nav-main-bg);
+        border-bottom: 1px solid var(--nav-main-border);
+      }
+    }
+    
+    /* Optional: Disable transparent on desktop with modifier class */
+    &.header--transparent-mobile-only {
+      @media (min-width: 769px) {
+        position: relative;
+        background: var(--nav-main-bg);
+        border-bottom: 1px solid var(--nav-main-border);
+      }
+    }
   }
   
   &--sticky {
@@ -308,6 +326,7 @@
     outline-offset: 2px;
     border-radius: var(--gl-radius-btn);
   }
+  
 }
 
 .header__logo-img {
@@ -331,10 +350,65 @@
   transition: color 0.3s ease;
 }
 
+.header__logo:hover {
+  .header__logo-text {
+    color: var(--header-logo-text-hover);
+  }
+}
+
 /* Transparent variant logo styles */
 .header--transparent {
   .header__logo-text {
-    color: white;
+    color: var(--base-white);
+  }
+  
+  .header__logo:hover {
+    .header__logo-text {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+  
+  /* Revert to normal colors when desktop-only transparent is used on mobile */
+  &.header--transparent-desktop-only {
+    @media (max-width: 768px) {
+      .header__logo-text {
+        color: var(--header-logo-text);
+      }
+      
+      .header__logo:hover {
+        .header__logo-text {
+          color: var(--header-logo-text-hover);
+        }
+      }
+    }
+  }
+  
+  /* Revert to normal colors when mobile-only transparent is used on desktop */
+  &.header--transparent-mobile-only {
+    @media (min-width: 769px) {
+      .header__logo-text {
+        color: var(--header-logo-text);
+      }
+      
+      .header__logo:hover {
+        .header__logo-text {
+          color: var(--header-logo-text-hover);
+        }
+      }
+    }
+  }
+}
+
+/* Smart transparent variant - adapts to theme */
+[data-theme="dark"] .header--transparent {
+  .header__logo-text {
+    color: var(--text-primary);
+  }
+  
+  .header__logo:hover {
+    .header__logo-text {
+      color: var(--header-logo-text-hover);
+    }
   }
 }
 
@@ -346,7 +420,7 @@
   width: var(--spacing-40);
   height: var(--spacing-40);
   padding: 0;
-  background: none;
+  background: var(--header-mobile-toggle-bg);
   border: 1px solid var(--header-mobile-toggle-border);
   border-radius: var(--gl-radius-btn);
   color: var(--header-mobile-toggle-text);
@@ -378,14 +452,70 @@
 .header--transparent {
   .header__mobile-toggle {
     border-color: rgba(255, 255, 255, 0.3);
-    color: white;
+    color: var(--base-white);
     
     &:hover {
       background: rgba(255, 255, 255, 0.1);
       border-color: rgba(255, 255, 255, 0.5);
+      color: var(--base-white);
+    }
+  }
+  
+  /* Revert to normal colors when desktop-only transparent is used on mobile */
+  &.header--transparent-desktop-only {
+    @media (max-width: 768px) {
+      .header__mobile-toggle {
+        border-color: var(--header-mobile-toggle-border);
+        color: var(--header-mobile-toggle-text);
+        
+        &:hover {
+          background: var(--header-mobile-toggle-bg-hover);
+          border-color: var(--header-mobile-toggle-border-hover);
+          color: var(--header-mobile-toggle-text);
+        }
+      }
+    }
+  }
+  
+  /* Revert to normal colors when mobile-only transparent is used on desktop */
+  &.header--transparent-mobile-only {
+    @media (min-width: 769px) {
+      .header__mobile-toggle {
+        border-color: var(--header-mobile-toggle-border);
+        color: var(--header-mobile-toggle-text);
+        
+        &:hover {
+          background: var(--header-mobile-toggle-bg-hover);
+          border-color: var(--header-mobile-toggle-border-hover);
+          color: var(--header-mobile-toggle-text);
+        }
+      }
     }
   }
 }
+
+/* Smart transparent mobile toggle - adapts to theme */
+[data-theme="dark"] .header--transparent {
+  .header__mobile-toggle {
+    border-color: var(--header-mobile-toggle-border);
+    color: var(--header-mobile-toggle-text);
+    
+    &:hover {
+      background: var(--header-mobile-toggle-bg-hover);
+      border-color: var(--header-mobile-toggle-border-hover);
+      color: var(--header-mobile-toggle-text);
+    }
+  }
+}
+
+/* ===== Header Theme Switcher ===== */
+.header__theme-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Theme switcher component inherits its styling from component's own CSS */
 
 /* ===== Header Navigation ===== */
 .header__nav {

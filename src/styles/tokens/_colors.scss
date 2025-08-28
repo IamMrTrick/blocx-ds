@@ -536,11 +536,11 @@
   --inp-icon-loading: var(--primary-05);
   
   /* ===== Header Navigation Tokens ===== */
-  --nav-main-bg: var(--bg-quinary-alt);
+  --nav-main-bg: var(--base-white);
   --nav-main-sticky-bg: var(--base-white);
   --nav-bottom-bg: var(--bg-senary-alt);
   --nav-main-txt: var(--base-black);
-  --nav-main-sticky-txt: var(--base-white);
+  --nav-main-sticky-txt: var(--base-black);
   --nav-bottom-txt: var(--base-black);
   --nav-bottom-sticky-bg: var(--base-white);
   --nav-bottom-sticky-txt: var(--base-white);
@@ -899,8 +899,8 @@
   --inp-icon-loading: var(--primary-04);
   
   /* ===== Header Navigation Tokens - Dark Theme ===== */
-  --nav-main-bg: var(--bg-quinary-alt);
-  --nav-main-sticky-bg: var(--transparent-black-70);
+  --nav-main-bg: var(--base-black);
+  --nav-main-sticky-bg: var(--base-black);
   --nav-bottom-bg: var(--bg-senary);
   --nav-main-txt: var(--base-white);
   --nav-main-sticky-txt: var(--base-white);

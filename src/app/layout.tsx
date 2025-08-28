@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" dir="ltr">
       <body>
         <ThemeProvider>
-          <HeaderWithMobileMenu variant="transparent" sticky={true} centerMode={true} />
+          <HeaderWithMobileMenu sticky={true} centerMode={true} />
           <ToastProvider>
             <Main width="full" id="main">
               {children}
