@@ -1,13 +1,9 @@
-'use client';
-import React, { useMemo } from 'react';
-import { usePathname } from 'next/navigation';
-import { Nav as PrimaryNav, type PrimaryNavItem } from '@/components/ui/nav/primary-nav/PrimaryNav';
+import type { PrimaryNavItem } from '@/components/ui/nav/primary-nav/PrimaryNav';
 
-export interface HeaderNavMenuProps {
-  activeId?: string;
-}
-
-const items: PrimaryNavItem[] = [
+/**
+ * Shared navigation items for both desktop and mobile header navigation
+ */
+export const navigationItems: PrimaryNavItem[] = [
   { id: 'home', label: 'Home', href: '/' },
   {
     id: 'foundations',
@@ -101,6 +97,7 @@ const items: PrimaryNavItem[] = [
         children: [
           { id: 'toast', label: 'Toast', href: '/components/ui/toast' },
           { id: 'badge', label: 'Badge', href: '/components/ui/badge' },
+          { id: 'theme-switcher', label: 'Theme Switcher', href: '/components/ui/theme-switcher' },
         ],
       },
       {
@@ -126,57 +123,3 @@ const items: PrimaryNavItem[] = [
   },
   { id: 'playground', label: 'Playground', href: '/playground' },
 ];
-
-export const HeaderNavMenu: React.FC<HeaderNavMenuProps> = ({ activeId }) => {
-  const pathname = usePathname();
-
-  const computedActiveId = useMemo(() => {
-    if (activeId) return activeId;
-    if (!pathname) return undefined;
-    if (pathname === '/') return 'home';
-    if (pathname.startsWith('/foundations')) return 'foundations';
-    if (pathname.startsWith('/templates')) return 'templates';
-    if (pathname.startsWith('/playground')) return 'playground';
-    if (pathname.startsWith('/components/')) {
-      const segments = pathname.split('/');
-      if (segments.length >= 3) {
-        const category = segments[2];
-        // Map URLs to navigation categories
-        if (category === 'ui') {
-          const component = segments[3];
-          // Map component to its category
-          if (['section', 'row', 'col', 'main', 'aside'].includes(component)) return 'layout';
-          if (['heading', 'text'].includes(component)) return 'typography';
-          if (['form', 'input', 'textarea', 'select', 'checkbox', 'radio', 'switcher', 'otp', 'date-picker', 'time-picker'].includes(component)) return 'forms';
-          if (['button', 'icon-button'].includes(component)) return 'actions';
-          if (['nav', 'breadcrumbs', 'pagination', 'tabs'].includes(component)) return 'navigation';
-          if (['accordion', 'modal', 'drawer'].includes(component)) return 'disclosure';
-          if (['toast', 'badge'].includes(component)) return 'feedback';
-          if (['card', 'icon'].includes(component)) return 'data-display';
-        }
-        return category;
-      }
-      return 'components';
-    }
-    if (pathname.startsWith('/components')) return 'components';
-    return undefined;
-  }, [activeId, pathname]);
-
-  return (
-    <PrimaryNav
-      items={items}
-      activeId={computedActiveId}
-      layout="gap"
-      gap="md"
-      dropdownTrigger="hover"
-      dropdownDelay={350}
-      variant="horizontal"
-      size="md"
-      collapsible={true}
-    />
-  );
-};
-
-export default HeaderNavMenu;
-
-

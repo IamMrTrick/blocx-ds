@@ -11,7 +11,7 @@ interface ToastItemProps {
   position: ToastPosition;
 }
 
-export function ToastItem({ toast, index, removeToast, isVisible, position }: ToastItemProps) {
+export function ToastItem({ toast, index, removeToast, isVisible, position: _position }: ToastItemProps) {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -67,7 +67,7 @@ export function ToastItem({ toast, index, removeToast, isVisible, position }: To
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [toast.duration, isPaused, isRemoving, handleRemove]);
+  }, [toast.duration, isPaused, isRemoving, handleRemove, removeToast, toast.id]);
 
   // Pause/resume on hover
   const handleMouseEnter = useCallback(() => {

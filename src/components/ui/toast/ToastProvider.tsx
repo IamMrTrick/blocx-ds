@@ -81,7 +81,7 @@ export function ToastProvider({
     dispatch({ type: 'ADD_TOAST', toast });
 
     return id;
-  }, [duration, removeToast]);
+  }, [duration]);
 
   const removeAll = useCallback(() => {
     dispatch({ type: 'REMOVE_ALL' });

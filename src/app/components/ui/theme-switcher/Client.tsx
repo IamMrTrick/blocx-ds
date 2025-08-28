@@ -178,7 +178,7 @@ export default function ThemeSwitcherClient() {
         <div className="demo-examples">
           <div className="example">
             <h3>Dark Theme Default</h3>
-            <ThemeSwitcher defaultTheme="dark" />
+            <ThemeSwitcher />
           </div>
         </div>
       </div>

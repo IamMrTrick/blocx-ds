@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
 import { Row, Col } from '@/components/layout';
-import { User, Mail, Lock, Phone, Search, Eye, EyeOff, MapPin, MessageSquare, Calendar, Clock, CreditCard, Shield } from 'lucide-react';
+import { User, Mail, Lock, Phone, Search, Eye, EyeOff } from 'lucide-react';
 
 export default function FormsClient() {
   const [formData, setFormData] = useState({
@@ -67,8 +67,8 @@ export default function FormsClient() {
           
           {/* Basic Inputs */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Basic Input States</Heading>
-            <Row gutter="md">
+            <Heading level={3} size="h3">Basic Input States</Heading>
+            <Row gap="md">
               <Col md={6}>
                 <Input 
                   label="Default State" 
@@ -86,7 +86,7 @@ export default function FormsClient() {
               </Col>
             </Row>
             
-            <Row gutter="md">
+            <Row gap="md">
               <Col md={6}>
                 <Input 
                   label="Disabled State" 
@@ -108,8 +108,8 @@ export default function FormsClient() {
 
           {/* Validation States */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Validation States</Heading>
-            <Row gutter="md">
+            <Heading level={3} size="h3">Validation States</Heading>
+            <Row gap="md">
               <Col md={4}>
                 <Input 
                   label="Success State" 
@@ -139,7 +139,7 @@ export default function FormsClient() {
 
           {/* Input Sizes */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Input Sizes</Heading>
+            <Heading level={3} size="h3">Input Sizes</Heading>
             <div className="space-y-3">
               <Input label="Extra Small (xs)" size="xs" placeholder="Extra small input" startIcon={<User size={12} />} />
               <Input label="Small (s)" size="s" placeholder="Small input" startIcon={<User size={14} />} />
@@ -151,8 +151,8 @@ export default function FormsClient() {
 
           {/* Input Types */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Input Types & Icons</Heading>
-            <Row gutter="md">
+            <Heading level={3} size="h3">Input Types & Icons</Heading>
+            <Row gap="md">
               <Col md={6}>
                 <Input 
                   label="Email" 
@@ -184,7 +184,7 @@ export default function FormsClient() {
               </Col>
             </Row>
             
-            <Row gutter="md">
+            <Row gap="md">
               <Col md={6}>
                 <Input 
                   label="Phone Number" 
@@ -208,8 +208,8 @@ export default function FormsClient() {
 
           {/* Character Count */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Advanced Features</Heading>
-            <Row gutter="md">
+            <Heading level={3} size="h3">Advanced Features</Heading>
+            <Row gap="md">
               <Col md={6}>
                 <Input 
                   label="Username" 
@@ -242,8 +242,8 @@ export default function FormsClient() {
           <Heading level={2}>Select Components</Heading>
           
           <div className="space-y-4">
-            <Heading level={3} size="md">Select States & Sizes</Heading>
-            <Row gutter="md">
+            <Heading level={3} size="h3">Select States & Sizes</Heading>
+            <Row gap="md">
               <Col md={4}>
                 <Select 
                   label="Country" 
@@ -271,7 +271,7 @@ export default function FormsClient() {
               </Col>
             </Row>
 
-            <Row gutter="md">
+            <Row gap="md">
               <Col md={3}>
                 <Select label="Small" size="s" placeholder="Small select" options={countryOptions} />
               </Col>
@@ -296,8 +296,8 @@ export default function FormsClient() {
           
           {/* Checkbox States */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Checkbox States (Click anywhere - box or label)</Heading>
-            <Row gutter="md">
+            <Heading level={3} size="h3">Checkbox States (Click anywhere - box or label)</Heading>
+            <Row gap="md">
               <Col md={6}>
                 <div className="space-y-3">
                   <Checkbox 
@@ -356,7 +356,7 @@ export default function FormsClient() {
 
           {/* Radio Button States */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Radio Buttons (Click anywhere - circle or label)</Heading>
+            <Heading level={3} size="h3">Radio Buttons (Click anywhere - circle or label)</Heading>
             <div className="space-y-3">
               <Text size="sm" className="font-medium">Gender Selection:</Text>
               <div className="flex gap-6">
@@ -433,8 +433,8 @@ export default function FormsClient() {
 
           {/* Checkbox & Radio Sizes */}
           <div className="space-y-4">
-            <Heading level={3} size="md">Component Sizes</Heading>
-            <Row gutter="md">
+            <Heading level={3} size="h3">Component Sizes</Heading>
+            <Row gap="md">
               <Col md={6}>
                 <div className="space-y-3">
                   <Text size="sm" className="font-medium">Checkbox Sizes:</Text>
@@ -469,7 +469,7 @@ export default function FormsClient() {
           </Text>
           
           <form className="space-y-6">
-            <Row gutter="md">
+            <Row gap="md">
               <Col md={6}>
                 <Input 
                   label="Full Name" 
@@ -493,7 +493,7 @@ export default function FormsClient() {
               </Col>
             </Row>
 
-            <Row gutter="md">
+            <Row gap="md">
               <Col md={6}>
                 <Select 
                   label="Country" 

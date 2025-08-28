@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { ThemeSwitcher } from '@/components/ui/theme-switcher';
+
 import { MinimalistPill } from '@/components/ui/theme-switcher/variants/MinimalistPill';
 import { SimpleThemeSwitcher } from '@/components/ui/theme-switcher/SimpleThemeSwitcher';
 import './Header.scss';

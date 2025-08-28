@@ -1,38 +1,47 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerHeader, DrawerBody, DrawerTitle } from '@/components/ui/drawer';
+import { Nav as PrimaryNav } from '@/components/ui/nav/primary-nav/PrimaryNav';
+import { navigationItems } from '../constants/navigationItems';
+import { useActiveNavigation } from '../hooks/useActiveNavigation';
 import type { PrimaryNavItem } from '@/components/ui/nav/primary-nav/PrimaryNav';
+import './HeaderNavigation.scss';
 
-export interface HeaderMobileMenuProps {
-  /** Navigation items (same structure as HeaderNavMenu) */
-  items: PrimaryNavItem[];
-  /** Whether the menu is open */
-  isOpen: boolean;
-  /** Callback when menu should close */
-  onClose: () => void;
-  /** Active navigation item ID */
+export interface HeaderNavigationProps {
+  /** Custom className */
+  className?: string;
+  /** Active navigation item ID (if not provided, will be calculated from pathname) */
   activeId?: string;
+  /** Mobile menu open state */
+  isMobileMenuOpen?: boolean;
+  /** Callback when mobile menu should close */
+  onMobileMenuClose?: () => void;
+}
+
+export interface HeaderMobileToggleProps {
+  /** Whether the mobile menu is open */
+  isOpen: boolean;
+  /** Callback when toggle is clicked */
+  onToggle: () => void;
+  /** ARIA controls attribute */
+  ariaControls?: string;
   /** Custom className */
   className?: string;
 }
 
-export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
-  items,
-  isOpen,
-  onClose,
-  activeId,
+export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   className = '',
+  activeId: providedActiveId,
+  isMobileMenuOpen = false,
+  onMobileMenuClose,
 }) => {
-  const pathname = usePathname();
+  const activeId = useActiveNavigation(providedActiveId);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
-  // Route-change close is handled in HeaderWithMobileMenu
-
-  // Toggle expanded state for items with children
+  // Toggle expanded state for mobile menu items with children
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => {
       const newSet = new Set(prev);
@@ -45,17 +54,23 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
     });
   };
 
-  // Check if item is active
+  // Check if item is active in mobile menu
   const isItemActive = (item: PrimaryNavItem): boolean => {
     if (activeId === item.id) return true;
-    if (pathname === item.href) return true;
     if (item.children) {
       return item.children.some(child => isItemActive(child));
     }
     return false;
   };
 
-  const renderLeafLink = (item: PrimaryNavItem, isActive: boolean) => {
+  const handleMobileMenuClose = () => {
+    onMobileMenuClose?.();
+  };
+
+
+
+  // Render leaf link for mobile menu
+  const renderMobileLeafLink = (item: PrimaryNavItem, isActive: boolean) => {
     const href = item.href ?? '#';
     const isExternal = Boolean(item.external) || /^https?:\/\//i.test(href);
     if (!isExternal) {
@@ -63,7 +78,7 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
         <Link
           href={href as string}
           className={`mobile-nav__link ${isActive ? 'mobile-nav__link--active' : ''}`}
-          onClick={onClose}
+          onClick={handleMobileMenuClose}
           prefetch={false}
         >
           <span className="mobile-nav__label">{item.label}</span>
@@ -74,7 +89,7 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
       <a
         href={href}
         className={`mobile-nav__link ${isActive ? 'mobile-nav__link--active' : ''}`}
-        onClick={onClose}
+        onClick={handleMobileMenuClose}
         {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       >
         <span className="mobile-nav__label">{item.label}</span>
@@ -85,8 +100,8 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
     );
   };
 
-  // Render navigation item
-  const renderNavItem = (item: PrimaryNavItem, level: number = 0) => {
+  // Render navigation item for mobile menu
+  const renderMobileNavItem = (item: PrimaryNavItem, level: number = 0) => {
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.has(item.id);
     const isActive = isItemActive(item);
@@ -114,28 +129,47 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
                 id={`mobile-submenu-${item.id}`}
                 className={`mobile-nav__submenu mobile-nav__submenu--level-${level + 1}`}
               >
-                {item.children!.map(child => renderNavItem(child, level + 1))}
+                {item.children!.map(child => renderMobileNavItem(child, level + 1))}
               </ul>
             )}
           </>
         ) : (
-          renderLeafLink(item, isActive)
+          renderMobileLeafLink(item, isActive)
         )}
       </li>
     );
   };
 
   return (
-    <Drawer
-        open={isOpen}
-        onClose={onClose}
+    <>
+      {/* Desktop Navigation */}
+      <div className={`header-nav header-nav--desktop ${className}`}>
+        <PrimaryNav
+          items={navigationItems}
+          activeId={activeId}
+          layout="gap"
+          gap="md"
+          dropdownTrigger="hover"
+          dropdownDelay={350}
+          variant="horizontal"
+          size="md"
+          collapsible={true}
+        />
+      </div>
+
+
+
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        open={isMobileMenuOpen}
+        onClose={handleMobileMenuClose}
         side="bottom"
         size="l"
         dismissible={true}
         swipeToClose={true}
         backdrop={true}
         trapFocus={true}
-        className={className}
+        className="header-nav__mobile-drawer"
         aria-label="Mobile navigation menu"
       >
         <DrawerHeader>
@@ -144,7 +178,7 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
             iconOnly
             variant="ghost"
             size="m"
-            onClick={onClose}
+            onClick={handleMobileMenuClose}
             aria-label="Close navigation menu"
           >
             <Icon name="x" />
@@ -154,12 +188,35 @@ export const HeaderMobileMenu: React.FC<HeaderMobileMenuProps> = ({
         <DrawerBody scrollable={true}>
           <nav className="mobile-nav" aria-label="Mobile navigation">
             <ul className="mobile-nav__list">
-              {items.map(item => renderNavItem(item))}
+              {navigationItems.map(item => renderMobileNavItem(item))}
             </ul>
           </nav>
         </DrawerBody>
       </Drawer>
+    </>
   );
 };
 
-export default HeaderMobileMenu;
+// Separate Mobile Toggle Button Component
+export const HeaderMobileToggle: React.FC<HeaderMobileToggleProps> = ({
+  isOpen,
+  onToggle,
+  ariaControls = "mobile-navigation-menu",
+  className = '',
+}) => {
+  return (
+    <button
+      className={`header__mobile-toggle ${className}`.trim()}
+      onClick={onToggle}
+      aria-expanded={isOpen}
+      aria-controls={ariaControls}
+      aria-label="Toggle mobile navigation"
+    >
+      <Icon name={isOpen ? 'x' : 'menu'}>
+        <span className="header__toggle-icon"></span>
+      </Icon>
+    </button>
+  );
+};
+
+export default HeaderNavigation;

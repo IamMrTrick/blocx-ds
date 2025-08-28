@@ -150,11 +150,11 @@ function useDrawerDrag(
     if (!active) return;
     const el = handleRef.current;
     if (!el) return;
-    const supportsPointer = typeof window !== 'undefined' && 'PointerEvent' in window;
+    const _supportsPointer = typeof window !== 'undefined' && 'PointerEvent' in window;
 
     const CLOSE_THRESHOLD = 0.4; // 40% of travel
     const VELOCITY_THRESHOLD = 0.5; // px/ms projected into close direction
-    const MAX_WRONG_STRETCH = 0.02; // 2% for closing direction
+    const _MAX_WRONG_STRETCH = 0.02; // 2% for closing direction
 
     const axisPoint = (e: PointerEvent | TouchEvent) => {
       const p = 'touches' in e ? e.touches[0] : e as PointerEvent;
@@ -238,7 +238,7 @@ function useDrawerDrag(
       ref.current.velocities.push(projectedVelocity);
       if (ref.current.velocities.length > 6) ref.current.velocities.shift();
 
-      const totalClose = (p - ref.current.startPoint) * sign; // >0 means closing
+      const _totalClose = (p - ref.current.startPoint) * sign; // >0 means closing
       const maxDist = Math.max(1, axisSize());
 
       let offset = 0;
@@ -516,7 +516,7 @@ function useDrawerDrag(
       el.removeEventListener('touchend', onUp);
       el.removeEventListener('touchcancel', onUp);
     };
-  }, [handleRef, side, active, onClose, expandOptions?.enabled]);
+  }, [handleRef, side, active, onClose, expandOptions]);
 
   return state;
 }

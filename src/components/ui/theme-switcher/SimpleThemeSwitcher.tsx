@@ -12,7 +12,7 @@ export interface SimpleThemeSwitcherProps {
 export const SimpleThemeSwitcher: React.FC<SimpleThemeSwitcherProps> = ({
   className = '',
   size = 'md',
-  showLabels = false,
+  showLabels: _showLabels = false,
 }) => {
   const { theme, toggleTheme } = useTheme();
 

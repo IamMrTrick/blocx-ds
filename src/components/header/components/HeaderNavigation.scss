@@ -1,0 +1,123 @@
+// HeaderNavigation.scss - Unified navigation with media query based visibility
+
+.header-nav {
+  // Desktop navigation - hidden on mobile
+  &--desktop {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  // Mobile toggle button - hidden on desktop
+  &__mobile-toggle {
+    display: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    
+    @media (max-width: 768px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  // Mobile drawer
+  &__mobile-drawer {
+    // Mobile-specific drawer styles if needed
+    @media (min-width: 769px) {
+      // Hide drawer on desktop (though it shouldn't be opened anyway)
+      display: none !important;
+    }
+  }
+}
+
+// Mobile navigation styles (inside drawer)
+.mobile-nav {
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    border-bottom: 1px solid var(--color-border-subtle);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &--level-1 {
+      padding-left: 1rem;
+    }
+
+    &--level-2 {
+      padding-left: 2rem;
+    }
+  }
+
+  &__link,
+  &__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem;
+    text-decoration: none;
+    color: var(--color-text-primary);
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--color-bg-hover);
+    }
+
+    &--active {
+      color: var(--color-primary);
+      background-color: var(--color-primary-bg-subtle);
+    }
+  }
+
+  &__label {
+    flex: 1;
+  }
+
+  &__chevron,
+  &__external {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  &__submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-bg-subtle);
+
+    &--level-1 {
+      .mobile-nav__link,
+      .mobile-nav__toggle {
+        padding-left: 2rem;
+      }
+    }
+
+    &--level-2 {
+      .mobile-nav__link,
+      .mobile-nav__toggle {
+        padding-left: 3rem;
+      }
+    }
+  }
+}
