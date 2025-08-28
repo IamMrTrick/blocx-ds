@@ -22,36 +22,6 @@
   
   /* ===== Sizes ===== */
   &--sm {
-    width: var(--spacing-28);
-    height: var(--spacing-16);
-    
-    .simple-theme-switcher__thumb {
-      width: var(--spacing-14);
-      height: var(--spacing-14);
-    }
-    
-    .simple-theme-switcher__icon {
-      width: var(--spacing-10);
-      height: var(--spacing-10);
-    }
-  }
-  
-  &--md {
-    width: var(--spacing-32);
-    height: var(--spacing-18);
-    
-    .simple-theme-switcher__thumb {
-      width: var(--spacing-16);
-      height: var(--spacing-16);
-    }
-    
-    .simple-theme-switcher__icon {
-      width: var(--spacing-12);
-      height: var(--spacing-12);
-    }
-  }
-  
-  &--lg {
     width: var(--spacing-40);
     height: var(--spacing-24);
     
@@ -61,8 +31,38 @@
     }
     
     .simple-theme-switcher__icon {
+      width: var(--spacing-14);
+      height: var(--spacing-14);
+    }
+  }
+  
+  &--md {
+    width: var(--spacing-48);
+    height: var(--spacing-28);
+    
+    .simple-theme-switcher__thumb {
+      width: var(--spacing-24);
+      height: var(--spacing-24);
+    }
+    
+    .simple-theme-switcher__icon {
       width: var(--spacing-16);
       height: var(--spacing-16);
+    }
+  }
+  
+  &--lg {
+    width: var(--spacing-56);
+    height: var(--spacing-32);
+    
+    .simple-theme-switcher__thumb {
+      width: var(--spacing-28);
+      height: var(--spacing-28);
+    }
+    
+    .simple-theme-switcher__icon {
+      width: var(--spacing-20);
+      height: var(--spacing-20);
     }
   }
 }
@@ -97,11 +97,12 @@
   background: var(--bg-primary);
   border: 1px solid var(--border-primary);
   border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: var(--spacing-4);
   
   &--dark {
     left: calc(100% - var(--spacing-2));
@@ -120,7 +121,7 @@
 /* ===== Icons ===== */
 .simple-theme-switcher__icon {
   position: absolute;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   opacity: 0;
   transform: scale(0.8);
   

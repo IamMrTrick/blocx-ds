@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderRight, HeaderActions, HeaderMobileToggle, HeaderThemeSwitcherSimple } from './Header';
+import { Header, HeaderMiddle, HeaderContainer, HeaderLeft, HeaderLogo, HeaderCenter, HeaderRight, HeaderMobileToggle, HeaderThemeSwitcherSimple } from './Header';
 import { HeaderNavMenu, HeaderMobileMenu } from './components';
 import type { PrimaryNavItem } from '@/components/ui/nav/primary-nav/PrimaryNav';
 
@@ -205,14 +205,12 @@ export const HeaderWithMobileMenu: React.FC<HeaderWithMobileMenuProps> = ({
               <HeaderNavMenu activeId={activeId} />
             </HeaderCenter>
             <HeaderRight>
-              <HeaderActions>
-                <HeaderThemeSwitcherSimple />
-                <HeaderMobileToggle
-                  isOpen={isMobileMenuOpen}
-                  onToggle={handleMobileMenuToggle}
-                  aria-controls="mobile-navigation-menu"
-                />
-              </HeaderActions>
+            <HeaderThemeSwitcherSimple />
+              <HeaderMobileToggle
+                isOpen={isMobileMenuOpen}
+                onToggle={handleMobileMenuToggle}
+                aria-controls="mobile-navigation-menu"
+              />
             </HeaderRight>
           </HeaderContainer>
         </HeaderMiddle>
