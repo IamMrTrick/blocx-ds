@@ -11,7 +11,7 @@ interface ToastItemProps {
   position: ToastPosition;
 }
 
-export function ToastItem({ toast, index, removeToast, isVisible, position: _position }: ToastItemProps) {
+export function ToastItem({ toast, index, removeToast, isVisible }: ToastItemProps) {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(100);

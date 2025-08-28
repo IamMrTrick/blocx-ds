@@ -217,7 +217,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
   // State management
   const [focused, setFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [_isAnimating, _setIsAnimating] = useState(false);
+  // Animation state can be added here if needed in future
   const [searchTerm, setSearchTerm] = useState('');
   const [internalValue, setInternalValue] = useState(defaultValue || '');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);

@@ -150,11 +150,11 @@ function useDrawerDrag(
     if (!active) return;
     const el = handleRef.current;
     if (!el) return;
-    const _supportsPointer = typeof window !== 'undefined' && 'PointerEvent' in window;
+    // Pointer events are supported in modern browsers
 
     const CLOSE_THRESHOLD = 0.4; // 40% of travel
     const VELOCITY_THRESHOLD = 0.5; // px/ms projected into close direction
-    const _MAX_WRONG_STRETCH = 0.02; // 2% for closing direction
+    // Maximum stretch in wrong direction: 2%
 
     const axisPoint = (e: PointerEvent | TouchEvent) => {
       const p = 'touches' in e ? e.touches[0] : e as PointerEvent;
@@ -238,7 +238,7 @@ function useDrawerDrag(
       ref.current.velocities.push(projectedVelocity);
       if (ref.current.velocities.length > 6) ref.current.velocities.shift();
 
-      const _totalClose = (p - ref.current.startPoint) * sign; // >0 means closing
+      // Calculate total close distance: (p - ref.current.startPoint) * sign
       const maxDist = Math.max(1, axisSize());
 
       let offset = 0;

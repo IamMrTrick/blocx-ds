@@ -87,7 +87,7 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
       document.addEventListener('keydown', handleEscapeKey);
       return () => document.removeEventListener('keydown', handleEscapeKey);
     }
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, handleMobileMenuClose]);
 
 
 

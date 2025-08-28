@@ -73,7 +73,7 @@ export default function ThemeSwitcherTestPage() {
           borderRadius: '12px',
           border: '1px solid var(--border-primary)'
         }}>
-          <h3>ThemeSwitcher variant="pill" Variants</h3>
+          <h3>ThemeSwitcher variant=&quot;pill&quot; Variants</h3>
           <div style={{ 
             display: 'flex', 
             flexDirection: 'column', 

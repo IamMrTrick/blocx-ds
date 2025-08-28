@@ -31,6 +31,7 @@ export const Main: React.FC<MainProps> = ({
     `main--${width}`,
     padding !== 'none' && `main--padding-${padding}`,
     withHeader && 'main--with-header',
+    withFooter && 'main--with-footer',
     withSidebar && 'main--with-sidebar',
     centered && 'main--centered',
     className
