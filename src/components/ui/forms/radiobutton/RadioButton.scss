@@ -78,7 +78,7 @@
   }
 
   &--disabled {
-    color: var(--input-text-disabled);
+    color: var(--inp-text-disabled);
   }
 
   /* Required indicator */
@@ -159,9 +159,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
+  background-color: var(--inp-bg-default);
+  border: 1px solid var(--inp-border-default);
   border-radius: var(--gl-radius-radio);
+  cursor: pointer;
   transition: 
     border-color var(--transition-fast) var(--transition-ease),
     background-color var(--transition-fast) var(--transition-ease),
@@ -196,19 +197,19 @@
 
   /* Hover state - similar to button hover */
   .radio-field:hover &:not(&--disabled):not(&--focused) {
-    background-color: var(--input-bg-hover);
-    border-color: var(--input-border-hover);
+    background-color: var(--inp-bg-hover);
+    border-color: var(--inp-border-hover);
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   /* Focus state - similar to button focus */
   &--focused {
-    background-color: var(--input-bg-focus);
-    border-color: var(--input-border-focus);
+    background-color: var(--inp-bg-pressed);
+    border-color: var(--inp-border-active);
     transform: translateY(-1px);
     box-shadow: 
-      0 0 0 2px var(--input-border-focus),
+      0 0 0 2px var(--inp-border-active),
       0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
@@ -234,19 +235,19 @@
 
   /* State variants */
   &--error {
-    border-color: var(--input-border-error);
+    border-color: var(--border-error);
 
     .radio-field:hover &:not(&--disabled):not(&--focused) {
-      border-color: var(--input-border-error);
+      border-color: var(--border-error);
       transform: translateY(-1px);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     &--focused {
-      border-color: var(--input-border-error);
+      border-color: var(--border-error);
       transform: translateY(-1px);
       box-shadow: 
-        0 0 0 2px var(--input-border-error),
+        0 0 0 2px var(--border-error),
         0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
@@ -354,15 +355,15 @@
   }
 
   &--disabled {
-    background-color: var(--input-bg-disabled);
-    border-color: var(--input-border);
+    background-color: var(--inp-bg-disabled);
+    border-color: var(--inp-border-default);
     cursor: not-allowed;
     transform: none !important;
     box-shadow: none !important;
 
     .radio-field:hover & {
-      background-color: var(--input-bg-disabled);
-      border-color: var(--input-border);
+      background-color: var(--inp-bg-disabled);
+      border-color: var(--inp-border-default);
       transform: none !important;
       box-shadow: none !important;
     }
@@ -391,8 +392,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60%;
-    height: 60%;
+    width: 70%;
+    height: 70%;
     color: var(--primary-05);
     transition: 
       opacity var(--transition-fast) var(--transition-ease),
@@ -511,7 +512,7 @@
   }
 
   &--disabled {
-    color: var(--input-text-disabled);
+    color: var(--inp-text-disabled);
     cursor: not-allowed;
   }
 
@@ -636,7 +637,7 @@
     border-width: 2px;
 
     &--focused {
-      outline: 2px solid var(--input-border-focus);
+      outline: 2px solid var(--inp-border-active);
       outline-offset: 2px;
     }
 

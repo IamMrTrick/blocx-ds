@@ -1,5 +1,5 @@
 'use client';
-import React, { forwardRef, useState, useCallback } from 'react';
+import React, { forwardRef, useState, useCallback, useId } from 'react';
 
 // Input size variants based on design tokens
 export type InputSize = 'xs' | 's' | 'm' | 'l' | 'xl';
@@ -83,9 +83,7 @@ const createBemClass = (
   return className;
 };
 
-// Generate unique ID for accessibility
-let inputIdCounter = 0;
-const generateInputId = () => `input-${++inputIdCounter}`;
+
 
 /**
  * Professional Input Component with BEM Methodology
@@ -165,8 +163,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const currentValue = value !== undefined ? value : internalValue;
   const currentLength = String(currentValue || '').length;
   
-  // Generate unique IDs for accessibility
-  const inputId = id || generateInputId();
+  // Determine if input has value (filled state)
+  const hasValue = Boolean(currentValue && String(currentValue).length > 0);
+  
+  // Generate unique IDs for accessibility using React's useId
+  const reactId = useId();
+  const inputId = id || `input-${reactId}`;
   const labelId = `${inputId}-label`;
   const helperTextId = `${inputId}-helper`;
   const errorId = `${inputId}-error`;
@@ -206,41 +208,42 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     showCharCount && maxLength && charCountId
   ].filter(Boolean).join(' ');
   
-  // Generate BEM classes
+  // Generate CSS classes with template strings
   const wrapperClasses = [
-    createBemClass('input-wrapper', undefined, [
-      actualVariant,
-      size,
-      fullWidth && 'full-width',
-      disabled && 'disabled',
-      focused && 'focused',
-      loading && 'loading',
-      !!(startIcon || endIcon) && 'has-icon',
-      !!startIcon && 'has-start-icon',
-      !!endIcon && 'has-end-icon'
-    ]),
+    'input-wrapper',
+    actualVariant && `input-wrapper--${actualVariant}`,
+    size && `input-wrapper--${size}`,
+    fullWidth && 'input-wrapper--full-width',
+    disabled && 'input-wrapper--disabled',
+    focused && 'input-wrapper--focused',
+    loading && 'input-wrapper--loading',
+    hasValue && 'input-wrapper--filled',
+    !!(startIcon || endIcon) && 'input-wrapper--has-icon',
+    !!startIcon && 'input-wrapper--has-start-icon',
+    !!endIcon && 'input-wrapper--has-end-icon',
     wrapperClassName
   ].filter(Boolean).join(' ');
   
   const inputClasses = [
-    createBemClass('input', undefined, [
-      actualVariant,
-      size,
-      fullWidth && 'full-width',
-      disabled && 'disabled',
-      focused && 'focused',
-      loading && 'loading'
-    ]),
+    'input',
+    actualVariant && `input--${actualVariant}`,
+    size && `input--${size}`,
+    fullWidth && 'input--full-width',
+    disabled && 'input--disabled',
+    focused && 'input--focused',
+    loading && 'input--loading',
     className
   ].filter(Boolean).join(' ');
   
-  const fieldClasses = createBemClass('input-field', undefined, [
-    actualVariant,
-    size,
-    disabled && 'disabled',
-    focused && 'focused',
-    loading && 'loading'
-  ]);
+  const fieldClasses = [
+    'input-field',
+    actualVariant && `input-field--${actualVariant}`,
+    size && `input-field--${size}`,
+    disabled && 'input-field--disabled',
+    focused && 'input-field--focused',
+    loading && 'input-field--loading',
+    hasValue && 'input-field--filled'
+  ].filter(Boolean).join(' ');
   
   return (
     <div className={wrapperClasses}>

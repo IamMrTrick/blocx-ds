@@ -110,7 +110,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--input-bg);
+  background-color: var(--inp-bg-default);
   border: 1px solid var(--input-border);
   border-radius: var(--gl-radius-input);
   font-family: inherit;
@@ -162,14 +162,14 @@
 
   /* Hover state */
   &:hover:not(&--disabled):not(&--focused) {
-    background-color: var(--input-bg-hover);
+    background-color: var(--inp-bg-default-hover);
     border-color: var(--input-border-hover);
     transform: translateY(-1px);
   }
 
   /* Focus state */
   &--focused {
-    background-color: var(--input-bg-focus);
+    background-color: var(--inp-bg-default-focus);
     border-color: var(--input-border-focus);
     box-shadow: 
       var(--gl-inpts-shadow-x) 
@@ -253,13 +253,13 @@
   }
 
   &--disabled {
-    background-color: var(--input-bg-disabled);
+    background-color: var(--inp-bg-default-disabled);
     border-color: var(--input-border);
     color: var(--input-text-disabled);
     cursor: not-allowed;
 
     &:hover {
-      background-color: var(--input-bg-disabled);
+      background-color: var(--inp-bg-default-disabled);
       border-color: var(--input-border);
       transform: none;
     }

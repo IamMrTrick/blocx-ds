@@ -45,31 +45,7 @@ interface IconOnlyButtonProps extends BaseButtonProps {
 export type ButtonProps = RegularButtonProps | IconOnlyButtonProps;
 
 // Helper function to generate BEM classes
-const createBemClass = (
-  block: string,
-  element?: string,
-  modifiers?: (string | boolean | undefined)[]
-): string => {
-  let className = block;
-  
-  if (element) {
-    className += `__${element}`;
-  }
-  
-  if (modifiers && modifiers.length > 0) {
-    const validModifiers = modifiers
-      .filter(Boolean)
-      .map(mod => typeof mod === 'string' ? mod : '')
-      .filter(Boolean);
-    
-    if (validModifiers.length > 0) {
-      const baseClass = element ? `${block}__${element}` : block;
-      className += ` ${validModifiers.map(mod => `${baseClass}--${mod}`).join(' ')}`;
-    }
-  }
-  
-  return className;
-};
+
 
 // Map button sizes to appropriate icon sizes
 const getIconSizeForButton = (buttonSize: ButtonSize): string => {
@@ -169,19 +145,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   // Process children to automatically set icon sizes
   const processedChildren = processChildren(children, size);
   
-  // Generate BEM classes
+  // Generate CSS classes with template strings
   const buttonClasses = [
-    // BEM base class with modifiers
-    createBemClass('btn', undefined, [
-      variant,
-      size,
-      iconOnly && 'icon-only',
-      loading && 'loading',
-      fullWidth && 'full-width',
-      disabled && 'disabled'
-    ]),
-    
-    // Custom className
+    'btn',
+    variant && `btn--${variant}`,
+    size && `btn--${size}`,
+    iconOnly && 'btn--icon-only',
+    loading && 'btn--loading',
+    fullWidth && 'btn--full-width',
+    disabled && 'btn--disabled',
     className
   ].filter(Boolean).join(' ');
 

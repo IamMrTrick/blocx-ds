@@ -56,7 +56,7 @@
     left: 0;
     right: 0;
     background: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid transparent;
     
     &.header--pos-fixed {
       position: fixed;
@@ -118,7 +118,10 @@
   }
   
   &--transparent.header--sticky {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--nav-main-sticky-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--nav-main-sticky-border);
+    box-shadow: 0 4px 20px var(--shadow-md);
   }
   
   &--minimal {
@@ -152,7 +155,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: var(--content-width-main);
+  max-width: var(--content-width-xl);
   margin: 0 auto;
   padding-inline: var(--gutter-inline);
   

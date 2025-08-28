@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import './RotatingSphere.scss';
 
 export interface RotatingSphereProps {
@@ -11,56 +12,12 @@ export interface RotatingSphereProps {
 }
 
 export const RotatingSphere: React.FC<RotatingSphereProps> = ({
-  defaultTheme = 'light',
   onThemeChange,
   size = 'md',
   className = '',
 }) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>(defaultTheme);
+  const { theme, toggleTheme } = useTheme();
   const [isAnimating, setIsAnimating] = useState(false);
-
-  // Apply theme to document and localStorage
-  const applyTheme = useCallback((newTheme: 'light' | 'dark') => {
-    if (typeof window !== 'undefined') {
-      const root = document.documentElement;
-      
-      root.classList.add('theme-transitioning');
-      
-      if (newTheme === 'dark') {
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.removeAttribute('data-theme');
-      }
-      
-      localStorage.setItem('theme', newTheme);
-      
-      setTimeout(() => {
-        root.classList.remove('theme-transitioning');
-      }, 800);
-    }
-  }, []);
-
-  // Initialize theme
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const initializeTheme = () => {
-        try {
-          const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          const initialTheme = savedTheme || systemTheme;
-          
-          if (initialTheme !== theme) {
-            setTheme(initialTheme);
-            applyTheme(initialTheme);
-          }
-        } catch (error) {
-          console.warn('Failed to initialize theme:', error);
-        }
-      };
-      
-      requestAnimationFrame(initializeTheme);
-    }
-  }, [theme, applyTheme]);
 
   // Handle theme toggle
   const handleToggle = useCallback(() => {
@@ -69,17 +26,15 @@ export const RotatingSphere: React.FC<RotatingSphereProps> = ({
     setIsAnimating(true);
     const newTheme = theme === 'light' ? 'dark' : 'light';
     
-    // Haptic feedback
     if ('vibrate' in navigator) {
       navigator.vibrate([50, 30, 50]);
     }
     
-    setTheme(newTheme);
-    applyTheme(newTheme);
+    toggleTheme();
     onThemeChange?.(newTheme);
     
     setTimeout(() => setIsAnimating(false), 800);
-  }, [theme, isAnimating, applyTheme, onThemeChange]);
+  }, [theme, isAnimating, toggleTheme, onThemeChange]);
 
   return (
     <button
@@ -88,7 +43,7 @@ export const RotatingSphere: React.FC<RotatingSphereProps> = ({
       onClick={handleToggle}
       disabled={isAnimating}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-      aria-pressed={theme === 'dark'}
+      aria-checked={theme === 'dark'}
       role="switch"
       data-theme={theme}
     >
@@ -148,7 +103,7 @@ export const RotatingSphere: React.FC<RotatingSphereProps> = ({
         </div>
       </div>
       
-      <span className="sr-only">
+      <span className="visually-hidden">
         Toggle between light and dark theme. Current theme is {theme}.
       </span>
     </button>

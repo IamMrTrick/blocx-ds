@@ -1,5 +1,5 @@
 'use client';
-import React, { forwardRef, useState, useCallback } from 'react';
+import React, { forwardRef, useState, useCallback, useId } from 'react';
 
 // RadioButton size variants based on design tokens
 export type RadioButtonSize = 'xs' | 's' | 'm' | 'l' | 'xl';
@@ -107,8 +107,7 @@ const createBemClass = (
 };
 
 // Generate unique ID for accessibility
-let radioIdCounter = 0;
-const generateRadioId = () => `radio-${++radioIdCounter}`;
+
 
 // Default radio dot icon (SVG)
 const DefaultRadioDot = () => (
@@ -205,8 +204,9 @@ const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(function Radi
     ? groupContext.value === value
     : (checked !== undefined ? checked : internalChecked);
   
-  // Generate unique IDs for accessibility
-  const radioId = id || generateRadioId();
+  // Generate unique IDs for accessibility using React's useId
+  const reactId = useId();
+  const radioId = id || `radio-${reactId}`;
   const labelId = `${radioId}-label`;
   const helperTextId = `${radioId}-helper`;
   const errorId = `${radioId}-error`;
@@ -280,7 +280,16 @@ const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(function Radi
   return (
     <div className={wrapperClasses}>
       {/* Radio Control */}
-      <div className="radio-field">
+      <div 
+        className="radio-field"
+        onClick={(e) => {
+          if (!actualDisabled && !loading) {
+            const input = e.currentTarget.querySelector('input[type="radio"]') as HTMLInputElement;
+            if (input) input.click();
+          }
+        }}
+        style={{ cursor: actualDisabled || loading ? 'not-allowed' : 'pointer' }}
+      >
         <div className={controlClasses}>
           {/* Hidden Input */}
           <input

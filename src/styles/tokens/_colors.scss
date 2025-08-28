@@ -269,18 +269,18 @@
   --btn-info-icon-active: var(--base-white);
   --btn-info-icon-disabled: var(--info-04);
   
-  /* ===== Input Colors ===== */
-  --input-bg: var(--base-white);
-  --input-bg-hover: var(--gray-01);
-  --input-bg-focus: var(--base-white);
-  --input-bg-disabled: var(--gray-01);
-  --input-border: var(--border-primary);
-  --input-border-hover: var(--border-secondary);
-  --input-border-focus: var(--border-focus);
-  --input-border-error: var(--border-error);
-  --input-text: var(--text-primary);
-  --input-text-placeholder: var(--text-tertiary);
-  --input-text-disabled: var(--text-disabled);
+  /* ===== Input Colors (Legacy - mapped to new tokens) ===== */
+  --input-bg: var(--inp-bg-default);
+  --input-bg-hover: var(--inp-bg-hover);
+  --input-bg-focus: var(--inp-bg-focus);
+  --input-bg-disabled: var(--inp-bg-disabled);
+  --input-border: var(--inp-border-default);
+  --input-border-hover: var(--inp-border-hover);
+  --input-border-focus: var(--inp-border-focus);
+  --input-border-error: var(--inp-border-error);
+  --input-text: var(--inp-text-default);
+  --input-text-placeholder: var(--inp-placeholder-default);
+  --input-text-disabled: var(--inp-text-disabled);
   
   /* ===== Card Colors ===== */
   --card-bg: var(--base-white);
@@ -469,19 +469,71 @@
   --card-bg-05: var(--bg-senary-alt);
   --card-bg-06: var(--bg-septenary);
   
-  /* ===== Input Tokens ===== */
-  --inp-bg-default: var(--gray-01);
-  --inp-bg-hover: var(--bg-senary);
-  --inp-bg-pressed: var(--bg-quinary);
-  --inp-bg-disabled: var(--transparent-black-20);
-  --inp-text-default: var(--transparent-black-40);
-  --inp-text-hover: var(--transparent-black-10);
-  --inp-text-pressed: var(--txt-01);
-  --inp-text-disabled: var(--transparent-black-30);
-  --inp-icon-default: var(--txt-01);
-  --inp-icon-hover: var(--primary-05);
-  --inp-icon-pressed: var(--primary-07);
-  --inp-icon-disabled: var(--transparent-black-30);
+  /* ===== Input Tokens - Complete State System ===== */
+  /* Default/Rest State */
+  --inp-bg-default: var(--base-white);
+  --inp-border-default: var(--gray-05);
+  --inp-text-default: var(--text-primary);
+  --inp-placeholder-default: var(--gray-07);
+  --inp-icon-default: var(--gray-07);
+  
+  /* Hover State */
+  --inp-bg-hover: var(--gray-01);
+  --inp-border-hover: var(--gray-06);
+  --inp-text-hover: var(--text-primary);
+  --inp-placeholder-hover: var(--gray-08);
+  --inp-icon-hover: var(--gray-08);
+  
+  /* Focus/Active State */
+  --inp-bg-focus: var(--base-white);
+  --inp-border-focus: var(--primary-05);
+  --inp-text-focus: var(--text-primary);
+  --inp-placeholder-focus: var(--gray-06);
+  --inp-icon-focus: var(--primary-05);
+  --inp-shadow-focus: var(--transparent-primary-20);
+  
+  /* Filled State (has value) */
+  --inp-bg-filled: var(--base-white);
+  --inp-border-filled: var(--gray-06);
+  --inp-text-filled: var(--text-primary);
+  --inp-icon-filled: var(--gray-08);
+  
+  /* Disabled State */
+  --inp-bg-disabled: var(--gray-02);
+  --inp-border-disabled: var(--gray-04);
+  --inp-text-disabled: var(--gray-06);
+  --inp-placeholder-disabled: var(--gray-05);
+  --inp-icon-disabled: var(--gray-05);
+  
+  /* Error State */
+  --inp-bg-error: var(--base-white);
+  --inp-border-error: var(--error-05);
+  --inp-text-error: var(--text-primary);
+  --inp-placeholder-error: var(--gray-07);
+  --inp-icon-error: var(--error-05);
+  --inp-shadow-error: var(--transparent-error-20);
+  
+  /* Success State */
+  --inp-bg-success: var(--base-white);
+  --inp-border-success: var(--success-05);
+  --inp-text-success: var(--text-primary);
+  --inp-placeholder-success: var(--gray-07);
+  --inp-icon-success: var(--success-05);
+  --inp-shadow-success: var(--transparent-success-20);
+  
+  /* Warning State */
+  --inp-bg-warning: var(--base-white);
+  --inp-border-warning: var(--warning-05);
+  --inp-text-warning: var(--text-primary);
+  --inp-placeholder-warning: var(--gray-07);
+  --inp-icon-warning: var(--warning-05);
+  --inp-shadow-warning: var(--transparent-warning-20);
+  
+  /* Loading State */
+  --inp-bg-loading: var(--gray-01);
+  --inp-border-loading: var(--gray-05);
+  --inp-text-loading: var(--text-primary);
+  --inp-icon-loading: var(--primary-05);
   
   /* ===== Header Navigation Tokens ===== */
   --nav-main-bg: var(--bg-quinary-alt);
@@ -671,17 +723,18 @@
   --btn-ghost-icon-active: var(--icon-primary);
   --btn-ghost-icon-disabled: var(--icon-disabled);
   
-  /* Input Colors - Dark */
-  --input-bg: var(--gray-01);
-  --input-bg-hover: var(--gray-02);
-  --input-bg-focus: var(--gray-01);
-  --input-bg-disabled: var(--gray-02);
-  --input-border: var(--gray-02);
-  --input-border-hover: var(--gray-03);
-  --input-border-focus: var(--primary-04);
-  --input-text: var(--text-primary);
-  --input-text-placeholder: var(--text-tertiary);
-  --input-text-disabled: var(--text-disabled);
+  /* Input Colors - Dark (Legacy - mapped to new tokens) */
+  --input-bg: var(--inp-bg-default);
+  --input-bg-hover: var(--inp-bg-hover);
+  --input-bg-focus: var(--inp-bg-focus);
+  --input-bg-disabled: var(--inp-bg-disabled);
+  --input-border: var(--inp-border-default);
+  --input-border-hover: var(--inp-border-hover);
+  --input-border-focus: var(--inp-border-focus);
+  --input-border-error: var(--inp-border-error);
+  --input-text: var(--inp-text-default);
+  --input-text-placeholder: var(--inp-placeholder-default);
+  --input-text-disabled: var(--inp-text-disabled);
   
   /* Card Colors - Dark */
   --card-bg: var(--gray-01);
@@ -779,19 +832,71 @@
   --card-bg-05: var(--bg-senary-alt);
   --card-bg-06: var(--bg-septenary);
   
-  /* ===== Input Tokens - Dark Theme ===== */
-  --inp-bg-default: var(--bg-quinary-alt);
-  --inp-bg-hover: var(--bg-senary);
-  --inp-bg-pressed: var(--bg-quinary);
-  --inp-bg-disabled: var(--transparent-white-20);
-  --inp-text-default: var(--transparent-white-40);
-  --inp-text-hover: var(--transparent-white-10);
-  --inp-text-pressed: var(--txt-01);
-  --inp-text-disabled: var(--transparent-white-30);
-  --inp-icon-default: var(--txt-01);
-  --inp-icon-hover: var(--primary-06);
-  --inp-icon-pressed: var(--primary-04);
-  --inp-icon-disabled: var(--transparent-white-30);
+  /* ===== Input Tokens - Dark Theme - Complete State System ===== */
+  /* Default/Rest State */
+  --inp-bg-default: var(--gray-01);
+  --inp-border-default: var(--gray-04);
+  --inp-text-default: var(--text-primary);
+  --inp-placeholder-default: var(--gray-07);
+  --inp-icon-default: var(--gray-07);
+  
+  /* Hover State */
+  --inp-bg-hover: var(--gray-02);
+  --inp-border-hover: var(--gray-05);
+  --inp-text-hover: var(--text-primary);
+  --inp-placeholder-hover: var(--gray-08);
+  --inp-icon-hover: var(--gray-08);
+  
+  /* Focus/Active State */
+  --inp-bg-focus: var(--gray-01);
+  --inp-border-focus: var(--primary-04);
+  --inp-text-focus: var(--text-primary);
+  --inp-placeholder-focus: var(--gray-06);
+  --inp-icon-focus: var(--primary-04);
+  --inp-shadow-focus: var(--transparent-primary-30);
+  
+  /* Filled State (has value) */
+  --inp-bg-filled: var(--gray-01);
+  --inp-border-filled: var(--gray-05);
+  --inp-text-filled: var(--text-primary);
+  --inp-icon-filled: var(--gray-08);
+  
+  /* Disabled State */
+  --inp-bg-disabled: var(--gray-02);
+  --inp-border-disabled: var(--gray-03);
+  --inp-text-disabled: var(--gray-06);
+  --inp-placeholder-disabled: var(--gray-05);
+  --inp-icon-disabled: var(--gray-05);
+  
+  /* Error State */
+  --inp-bg-error: var(--gray-01);
+  --inp-border-error: var(--error-04);
+  --inp-text-error: var(--text-primary);
+  --inp-placeholder-error: var(--gray-07);
+  --inp-icon-error: var(--error-04);
+  --inp-shadow-error: var(--transparent-error-30);
+  
+  /* Success State */
+  --inp-bg-success: var(--gray-01);
+  --inp-border-success: var(--success-04);
+  --inp-text-success: var(--text-primary);
+  --inp-placeholder-success: var(--gray-07);
+  --inp-icon-success: var(--success-04);
+  --inp-shadow-success: var(--transparent-success-30);
+  
+  /* Warning State */
+  --inp-bg-warning: var(--gray-01);
+  --inp-border-warning: var(--warning-04);
+  --inp-text-warning: var(--text-primary);
+  --inp-placeholder-warning: var(--gray-07);
+  --inp-icon-warning: var(--warning-04);
+  --inp-shadow-warning: var(--transparent-warning-30);
+  
+  /* Loading State */
+  --inp-bg-loading: var(--gray-02);
+  --inp-border-loading: var(--gray-04);
+  --inp-text-loading: var(--text-primary);
+  --inp-icon-loading: var(--primary-04);
   
   /* ===== Header Navigation Tokens - Dark Theme ===== */
   --nav-main-bg: var(--bg-quinary-alt);

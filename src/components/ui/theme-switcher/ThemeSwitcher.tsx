@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Icon } from '@/components/ui/icon';
+import { useTheme } from '@/contexts/ThemeContext';
 import './ThemeSwitcher.scss';
 
 export interface ThemeSwitcherProps {
-  /** Initial theme - defaults to 'light' */
-  defaultTheme?: 'light' | 'dark';
   /** Callback when theme changes */
   onThemeChange?: (theme: 'light' | 'dark') => void;
   /** Size of the switcher */
@@ -22,7 +21,6 @@ export interface ThemeSwitcherProps {
 }
 
 export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
-  defaultTheme = 'light',
   onThemeChange,
   size = 'md',
   showLabels = true,
@@ -30,62 +28,12 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   compact = false,
   animationStyle = 'smooth',
 }) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>(defaultTheme);
+  const { theme, toggleTheme } = useTheme();
   const [isAnimating, setIsAnimating] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const switcherRef = useRef<HTMLButtonElement>(null);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Apply theme to document and localStorage with smooth transition
-  const applyTheme = useCallback((newTheme: 'light' | 'dark') => {
-    if (typeof window !== 'undefined') {
-      const root = document.documentElement;
-      
-      // Add transition class for smooth color changes
-      root.classList.add('theme-transitioning');
-      
-      if (newTheme === 'dark') {
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.removeAttribute('data-theme');
-      }
-      
-      localStorage.setItem('theme', newTheme);
-      
-      // Remove transition class after animation completes
-      setTimeout(() => {
-        root.classList.remove('theme-transitioning');
-      }, 300);
-    }
-  }, []);
-
-  // Initialize theme from localStorage or system preference with performance optimization
-  useEffect(() => {
-    // Check if we're in browser environment
-    if (typeof window !== 'undefined') {
-      // Use requestAnimationFrame for better performance
-      const initializeTheme = () => {
-        try {
-          const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          const initialTheme = savedTheme || systemTheme;
-          
-          // Only update if different from current theme
-          if (initialTheme !== theme) {
-            setTheme(initialTheme);
-            applyTheme(initialTheme);
-          }
-        } catch (error) {
-          console.warn('Failed to initialize theme:', error);
-          // Fallback to default theme
-          setTheme(defaultTheme);
-        }
-      };
-      
-      requestAnimationFrame(initializeTheme);
-    }
-  }, [theme, defaultTheme, applyTheme]);
 
   // Handle theme toggle with enhanced animations
   const handleThemeToggle = useCallback(() => {
@@ -107,8 +55,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
     }
     
     // Trigger theme change with animation
-    setTheme(newTheme);
-    applyTheme(newTheme);
+    toggleTheme();
     onThemeChange?.(newTheme);
     
     // Reset animation states
@@ -116,35 +63,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
       setIsAnimating(false);
       setIsPressed(false);
     }, 300);
-  }, [theme, isAnimating, applyTheme, onThemeChange]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Handle system theme change
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      const handleChange = (e: MediaQueryListEvent) => {
-        if (!localStorage.getItem('theme')) {
-          const newTheme = e.matches ? 'dark' : 'light';
-          setTheme(newTheme);
-          applyTheme(newTheme);
-          onThemeChange?.(newTheme);
-        }
-      };
-      
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-  }, [onThemeChange]);
+  }, [theme, isAnimating, toggleTheme, onThemeChange]);
 
   return (
     <button
@@ -164,7 +83,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
       }}
       disabled={isAnimating}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-      aria-pressed={theme === 'dark'}
+      aria-checked={theme === 'dark'}
       aria-describedby="theme-switcher-description"
       title={`Current theme: ${theme}. Click to switch to ${theme === 'light' ? 'dark' : 'light'}`}
       data-theme={theme}
@@ -198,7 +117,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
       )}
       
       {/* Hidden description for screen readers */}
-      <span id="theme-switcher-description" className="sr-only">
+      <span id="theme-switcher-description" className="visually-hidden">
         Toggle between light and dark theme. Current theme is {theme}.
       </span>
     </button>

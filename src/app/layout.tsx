@@ -4,6 +4,7 @@ import { HeaderWithMobileMenu } from '@/components/header/HeaderWithMobileMenu';
 import { Footer } from '@/components/footer';
 import { Main } from '@/components/layout';
 import { ToastProvider } from '@/components/ui/toast';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export const metadata: Metadata = {
   title: "Blocx - Next.js Project",
@@ -18,12 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr">
       <body>
-        <HeaderWithMobileMenu sticky={true} centerMode={true} />
-        <ToastProvider>
-          <Main width="full" id="main">
-            {children}
-          </Main>
-        </ToastProvider>
+        <ThemeProvider>
+          <HeaderWithMobileMenu variant="transparent" sticky={true} centerMode={true} />
+          <ToastProvider>
+            <Main width="full" id="main">
+              {children}
+            </Main>
+          </ToastProvider>
         <Footer
           companyName="Blocx"
           description="Building the future of blockchain technology with innovative solutions and cutting-edge development tools."
@@ -59,6 +61,7 @@ export default function RootLayout({
             { id: 'discord', label: 'Discord', href: 'https://discord.gg/blocx', icon: 'discord', external: true }
           ]}
         />
+        </ThemeProvider>
       </body>
     </html>
   );

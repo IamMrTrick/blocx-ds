@@ -13,13 +13,23 @@
   border: 0;
 }
 
+/* Prefer global utility class name */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Global theme transition for smooth color changes */
 :root.theme-transitioning,
 :root.theme-transitioning * {
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: var(--transition-colors), var(--transition-shadow) !important;
 }
 
 .theme-switcher {

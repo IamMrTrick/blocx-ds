@@ -26,7 +26,6 @@
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-8);
-  cursor: pointer;
 
   /* Disabled state */
   .checkbox-wrapper--disabled & {
@@ -41,9 +40,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
+  background-color: var(--inp-bg-default);
+  border: 1px solid var(--inp-border-default);
   border-radius: var(--gl-radius-checkbox);
+  cursor: pointer;
   transition: 
     border-color var(--transition-fast) var(--transition-ease),
     background-color var(--transition-fast) var(--transition-ease),
@@ -77,16 +77,16 @@
 
   /* Hover state */
   &:hover:not(&--disabled):not(&--focused) {
-    background-color: var(--input-bg-hover);
-    border-color: var(--input-border-hover);
+    background-color: var(--inp-bg-hover);
+    border-color: var(--inp-border-hover);
   }
 
   /* Focus state */
   &--focused {
-    background-color: var(--input-bg-focus);
-    border-color: var(--input-border-focus);
+    background-color: var(--inp-bg-pressed);
+    border-color: var(--inp-border-active);
     box-shadow: 
-      0 0 0 2px var(--input-border-focus);
+      0 0 0 2px var(--inp-border-active);
   }
 
   /* Checked state */
@@ -127,13 +127,13 @@
 
   /* State variants */
   &--error {
-    border-color: var(--input-border-error);
+    border-color: var(--border-error);
 
     &:hover,
     &--focused {
-      border-color: var(--input-border-error);
+      border-color: var(--border-error);
       box-shadow: 
-        0 0 0 2px var(--input-border-error);
+        0 0 0 2px var(--border-error);
     }
 
     &--checked,
@@ -214,13 +214,13 @@
   }
 
   &--disabled {
-    background-color: var(--input-bg-disabled);
-    border-color: var(--input-border);
+    background-color: var(--inp-bg-disabled);
+    border-color: var(--inp-border-default);
     cursor: not-allowed;
 
     &:hover {
-      background-color: var(--input-bg-disabled);
-      border-color: var(--input-border);
+      background-color: var(--inp-bg-disabled);
+      border-color: var(--inp-border-default);
     }
 
     &--checked,
@@ -352,7 +352,7 @@
   }
 
   &--disabled {
-    color: var(--input-text-disabled);
+    color: var(--inp-text-disabled);
     cursor: not-allowed;
   }
 
@@ -465,7 +465,7 @@
     border-width: 2px;
 
     &--focused {
-      outline: 2px solid var(--input-border-focus);
+      outline: 2px solid var(--inp-border-active);
       outline-offset: 2px;
     }
 

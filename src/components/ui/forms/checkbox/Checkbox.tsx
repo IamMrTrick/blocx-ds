@@ -1,5 +1,5 @@
 'use client';
-import React, { forwardRef, useState, useCallback } from 'react';
+import React, { forwardRef, useState, useCallback, useId } from 'react';
 
 // Checkbox size variants based on design tokens
 export type CheckboxSize = 'xs' | 's' | 'm' | 'l' | 'xl';
@@ -37,36 +37,10 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
   indeterminateIcon?: React.ReactNode;
 }
 
-// Helper function to generate BEM classes
-const createBemClass = (
-  block: string,
-  element?: string,
-  modifiers?: (string | boolean | undefined)[]
-): string => {
-  let className = block;
-  
-  if (element) {
-    className += `__${element}`;
-  }
-  
-  if (modifiers && modifiers.length > 0) {
-    const validModifiers = modifiers
-      .filter(Boolean)
-      .map(mod => typeof mod === 'string' ? mod : '')
-      .filter(Boolean);
-    
-    if (validModifiers.length > 0) {
-      const baseClass = element ? `${block}__${element}` : block;
-      className += ` ${validModifiers.map(mod => `${baseClass}--${mod}`).join(' ')}`;
-    }
-  }
-  
-  return className;
-};
+
 
 // Generate unique ID for accessibility
-let checkboxIdCounter = 0;
-const generateCheckboxId = () => `checkbox-${++checkboxIdCounter}`;
+
 
 // Default check icon (SVG)
 const DefaultCheckIcon = () => (
@@ -178,8 +152,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
   // Use controlled or uncontrolled value
   const isChecked = checked !== undefined ? checked : internalChecked;
   
-  // Generate unique IDs for accessibility
-  const checkboxId = id || generateCheckboxId();
+  // Generate unique IDs for accessibility using React's useId
+  const reactId = useId();
+  const checkboxId = id || `checkbox-${reactId}`;
   const labelId = `${checkboxId}-label`;
   const helperTextId = `${checkboxId}-helper`;
   const errorId = `${checkboxId}-error`;
@@ -217,42 +192,41 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
     warning && warningId
   ].filter(Boolean).join(' ');
   
-  // Generate BEM classes
+  // Generate CSS classes with template strings
   const wrapperClasses = [
-    createBemClass('checkbox-wrapper', undefined, [
-      actualVariant,
-      size,
-      disabled && 'disabled',
-      focused && 'focused',
-      loading && 'loading',
-      isChecked && 'checked',
-      indeterminate && 'indeterminate'
-    ]),
+    'checkbox-wrapper',
+    actualVariant && `checkbox-wrapper--${actualVariant}`,
+    size && `checkbox-wrapper--${size}`,
+    disabled && 'checkbox-wrapper--disabled',
+    focused && 'checkbox-wrapper--focused',
+    loading && 'checkbox-wrapper--loading',
+    isChecked && 'checkbox-wrapper--checked',
+    indeterminate && 'checkbox-wrapper--indeterminate',
     wrapperClassName
   ].filter(Boolean).join(' ');
   
   const checkboxClasses = [
-    createBemClass('checkbox', undefined, [
-      actualVariant,
-      size,
-      disabled && 'disabled',
-      focused && 'focused',
-      loading && 'loading',
-      isChecked && 'checked',
-      indeterminate && 'indeterminate'
-    ]),
+    'checkbox',
+    actualVariant && `checkbox--${actualVariant}`,
+    size && `checkbox--${size}`,
+    disabled && 'checkbox--disabled',
+    focused && 'checkbox--focused',
+    loading && 'checkbox--loading',
+    isChecked && 'checkbox--checked',
+    indeterminate && 'checkbox--indeterminate',
     className
   ].filter(Boolean).join(' ');
   
-  const controlClasses = createBemClass('checkbox-control', undefined, [
-    actualVariant,
-    size,
-    disabled && 'disabled',
-    focused && 'focused',
-    loading && 'loading',
-    isChecked && 'checked',
-    indeterminate && 'indeterminate'
-  ]);
+  const controlClasses = [
+    'checkbox-control',
+    actualVariant && `checkbox-control--${actualVariant}`,
+    size && `checkbox-control--${size}`,
+    disabled && 'checkbox-control--disabled',
+    focused && 'checkbox-control--focused',
+    loading && 'checkbox-control--loading',
+    isChecked && 'checkbox-control--checked',
+    indeterminate && 'checkbox-control--indeterminate'
+  ].filter(Boolean).join(' ');
   
   return (
     <div className={wrapperClasses}>
@@ -302,12 +276,13 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
           <label 
             htmlFor={checkboxId}
             id={labelId}
-            className={createBemClass('checkbox-label', undefined, [
-              actualVariant,
-              size,
-              disabled && 'disabled',
-              required && 'required'
-            ])}
+            className={[
+              'checkbox-label',
+              actualVariant && `checkbox-label--${actualVariant}`,
+              size && `checkbox-label--${size}`,
+              disabled && 'checkbox-label--disabled',
+              required && 'checkbox-label--required'
+            ].filter(Boolean).join(' ')}
           >
             {label}
             {required && (
@@ -325,7 +300,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
         {error && (
           <span 
             id={errorId}
-            className={createBemClass('checkbox-message', undefined, ['error'])}
+            className="checkbox-message checkbox-message--error"
             role="alert"
             aria-live="polite"
           >
@@ -337,7 +312,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
         {success && !error && (
           <span 
             id={successId}
-            className={createBemClass('checkbox-message', undefined, ['success'])}
+            className="checkbox-message checkbox-message--success"
             role="status"
             aria-live="polite"
           >
@@ -349,7 +324,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
         {warning && !error && !success && (
           <span 
             id={warningId}
-            className={createBemClass('checkbox-message', undefined, ['warning'])}
+            className="checkbox-message checkbox-message--warning"
             role="alert"
             aria-live="polite"
           >
@@ -361,7 +336,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
         {helperText && !error && !success && !warning && (
           <span 
             id={helperTextId}
-            className={createBemClass('checkbox-message', undefined, ['helper'])}
+            className="checkbox-message checkbox-message--helper"
           >
             {helperText}
           </span>

@@ -1,5 +1,5 @@
 'use client';
-import React, { forwardRef, useState, useCallback, useRef, useEffect } from 'react';
+import React, { forwardRef, useState, useCallback, useRef, useEffect, useId } from 'react';
 
 // TextArea size variants based on design tokens
 export type TextAreaSize = 'xs' | 's' | 'm' | 'l' | 'xl';
@@ -76,8 +76,7 @@ const createBemClass = (
 };
 
 // Generate unique ID for accessibility
-let textareaIdCounter = 0;
-const generateTextAreaId = () => `textarea-${++textareaIdCounter}`;
+
 
 /**
  * Professional TextArea Component with BEM Methodology
@@ -162,8 +161,9 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextAre
   const currentValue = value !== undefined ? value : internalValue;
   const currentLength = String(currentValue || '').length;
   
-  // Generate unique IDs for accessibility
-  const textareaId = id || generateTextAreaId();
+  // Generate unique IDs for accessibility using React's useId
+  const reactId = useId();
+  const textareaId = id || `textarea-${reactId}`;
   const labelId = `${textareaId}-label`;
   const helperTextId = `${textareaId}-helper`;
   const errorId = `${textareaId}-error`;

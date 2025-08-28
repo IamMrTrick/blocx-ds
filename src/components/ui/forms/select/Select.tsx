@@ -1,5 +1,5 @@
 'use client';
-import React, { forwardRef, useState, useCallback, useRef, useEffect } from 'react';
+import React, { forwardRef, useState, useCallback, useRef, useEffect, useId } from 'react';
 
 // Select size variants based on design tokens
 export type SelectSize = 'xs' | 's' | 'm' | 'l' | 'xl';
@@ -89,8 +89,7 @@ const createBemClass = (
 };
 
 // Generate unique ID for accessibility
-let selectIdCounter = 0;
-const generateSelectId = () => `select-${++selectIdCounter}`;
+
 
 // Default dropdown icon (SVG)
 const DefaultDropdownIcon = () => (
@@ -218,6 +217,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
   // State management
   const [focused, setFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [internalValue, setInternalValue] = useState(defaultValue || '');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -230,8 +230,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
   // Use controlled or uncontrolled value
   const currentValue = value !== undefined ? value : internalValue;
   
-  // Generate unique IDs for accessibility
-  const selectId = id || generateSelectId();
+  // Generate unique IDs for accessibility using React's useId
+  const reactId = useId();
+  const selectId = id || `select-${reactId}`;
   const labelId = `${selectId}-label`;
   const helperTextId = `${selectId}-helper`;
   const errorId = `${selectId}-error`;
@@ -379,42 +380,41 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
     warning && warningId
   ].filter(Boolean).join(' ');
   
-  // Generate BEM classes
+  // Generate CSS classes with template strings
   const wrapperClasses = [
-    createBemClass('select-wrapper', undefined, [
-      actualVariant,
-      size,
-      fullWidth && 'full-width',
-      disabled && 'disabled',
-      focused && 'focused',
-      loading && 'loading',
-      isOpen && 'open',
-      !native && 'custom'
-    ]),
+    'select-wrapper',
+    actualVariant && `select-wrapper--${actualVariant}`,
+    size && `select-wrapper--${size}`,
+    fullWidth && 'select-wrapper--full-width',
+    disabled && 'select-wrapper--disabled',
+    focused && 'select-wrapper--focused',
+    loading && 'select-wrapper--loading',
+    isOpen && 'select-wrapper--open',
+    !native && 'select-wrapper--custom',
     wrapperClassName
   ].filter(Boolean).join(' ');
   
   const selectClasses = [
-    createBemClass('select', undefined, [
-      actualVariant,
-      size,
-      fullWidth && 'full-width',
-      disabled && 'disabled',
-      focused && 'focused',
-      loading && 'loading',
-      !native && 'custom'
-    ]),
+    'select',
+    actualVariant && `select--${actualVariant}`,
+    size && `select--${size}`,
+    fullWidth && 'select--full-width',
+    disabled && 'select--disabled',
+    focused && 'select--focused',
+    loading && 'select--loading',
+    !native && 'select--custom',
     className
   ].filter(Boolean).join(' ');
   
-  const fieldClasses = createBemClass('select-field', undefined, [
-    actualVariant,
-    size,
-    disabled && 'disabled',
-    focused && 'focused',
-    loading && 'loading',
-    isOpen && 'open'
-  ]);
+  const fieldClasses = [
+    'select-field',
+    actualVariant && `select-field--${actualVariant}`,
+    size && `select-field--${size}`,
+    disabled && 'select-field--disabled',
+    focused && 'select-field--focused',
+    loading && 'select-field--loading',
+    isOpen && 'select-field--open'
+  ].filter(Boolean).join(' ');
   
   if (native) {
     // Native select implementation
@@ -581,7 +581,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
           </span>
         )}
         
-        {/* Custom Select Trigger */}
+        {/* Custom Select Trigger - Entire field is clickable */}
         <div
           className={selectClasses}
           onClick={handleDropdownToggle}
@@ -594,29 +594,29 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
           aria-labelledby={label ? labelId : undefined}
           aria-describedby={describedByIds || undefined}
           aria-invalid={actualVariant === 'error' ? 'true' : undefined}
+          style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
         >
           <span className="select__display">
             {displayValue || placeholder || 'Select...'}
           </span>
+          
+          {/* Loading Spinner */}
+          {loading && (
+            <span className="select-field__spinner" aria-hidden="true">
+              <span className="select-field__spinner-icon"></span>
+            </span>
+          )}
+          
+          {/* Dropdown Icon - Part of clickable area */}
+          {!loading && (
+            <span 
+              className="select-field__dropdown-icon" 
+              aria-hidden="true"
+            >
+              {dropdownIcon || <DefaultDropdownIcon />}
+            </span>
+          )}
         </div>
-        
-        {/* Loading Spinner */}
-        {loading && (
-          <span className="select-field__spinner" aria-hidden="true">
-            <span className="select-field__spinner-icon"></span>
-          </span>
-        )}
-        
-        {/* Dropdown Icon */}
-        {!loading && (
-          <span 
-            className="select-field__dropdown-icon" 
-            aria-hidden="true"
-            onClick={handleDropdownToggle}
-          >
-            {dropdownIcon || <DefaultDropdownIcon />}
-          </span>
-        )}
         
         {/* Custom Dropdown */}
         {isOpen && (
