@@ -24,20 +24,7 @@
 @use 'base/reset';
 @use 'base/globals';
 
-// 4. Utilities
-@use 'utilities/spacing-utils';
-@use 'utilities/radius-utils';
-@use 'utilities/color-utils';
-@use 'utilities/effects-utils';
-@use 'utilities/layout-utils';
-@use 'utilities/section-utils';
-@use 'utilities/main-layout-utils';
-@use 'utilities/display-utils';
-@use 'utilities/text-utils';
-@use 'utilities/icon-utils';
-@use 'utilities/visually-hidden';
-
-// 5. Components
+// 4. Components
 // UI Components
 @use '../components/ui/button/Button';
 @use '../components/ui/badge/Badge';
@@ -75,7 +62,19 @@
 
 
 
-// 6. Demo pages (components showcase)
+// 5. Demo pages (components showcase)
 @use '../app/components/components';
 
 
+// 6. Utilities (load last for highest precedence)
+@use 'utilities/spacing-utils';
+@use 'utilities/radius-utils';
+@use 'utilities/color-utils';
+@use 'utilities/effects-utils';
+@use 'utilities/layout-utils';
+@use 'utilities/section-utils';
+@use 'utilities/main-layout-utils';
+@use 'utilities/display-utils';
+@use 'utilities/text-utils';
+@use 'utilities/icon-utils';
+@use 'utilities/visually-hidden';
