@@ -422,7 +422,7 @@ body.drawer-active-not-minimized {
 .drawer__drag-indicator[data-side="left"] {
   top: 50%;
   right: -0.5rem;
-  width: 4px;
+  width: 2px;
   height: 86px;
   transform: translateY(-50%);
 }
@@ -430,24 +430,24 @@ body.drawer-active-not-minimized {
 .drawer__drag-indicator[data-side="right"] {
   top: 50%;
   left: -0.5rem;
-  width: 4px;
+  width: 2px;
   height: 86px;
   transform: translateY(-50%);
 }
 
 .drawer__drag-indicator[data-side="top"] {
-  bottom: -0.5rem;
+  bottom: -0.8rem;
   left: 50%;
   width: 86px;
-  height: 4px;
+  height: 2px;
   transform: translateX(-50%);
 }
 
 .drawer__drag-indicator[data-side="bottom"] {
-  top: -0.5rem;
+  top: -0.8rem;
   left: 50%;
   width: 86px;
-  height: 4px;
+  height: 2px;
   transform: translateX(-50%);
 }
 

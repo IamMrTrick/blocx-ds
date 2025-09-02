@@ -1,43 +1,113 @@
-/* Toast Test Page Mobile Responsive Styles */
+/* ===== Toast Test Page Styles ===== */
 
-.toast-test-page {
-  /* Ensure no horizontal overflow */
-  overflow-x: hidden;
-  
-  /* Mobile-specific grid overrides */
-  @media (max-width: 768px) {
-    .grid--auto-fit {
-      grid-template-columns: 1fr !important;
-    }
-  }
+/* Toast Position Grid */
+.toast-position-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-8);
+  max-width: 150px;
   
   @media (max-width: 480px) {
-    .grid--auto-fit {
-      grid-template-columns: 1fr !important;
+    max-width: 120px;
+    gap: var(--spacing-6);
+  }
+}
+
+.toast-position-btn {
+  aspect-ratio: 1;
+  font-size: 12px;
+  
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
+}
+
+/* Duration Control */
+.toast-duration-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.toast-range-input {
+  width: 100%;
+  min-width: 100px;
+  accent-color: var(--color-primary);
+}
+
+/* Button Groups */
+.toast-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+/* Performance Monitor */
+.toast-performance-monitor {
+  padding: var(--spacing-12);
+  background: rgba(0, 123, 255, 0.1);
+  border-radius: var(--radius-8);
+  font-size: var(--font-size-xs);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.toast-performance-status {
+  font-weight: 600;
+  
+  &--light {
+    color: #28a745;
+  }
+  
+  &--medium {
+    color: #ffc107;
+  }
+  
+  &--stress {
+    color: #dc3545;
+  }
+}
+
+/* Battle Guide */
+.toast-battle-guide {
+  background-color: var(--warning-02);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--warning-06);
+}
+
+/* Utility Classes */
+.w-full {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .toast-test-page {
+    .container--lg {
+      padding-inline: var(--spacing-16);
     }
-    
-    /* Stack flex items vertically on very small screens */
-    .flex--wrap {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    
-    /* Make range input full width on mobile */
-    input[type="range"] {
-      min-width: 100% !important;
-      max-width: 100% !important;
-      width: 100% !important;
-    }
-    
-    /* Position grid adjustments for mobile */
-    .position-grid {
-      max-width: 150px !important;
-      gap: 6px !important;
-      
-      button {
-        font-size: 8px !important;
-        padding: 2px !important;
-      }
-    }
+  }
+}
+
+@media (max-width: 480px) {
+  .toast-button-group {
+    gap: var(--spacing-6);
+  }
+  
+  .toast-performance-monitor {
+    padding: var(--spacing-8);
+    font-size: 11px;
   }
 }
