@@ -4,6 +4,13 @@ export type ToastPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-le
 export interface ToastAction {
   label: string;
   onClick: () => void;
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'ghost' | 'outline-primary' | 'outline-secondary' | 'outline-success' | 'outline-warning' | 'outline-error';
+  size?: 'xs' | 's' | 'm' | 'l' | 'xl';
+}
+
+export interface ToastActions {
+  primary?: ToastAction;
+  secondary?: ToastAction;
 }
 
 export interface ToastData {
@@ -11,7 +18,8 @@ export interface ToastData {
   type: ToastType;
   title?: string;
   description?: string;
-  action?: ToastAction;
+  action?: ToastAction; // Legacy support
+  actions?: ToastActions; // New multiple actions support
   duration?: number;
   dismissible?: boolean;
   important?: boolean;
@@ -23,7 +31,8 @@ export interface ToastOptions {
   type?: ToastType;
   title?: string;
   description?: string;
-  action?: ToastAction;
+  action?: ToastAction; // Legacy support
+  actions?: ToastActions; // New multiple actions support
   duration?: number;
   dismissible?: boolean;
   important?: boolean;
@@ -41,4 +50,5 @@ export interface ToastContextType {
   removeToast: (id: string) => void;
   removeAll: () => void;
   position: ToastPosition;
+  setPosition: (position: ToastPosition) => void;
 }

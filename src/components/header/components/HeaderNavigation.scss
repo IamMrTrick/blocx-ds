@@ -239,7 +239,7 @@
 
     &:not([hidden]) {
       opacity: 1;
-      max-height: 300px;
+      max-height: none;
       transform: translateY(0);
       margin: var(--spacing-4) 0 0 0;
       padding: var(--spacing-6);

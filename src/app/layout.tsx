@@ -22,7 +22,7 @@ export default function RootLayout({
         <ThemeProvider>
           <HeaderWithMobileMenu sticky={true} centerMode={true} />
           <ToastProvider>
-            <Main width="full" id="main">
+            <Main width="full" withHeader={true} id="main">
               {children}
             </Main>
           </ToastProvider>

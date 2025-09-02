@@ -22,6 +22,7 @@ function createToast(options: ToastOptions): string {
     console.warn('Toast provider not found. Make sure to wrap your app with ToastProvider.');
     return '';
   }
+
   return toastFunction(options);
 }
 
@@ -101,6 +102,73 @@ export const toast = Object.assign(createToast, {
         
         throw error;
       });
+  },
+
+  // Enhanced action-based toast creators
+  withAction: (title: string, description?: string, action?: import('./types').ToastAction, options?: Omit<ToastOptions, 'title' | 'description' | 'action'>) =>
+    createToast({ ...options, title, description, action }),
+
+  withActions: (title: string, description?: string, actions?: import('./types').ToastActions, options?: Omit<ToastOptions, 'title' | 'description' | 'actions'>) =>
+    createToast({ ...options, title, description, actions }),
+
+  // Preset action toasts
+  undo: (title: string, description: string, undoCallback: () => void, options?: Omit<ToastOptions, 'title' | 'description' | 'actions'>) => {
+    const toastId = createToast({
+      ...options,
+      type: 'success',
+      title,
+      description,
+      duration: 5000, // 5 seconds to undo
+      actions: {
+        primary: {
+          label: 'Undo',
+          onClick: () => {
+            undoCallback();
+            if (removeToastFunction) {
+              removeToastFunction(toastId);
+            }
+          },
+          variant: 'ghost',
+          size: 's'
+        }
+      }
+    });
+    return toastId;
+  },
+
+  confirm: (title: string, description: string, confirmCallback: () => void, cancelCallback?: () => void, options?: Omit<ToastOptions, 'title' | 'description' | 'actions'>) => {
+    const toastId = createToast({
+      ...options,
+      type: 'warning',
+      title,
+      description,
+      duration: 0, // Don't auto-dismiss confirmation toasts
+      actions: {
+        primary: {
+          label: 'Confirm',
+          onClick: () => {
+            confirmCallback();
+            if (removeToastFunction) {
+              removeToastFunction(toastId);
+            }
+          },
+          variant: 'primary',
+          size: 's'
+        },
+        secondary: {
+          label: 'Cancel',
+          onClick: () => {
+            if (cancelCallback) cancelCallback();
+            if (removeToastFunction) {
+              removeToastFunction(toastId);
+            }
+          },
+          variant: 'ghost',
+          size: 's'
+        }
+      }
+    });
+    return toastId;
   }
 });
 

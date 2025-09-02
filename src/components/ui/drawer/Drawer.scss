@@ -1,5 +1,33 @@
 /* Drawer Component - Modern glassmorphism design with smooth animations */
 
+/* GLOBAL: Prevent pull-to-refresh when any drawer is active */
+html {
+  overscroll-behavior-y: auto; /* Default for normal browsing */
+}
+
+html.drawer-active {
+  overscroll-behavior: none;
+  -webkit-overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  -webkit-overscroll-behavior-y: none;
+}
+
+/* Mobile viewport stability - address dynamic viewport changes */
+@supports (height: 100dvh) {
+  .drawer {
+    height: 100dvh; /* Use dynamic viewport height when supported */
+  }
+}
+
+/* Fallback for older browsers */
+@supports not (height: 100dvh) {
+  .drawer {
+    height: 100vh;
+    /* Fix iOS Safari viewport issues */
+    height: calc(var(--vh, 1vh) * 100);
+  }
+}
+
 .drawer {
   /* Local vars - Enhanced for modern look */
   --_backdrop-bg: var(--transparent-black-50);
@@ -28,7 +56,10 @@
   --_curve-ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* A very smooth ease-out quint */
 
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: var(--z-drawer);
   display: block; /* Keep in DOM to allow transition from initial transform */
   pointer-events: none; /* Disabled until open */
@@ -118,13 +149,24 @@
 
 .drawer--side-bottom .drawer__panel {
   inset-inline: 0;
+  /* Use both modern and fallback positioning for mobile stability */
   inset-block-end: 0;
+  bottom: calc(var(--drawer-bottom-offset, 0px) + env(safe-area-inset-bottom, 0px));
   height: var(--_panel-h);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   transform-origin: center bottom;
   transform: translate3d(0, 100%, 0);
   opacity: 0;
+  /* Mobile browser stability fixes */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /* Safari-specific positioning fix - combine with slide animation */
+  -webkit-transform: translate3d(0, 100%, 0);
+  transform: translate3d(0, 100%, 0);
+  /* Force hardware acceleration and stability */
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
 }
 
 .drawer__panel {
@@ -189,10 +231,14 @@
   &[data-scrollable="true"] {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    /* Allow normal vertical scrolling */
+    touch-action: pan-y;
+    overscroll-behavior-y: contain; /* Prevent overscroll but allow scroll */
   }
   
   &[data-scrollable="false"] {
     overflow: hidden;
+    touch-action: none;
   }
 }
 .drawer__footer {
@@ -209,20 +255,138 @@
   padding-bottom: calc(var(--spacing-16) + env(safe-area-inset-bottom, 0px));
 }
 
-/* Improve touch behavior for swipes */
-.drawer__panel {
-  /* Allow vertical scroll for top/bottom until drag commits; we preventDefault in JS on commit */
-  touch-action: pan-y pan-x; 
+/* 📱 MOBILE OPTIMIZATION: Touch and overscroll behavior */
+
+/* Different touch-action for different sides */
+.drawer--side-left .drawer__panel,
+.drawer--side-right .drawer__panel {
+  touch-action: pan-y; /* Allow vertical scroll, capture horizontal drag */
   cursor: grab;
+}
+
+.drawer--side-top .drawer__panel,
+.drawer--side-bottom .drawer__panel {
+  touch-action: none; /* Capture all touch events for our drag logic */
+  overscroll-behavior: none; /* Disable overscroll bounce on the panel */
+  -webkit-overscroll-behavior: none; /* Safari/WebKit support */
+  cursor: grab;
+}
+
+/* Allow content scrolling but prevent pull-to-refresh */
+.drawer {
+  overscroll-behavior: none;
+  -webkit-overscroll-behavior: none;
+}
+
+/* Backdrop can disable touch since it's not content */
+.drawer__backdrop {
+  touch-action: none;
+  overscroll-behavior: none;
+  -webkit-overscroll-behavior: none;
 }
 
 .drawer__panel:active {
   cursor: grabbing;
 }
 
-/* Advanced drag visual feedback */
-.drawer__panel[data-dragging="true"] {
-  transition: transform 0s linear, opacity 0s linear; /* Ensure no cross-fade */
+/* 🔥 3-MODE SYSTEM STYLES */
+
+/* EXPANDED STATE: Full screen height */
+.drawer--expanded.drawer--side-top .drawer__panel,
+.drawer--expanded.drawer--side-bottom .drawer__panel {
+  height: calc(100vh - 32px);
+  border-radius: 0;
+}
+
+/* MINIMIZED STATE: Header only */
+.drawer--minimized.drawer--side-bottom .drawer__panel {
+  height: 80px;
+  min-height: 80px;
+  /* Ensure minimized drawer stays at bottom even when browser bars change */
+  position: fixed !important;
+  bottom: calc(var(--drawer-bottom-offset, 0px) + env(safe-area-inset-bottom, 0px)) !important;
+  /* Safari-specific fixes for stable positioning */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* MINIMIZED STATE: Top drawer - Header only */
+.drawer--minimized.drawer--side-top .drawer__panel {
+  height: 80px;
+  min-height: 80px;
+  /* Ensure minimized drawer stays at top */
+  position: fixed !important;
+  top: 0 !important;
+  /* Safari-specific fixes for stable positioning */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* CLOSING FROM MINIMIZED STATE: Proper directional sliding */
+.drawer--closing-from-minimized.drawer--side-bottom .drawer__panel {
+  transform: translate3d(0, 100%, 0) !important; /* Slide down */
+  opacity: 0;
+  transition: transform var(--_duration-medium) var(--_curve-ease-out),
+              opacity var(--_duration-fast) ease-out;
+}
+
+.drawer--closing-from-minimized.drawer--side-top .drawer__panel {
+  transform: translate3d(0, -100%, 0) !important; /* Slide up */
+  opacity: 0;
+  transition: transform var(--_duration-medium) var(--_curve-ease-out),
+              opacity var(--_duration-fast) ease-out;
+}
+
+/* MINIMIZED STATE: Transparent backdrop and allow page interaction */
+.drawer--minimized .drawer__backdrop {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
+}
+
+.drawer--minimized {
+  overflow: visible; /* Allow page scroll */
+  pointer-events: none; /* Disable drawer interactions except panel */
+}
+
+.drawer--minimized .drawer__panel {
+  pointer-events: auto; /* Re-enable panel interactions */
+}
+
+/* MINIMIZED STATE: Hide drawer body/footer content */
+.drawer--minimized .drawer__body,
+.drawer--minimized .drawer__footer {
+  display: none;
+}
+
+/* Disable overscroll on entire page when drawer is active (not minimized) */
+body.drawer-active-not-minimized {
+  overscroll-behavior: none;
+  -webkit-overscroll-behavior: none;
+  /* Prevent pull-to-refresh without breaking scroll position */
+  overscroll-behavior-y: none;
+  -webkit-overscroll-behavior-y: none;
+}
+
+/* 🔥 DISABLE ALL transitions during drag for real-time response */
+.drawer[data-dragging="true"] .drawer__panel {
+  transition: none;
+  will-change: transform, height;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  /* Prevent jumping during elongation effect */
+  transform-box: border-box;
+}
+
+/* Ensure header remains interactive in minimized mode */
+.drawer--minimized .drawer__header {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.drawer--minimized .drawer__header:active {
+  cursor: grabbing;
 }
 
 /* Ensure initial translate-from-side animation is preserved */
@@ -250,8 +414,8 @@
   pointer-events: none;
   
   /* Base styles for all sides */
-  background: var(--gray-300, rgba(128,128,128,0.35));
-  border-radius: var(--radius-full);
+  background: var(--gray-300, #d1d5db);
+  border-radius: var(--radius-full, 9999px);
 }
 
 /* Drag indicator positioning by side */
@@ -293,7 +457,7 @@
   background: var(--accent-primary, #3b82f6);
   border-radius: inherit;
   transition: all 0.1s ease-out;
-  box-shadow: 0 0 8px rgba(var(--accent-rgb, 59, 130, 246), 0.4);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
   
   /* Pulsing effect based on resistance */
   animation: dragPulse 0.3s ease-in-out infinite alternate;
@@ -383,5 +547,4 @@
 @media (prefers-reduced-motion: reduce) {
   .drawer__backdrop, .drawer__panel { transition: none; }
 }
-
 

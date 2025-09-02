@@ -1,0 +1,43 @@
+/* Toast Test Page Mobile Responsive Styles */
+
+.toast-test-page {
+  /* Ensure no horizontal overflow */
+  overflow-x: hidden;
+  
+  /* Mobile-specific grid overrides */
+  @media (max-width: 768px) {
+    .grid--auto-fit {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .grid--auto-fit {
+      grid-template-columns: 1fr !important;
+    }
+    
+    /* Stack flex items vertically on very small screens */
+    .flex--wrap {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    /* Make range input full width on mobile */
+    input[type="range"] {
+      min-width: 100% !important;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    
+    /* Position grid adjustments for mobile */
+    .position-grid {
+      max-width: 150px !important;
+      gap: 6px !important;
+      
+      button {
+        font-size: 8px !important;
+        padding: 2px !important;
+      }
+    }
+  }
+}
