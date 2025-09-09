@@ -1029,13 +1029,13 @@ export const Drawer: React.FC<DrawerProps> = ({
   useEffect(() => {
     if (!open) return;
     
-    // Add a history entry when drawer opens
-    const historyKey = `drawer-${Date.now()}`;
-    window.history.pushState({ drawerOpen: true, key: historyKey }, '', window.location.href);
+    // Add a single history entry when drawer opens
+    const historyState = { drawerOpen: true, timestamp: Date.now() };
+    window.history.pushState(historyState, '', window.location.href);
     
     const handlePopState = (e: PopStateEvent) => {
-      // Only handle if this is our drawer's history entry
-      if (e.state?.drawerOpen) return;
+      // Only handle if we're currently open
+      if (!open) return;
       
       // Check if minimize mode is enabled for vertical drawers
       if (minimizeMode && (side === 'bottom' || side === 'top')) {
@@ -1044,8 +1044,8 @@ export const Drawer: React.FC<DrawerProps> = ({
         if (currentMode === 'normal' || currentMode === 'expanded') {
           // First back press: minimize
           topBottomDrag.setMinimized();
-          // Push a new state so the next back press can close
-          window.history.pushState({ drawerMinimized: true, key: historyKey }, '', window.location.href);
+          // Add another history entry so next back press can close
+          window.history.pushState({ drawerMinimized: true, timestamp: Date.now() }, '', window.location.href);
           return;
         } else if (currentMode === 'minimized') {
           // Second back press: close

@@ -199,6 +199,15 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
         swipeToClose={true}
         backdrop={true}
         trapFocus={true}
+        minimizeMode={true}
+        onMinimize={() => {
+          // Optional: handle minimize state if needed
+          console.log('Mobile navigation minimized');
+        }}
+        onRestore={() => {
+          // Optional: handle restore state if needed
+          console.log('Mobile navigation restored');
+        }}
         className="header-nav__mobile-drawer"
         aria-label="Mobile navigation menu"
       >
