@@ -1025,6 +1025,46 @@ export const Drawer: React.FC<DrawerProps> = ({
   const currentHeight = isVertical ? topBottomDrag.currentHeight : null;
   const isMinimized = isVertical ? topBottomDrag.isMinimized : false;
 
+  // Mobile back button handling - minimize first, then close
+  useEffect(() => {
+    if (!open) return;
+    
+    // Add a history entry when drawer opens
+    const historyKey = `drawer-${Date.now()}`;
+    window.history.pushState({ drawerOpen: true, key: historyKey }, '', window.location.href);
+    
+    const handlePopState = (e: PopStateEvent) => {
+      // Only handle if this is our drawer's history entry
+      if (e.state?.drawerOpen) return;
+      
+      // Check if minimize mode is enabled for vertical drawers
+      if (minimizeMode && (side === 'bottom' || side === 'top')) {
+        const currentMode = isVertical ? topBottomDrag.mode : 'normal';
+        
+        if (currentMode === 'normal' || currentMode === 'expanded') {
+          // First back press: minimize
+          topBottomDrag.setMinimized();
+          // Push a new state so the next back press can close
+          window.history.pushState({ drawerMinimized: true, key: historyKey }, '', window.location.href);
+          return;
+        } else if (currentMode === 'minimized') {
+          // Second back press: close
+          onClose();
+          return;
+        }
+      }
+      
+      // Default behavior: close immediately if minimize mode not enabled
+      onClose();
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [open, minimizeMode, side, isVertical, topBottomDrag, onClose]);
+
   // Handle closing from minimized state detection
   useEffect(() => {
     if (!open && isMinimized) {
